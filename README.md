@@ -1,1 +1,1 @@
-# thesis_controlstation
+# Thesis control station 
