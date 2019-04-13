@@ -13,15 +13,9 @@ public class Constant {
 
     public class TaskStatus{
         public static final int NEW = 0;
-        public static final int RUNNING = 1;
-        public static final int DONE = 2;
+        public static final int READY = 1;
+        public static final int RUNNING = 2;
+        public static final int DONE = 3;
     }
-
-    public class Time{
-        public static final int ASSIGNMENT = 3;
-
-    }
-
-
 
 }

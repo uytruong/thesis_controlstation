@@ -16,12 +16,6 @@ public class TaskCreator {
     }
 
     public boolean createTask(Task task) {
-        for (Task otherTask: taskList) {
-            if((otherTask.getGoal().getId() == task.getGoal().getId()) & (otherTask.getType() == task.getType()) &(otherTask.getTimeAppear() == task.getTimeAppear())){
-                return false;
-            }
-        }
-
         if (mapBase.getStatus(task.getGoal()) == Constant.PointStatus.PERM){
             return false;
         }

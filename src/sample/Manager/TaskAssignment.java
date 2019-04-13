@@ -14,9 +14,6 @@ public class TaskAssignment {
     }
 
 
-
-
-
     public RobotManager getRobotManager() {
         return robotManager;
     }

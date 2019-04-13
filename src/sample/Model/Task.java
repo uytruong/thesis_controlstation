@@ -2,7 +2,7 @@ package sample.Model;
 
 public class Task {
     private int id, type;
-    private int timeExecute, timeAppear, timeValid;
+    private int timeExecute, timeAppear;
     private Point goal;
     private int status;
 
@@ -16,7 +16,6 @@ public class Task {
 
     private void init(){
         this.status    = Constant.TaskStatus.NEW;
-        this.timeValid = this.timeAppear;
     }
 
     public int getId() {
@@ -55,15 +54,9 @@ public class Task {
     public void setStatus(int status) {
         this.status = status;
     }
-    public int getTimeValid() {
-        return timeValid;
-    }
-    public void setTimeValid(int timeValid) {
-        this.timeValid = timeValid;
-    }
 
     public void printInfo(){
-        String info = "Task Info: id = " + id + "; type = " + type + "; goal at: id = " + goal.getId();
+        String info = "Task Info: id = " + id + "; type = " + type + "; goal at: id = " + goal.getId() + "; status = " + status;
         System.out.println(info);
     }
 }

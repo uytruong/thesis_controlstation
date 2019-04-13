@@ -35,7 +35,6 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
 
-        System.out.println(System.currentTimeMillis());
         mapBaseCreator.getShelf().setxLength(2);
         mapBaseCreator.getShelf().setyLength(3);
         mapBaseCreator.getShelf().setxNumber(5);
@@ -47,14 +46,8 @@ public class Main extends Application {
         mapBaseCreator.getDistance().setShelfToVerticalShelf(2);
 
         mapBaseCreator.update();
-
-
-        MapBase mapBase1 = new MapBase(mapBaseCreator);
-        mapBase1.setStatus(0,7);
-        mapBase1.printMapBase();
         mapBaseCreator.getMapBase().printMapBase();
-        System.out.println(mapBase1.getStatusList().size());
-        System.out.println(System.currentTimeMillis());
+
         /*
         Robot robot = new Robot(0,new Point(0,Constant.PointStatus.LEFT));
         robotCreator.createRobot(robot);
@@ -80,37 +73,53 @@ public class Main extends Application {
             lrobot.printInfo();
         }
         System.out.println("=======================");
+*/
+        taskCreator.createTask(new Task(0,1,0,new Point(19,Constant.PointStatus.DOWN)));
+        taskCreator.createTask(new Task(1,1,0,new Point(23,Constant.PointStatus.DOWN)));
+        taskCreator.createTask(new Task(2,1,1,new Point(24,Constant.PointStatus.DOWN)));
+        taskCreator.createTask(new Task(2,1,1,new Point(27,Constant.PointStatus.DOWN)));
+        taskCreator.createTask(new Task(2,1,1,new Point(27,Constant.PointStatus.DOWN)));
+        taskCreator.createTask(new Task(2,1,2,new Point(27,Constant.PointStatus.DOWN)));
 
-        Task task = new Task(0,1,0,new Point(19,Constant.PointStatus.DOWN));
-        taskCreator.createTask(task);
-        task = new Task(1,1,0,new Point(23,Constant.PointStatus.DOWN));
-        taskCreator.createTask(task);
-        task = new Task(2,1,1,new Point(22,Constant.PointStatus.DOWN));
-        taskCreator.createTask(task);
-        task = new Task(2,1,2,new Point(27,Constant.PointStatus.DOWN));
-        taskCreator.createTask(task);
+
         for (Task ltask: taskCreator.getTaskList()) {
             ltask.printInfo();
         }
+
         System.out.println("=======================");
         taskManager = new TaskManager(taskCreator);
 
+        Context.time = 0;
+        taskManager.update();
+        taskManager.printInfo();
+
+        taskManager.changeTaskStatus(1,Constant.TaskStatus.RUNNING);
+        taskManager.changeTaskStatus(0,Constant.TaskStatus.DONE);
+
         Context.time = 1;
-        taskManager.updateTaskList();
-        taskManager.getTaskList().get(0).setStatus(Constant.TaskStatus.DONE);
-        taskManager.getTaskList().get(1).setStatus(Constant.TaskStatus.DONE);
+        taskManager.update();
+        taskManager.printInfo();
 
+        taskManager.changeTaskStatus(0,Constant.TaskStatus.DONE);
         Context.time = 2;
-        taskManager.getTaskList().get(2).setStatus(Constant.TaskStatus.DONE);
-        taskManager.updateTaskList();
+        taskManager.update();
+        taskManager.printInfo();
 
-        for (Task ltask: taskManager.getTaskList()) {
-            ltask.printInfo();
-        }
-        */
-        Random random = new Random();
-        random.setSeed(7);
-        System.out.println(random.nextInt(5));
+
+        taskManager.changeTaskStatus(2,Constant.TaskStatus.DONE);
+        taskManager.changeTaskStatus(3,Constant.TaskStatus.DONE);
+
+        Context.time = 3;
+        taskManager.update();
+        taskManager.printInfo();
+
+        taskManager.changeTaskStatus(4,Constant.TaskStatus.DONE);
+        Context.time = 4;
+        taskManager.update();
+        taskManager.printInfo();
+
+
+
     }
 
 
