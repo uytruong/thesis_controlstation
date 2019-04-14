@@ -4,6 +4,13 @@ public class Point {
     private int id;
     private int status;
 
+    /**
+     * These methods are only for path planning
+     *
+    private int costToThisPoint;
+    private int costEstimateFromThisPoint;
+    private int costEstimateTotal;
+     */
     public Point(int id, int status) {
         this.id = id;
         this.status = status;

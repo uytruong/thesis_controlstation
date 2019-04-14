@@ -22,47 +22,25 @@ public class TaskManager {
 
     }
 
-    public void update(){
-        /* remove all Tasks which were RUNNING from readyTaskList */
-        List<Integer> removeIndex = new ArrayList<>();
-        for (int i = 0; i < readyTaskList.size(); i++){
-            if (readyTaskList.get(i).getStatus() != Constant.TaskStatus.READY){
-                removeIndex.add(i);
-            }
-        }
-        for (int i = removeIndex.size()-1; i >= 0 ; i--) {
-            readyTaskList.remove(removeIndex.get(i).intValue());
-        }
-
-
-        /* remove all Tasks which were DONE from runningTaskList */
-        removeIndex = new ArrayList<>();
-        for (int i = 0; i < runningTaskList.size(); i++){
-            if (runningTaskList.get(i).getStatus() != Constant.TaskStatus.RUNNING){
-                doneTaskNumber++;
-                removeIndex.add(i);
-            }
-        }
-        for (int i = removeIndex.size()-1; i >= 0 ; i--) {
-            runningTaskList.remove(removeIndex.get(i).intValue());
-        }
-
-        /* find new Task from taskCreator.taskList and add to readyTaskList if:
-            - its Goal position is not assinged to other running Task.
+    public void update(int timeUpdate){
+         /* find new TaskCreator from taskCreator.taskList and add to readyTaskList if:
+            - its Goal position is not assinged to other running TaskCreator.
             - there is no task in readyTaskList having same Goal
          */
         for (Task task: taskList) {
-            if ((task.getStatus() == Constant.TaskStatus.NEW) & (task.getTimeAppear() <= Context.time)){
+            if ((task.getStatus() == Constant.TaskStatus.NEW) & (task.getTimeAppear() <= timeUpdate)){
                 boolean valid = true;
                 for (Task runningTask: runningTaskList) {
                     if(task.getGoal().getId() == runningTask.getGoal().getId()){
                         valid = false;
+                        break;
                     }
                 }
 
                 for (Task readyTask: readyTaskList) {
                     if (task.getGoal().getId() == readyTask.getGoal().getId()){
                         valid = false;
+                        break;
                     }
                 }
 
@@ -80,49 +58,54 @@ public class TaskManager {
         Task task = taskList.get(id);
 
         if ((status == Constant.TaskStatus.RUNNING) & (task.getStatus() == Constant.TaskStatus.READY)){
-            /*converti task status from ready to running then add task to runningTaskList
-             * removing task from readyTaskList is work of update() */
-            task.setStatus(Constant.TaskStatus.RUNNING);
+            /* Convert task <status> from READY to RUNNING then add task to <runningTaskList>
+             * then remove task from <readyTaskList>*/
+            task.setStatus(status);
             runningTaskList.add(task);
+
+            for (int i = 0; i < readyTaskList.size(); i++) {
+                if (id == readyTaskList.get(i).getId()){
+                    readyTaskList.remove(i);
+                    break;
+                }
+            }
+
         }
         //& (task.getStatus() == Constant.TaskStatus.RUNNING)
-        else if ((status == Constant.TaskStatus.DONE) ){
+        else if ((status == Constant.TaskStatus.DONE)  ){
+            /* Convert task <status> from RUNNING to DONE, and also counting number of tasks wereDone;
+             * then remove task from <runningTaskList> */
             task.setStatus(status);
+            doneTaskNumber++;
+
+            for (int i = 0; i < runningTaskList.size(); i++) {
+                if (id == runningTaskList.get(i).getId()){
+                    runningTaskList.remove(i);
+                    break;
+                }
+            }
         }
+
+    }
+
+    public boolean isTaskListDone(){
+        return (taskList.size() == doneTaskNumber);
     }
 
 
     public List<Task> getTaskList() {
         return taskList;
     }
-
-    public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
-    }
-
     public List<Task> getReadyTaskList() {
         return readyTaskList;
     }
-
-    public void setReadyTaskList(List<Task> readyTaskList) {
-        this.readyTaskList = readyTaskList;
-    }
-
     public List<Task> getRunningTaskList() {
         return runningTaskList;
     }
-
-    public void setRunningTaskList(List<Task> runningTaskList) {
-        this.runningTaskList = runningTaskList;
-    }
-
     public int getDoneTaskNumber() {
         return doneTaskNumber;
     }
 
-    public void setDoneTaskNumber(int doneTaskNumber) {
-        this.doneTaskNumber = doneTaskNumber;
-    }
 
     public void printInfo(){
         System.out.println("======== TIME = " + Context.time +" ============ ");

@@ -6,18 +6,23 @@ import sample.Model.MapBase;
 import java.util.ArrayList;
 
 public class MapBaseCreator {
-    private Shelf shelf       = new Shelf();
-    private Distance distance = new Distance();
-    private Bound bound       = new Bound();
-    private MapBase mapBase   = new MapBase();
+    private Shelf shelf;
+    private Distance distance;
+    private Bound bound;
+    private MapBase mapBase;
 
     public MapBaseCreator() {
+        shelf    = new Shelf();
+        distance = new Distance();
+        bound    = new Bound();
+        mapBase  = new MapBase();
     }
 
     public void update(){
         bound.updateBound(distance,shelf);
         MapBase.xLength = bound.getxLength();
         MapBase.yLength = bound.getyLength();
+
         mapBase.setStatusList(new ArrayList<>());
         for (int i = 0; i < bound.getxLength() ; i++) {
             for (int j = 0; j < bound.getyLength(); j++) {
@@ -43,26 +48,14 @@ public class MapBaseCreator {
     public Shelf getShelf() {
         return shelf;
     }
-    public void setShelf(Shelf shelf) {
-        this.shelf = shelf;
-    }
     public Bound getBound() {
         return bound;
-    }
-    public void setBound(Bound bound) {
-        this.bound = bound;
     }
     public Distance getDistance() {
         return distance;
     }
-    public void setDistance(Distance distance) {
-        this.distance = distance;
-    }
     public MapBase getMapBase() {
         return mapBase;
-    }
-    public void setMapBase(MapBase mapBase) {
-        this.mapBase = mapBase;
     }
     public MapBase getMapBaseClone() {return new MapBase(this);}
 
@@ -73,12 +66,6 @@ public class MapBaseCreator {
         public Shelf() {
         }
 
-        public Shelf(int xLength, int yLength, int xNumber, int yNumber) {
-            this.xLength = xLength;
-            this.yLength = yLength;
-            this.xNumber = xNumber;
-            this.yNumber = yNumber;
-        }
         public int getxLength() {
             return xLength;
         }
@@ -110,13 +97,6 @@ public class MapBaseCreator {
         private int shelfToVerticalShelf, shelfToHorizontalShelf;
 
         public Distance() {
-        }
-
-        public Distance(int boundToVerticalShelf, int boundToHorizontalShelf, int shelfToVerticalShelf, int shelfToHorizontalShelf) {
-            this.boundToVerticalShelf   = boundToVerticalShelf;
-            this.boundToHorizontalShelf = boundToHorizontalShelf;
-            this.shelfToVerticalShelf   = shelfToVerticalShelf;
-            this.shelfToHorizontalShelf = shelfToHorizontalShelf;
         }
 
         public int getBoundToVerticalShelf() {
@@ -154,12 +134,6 @@ public class MapBaseCreator {
             this.yLength = distance.getBoundToHorizontalShelf()*2 + shelf.getyNumber()*(shelf.getyLength() + distance.getShelfToHorizontalShelf()) - distance.getShelfToHorizontalShelf();
         }
 
-        public void setxLength(int xLength) {
-            this.xLength = xLength;
-        }
-        public void setyLength(int yLength) {
-            this.yLength = yLength;
-        }
         public int getxLength() {
             return xLength;
         }

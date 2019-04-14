@@ -13,7 +13,7 @@ public class MapBase {
     public MapBase() {
     }
     public MapBase(MapBaseCreator mapBaseCreator){
-        this.statusList = new ArrayList<Integer>(mapBaseCreator.getMapBase().getStatusList());
+        this.statusList = new ArrayList<>(mapBaseCreator.getMapBase().getStatusList());
     }
 
     public List<Integer> getStatusList() {
@@ -34,7 +34,11 @@ public class MapBase {
 
 
 
-
+    public MapBase getClone(){
+        MapBase mapBase = new MapBase();
+        mapBase.setStatusList(new ArrayList<>(this.statusList));
+        return mapBase;
+    }
 
     public void printMapBase(){
         System.out.println("MapBase.xLength = " + xLength);
@@ -48,12 +52,13 @@ public class MapBase {
         }
     }
 
+
+
     public static int getIdFromXY(int x, int y){
         return (x + y*xLength);
     }
     public static int getXFromId(int id){
         return id%xLength;
-
     }
     public static int getYFromId(int id){
         return id/xLength;

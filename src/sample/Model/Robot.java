@@ -5,9 +5,10 @@ import java.util.List;
 
 public class Robot { ;
     private int id, type;
-    private int timeAvailable;
     private List<Point> pointList = new ArrayList<>();
     private Task task;
+
+    private int lastTimeUpdateToMap = -1;
 
     public Robot(int type, Point start) {
         this.type = type;
@@ -16,31 +17,29 @@ public class Robot { ;
     }
 
     private void init(){
-        timeAvailable = pointList.size();
+
     }
 
-    public void update(int timeContext){
-        if (this.timeAvailable <= timeContext){
-            for (int i = 0; i <= timeContext - this.timeAvailable ; i++) {
-                pointList.add(new Point(pointList.get(this.timeAvailable-1)));
+    /*this update is for robot doesn't have any task so it does not move*/
+    public void update(int timeUpdate){
+        if (getLastTimeBusy() <= timeUpdate) {
+            Point lastPoint = new Point(pointList.get(getLastTimeBusy()));
+            for (int i = 0; i < timeUpdate - getLastTimeBusy(); i++) {
+                pointList.add(new Point(lastPoint));
             }
-            this.timeAvailable = pointList.size();
         }
-        else { return;}
     }
+
     public void addPoint(Point point){
         pointList.add(new Point(point));
-        timeAvailable = pointList.size();
     }
 
 
 
-    public int getTimeAvailable() {
-        return timeAvailable;
+    public int getLastTimeBusy() {
+        return pointList.size()-1;
     }
-    public void setTimeAvailable(int timeAvailable) {
-        this.timeAvailable = timeAvailable;
-    }
+
     public int getId() {
         return id;
     }
@@ -59,17 +58,27 @@ public class Robot { ;
     public void setTask(Task task) {
         this.task = task;
     }
+
+    public int getLastTimeUpdateToMap() {
+        return lastTimeUpdateToMap;
+    }
+
+    public void setLastTimeUpdateToMap(int lastTimeUpdateToMap) {
+        this.lastTimeUpdateToMap = lastTimeUpdateToMap;
+    }
+
     public List<Point> getPointList() {
         return pointList;
     }
     public void setPointList(List<Point> pointList) {
         this.pointList = pointList;
     }
+
     public Point getPoint(int time){ return pointList.get(time);}
 
     public void printInfo(){
-        String info = "Robot Info: id = " + id + "; type = " + type + "; start at: id = " + pointList.get(0).getId() + ", end at: id = " + pointList.get(pointList.size()-1).getId()
-                      + "; timeAvailable = " + timeAvailable;
+        String info = "Robot id = " + id + "; type = " + type + "; start at: id = " + pointList.get(0).getId() + ", end at: id = " + pointList.get(getLastTimeBusy()).getId()
+                      + "; timeAvailable = " + getLastTimeBusy();
         System.out.println(info);
     }
 

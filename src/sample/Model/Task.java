@@ -56,7 +56,7 @@ public class Task {
     }
 
     public void printInfo(){
-        String info = "Task Info: id = " + id + "; type = " + type + "; goal at: id = " + goal.getId() + "; status = " + status;
+        String info = "Task id = " + id + "; type = " + type + "; goal at: id = " + goal.getId() + "; status = " + status;
         System.out.println(info);
     }
 }

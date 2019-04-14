@@ -19,9 +19,10 @@ import java.util.Random;
 
 
 public class Main extends Application {
+    Random random = new Random();
     MapBaseCreator mapBaseCreator = new MapBaseCreator();
-    RobotCreator robotCreator     = new RobotCreator(mapBaseCreator);
-    TaskCreator taskCreator       = new TaskCreator(mapBaseCreator);
+    RobotCreator robotCreator     = new RobotCreator(mapBaseCreator, random);
+    TaskCreator taskCreator       = new TaskCreator(mapBaseCreator, random);
 
     MapManager mapManager;
     RobotManager robotManager;
@@ -31,14 +32,16 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Warehouse Control Station Simulation");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
 
+        random.setSeed(Context.Random.seed);
+
         mapBaseCreator.getShelf().setxLength(2);
         mapBaseCreator.getShelf().setyLength(3);
-        mapBaseCreator.getShelf().setxNumber(5);
-        mapBaseCreator.getShelf().setyNumber(5);
+        mapBaseCreator.getShelf().setxNumber(2);
+        mapBaseCreator.getShelf().setyNumber(2);
 
         mapBaseCreator.getDistance().setBoundToHorizontalShelf(1);
         mapBaseCreator.getDistance().setBoundToVerticalShelf(1);
@@ -48,39 +51,30 @@ public class Main extends Application {
         mapBaseCreator.update();
         mapBaseCreator.getMapBase().printMapBase();
 
-        /*
-        Robot robot = new Robot(0,new Point(0,Constant.PointStatus.LEFT));
-        robotCreator.createRobot(robot);
-        robot = new Robot(1,new Point(1,Constant.PointStatus.LEFT));
-        robotCreator.createRobot(robot);
-        robot = new Robot(2,new Point(2,Constant.PointStatus.DOWN));
-        robotCreator.createRobot(robot);
-        for (Robot lrobot: robotCreator.getRobotList()) {
-            lrobot.printInfo();
-        }
 
-        System.out.println("========================");
+        robotCreator.createRobot(new Robot(0,new Point(0,Constant.PointStatus.LEFT)));
+        robotCreator.createRobot(new Robot(1,new Point(1,Constant.PointStatus.LEFT)));
+        robotCreator.createRobot(new Robot(2,new Point(2,Constant.PointStatus.DOWN)));
+        robotCreator.createRobotRandom(2,0);
+        robotCreator.createRobotRandom(6,0);
+
+
         robotManager = new RobotManager(robotCreator);
-        for (Robot lrobot: robotManager.getRobotList()) {
-            lrobot.printInfo();
-        }
-        //Context.time = 2;
-        robotManager.getRobot(2).addPoint(new Point(58,Constant.PointStatus.LEFT));
-        robotManager.getRobot(2).addPoint(new Point(59,Constant.PointStatus.LEFT));
 
-        robotManager.update();
-        for (Robot lrobot: robotManager.getRobotList()) {
-            lrobot.printInfo();
-        }
+
+        robotManager.getRobot(2).addPoint(new Point(3,Constant.PointStatus.LEFT));
+        robotManager.getRobot(2).addPoint(new Point(4,Constant.PointStatus.LEFT));
+
+
         System.out.println("=======================");
-*/
+
         taskCreator.createTask(new Task(0,1,0,new Point(19,Constant.PointStatus.DOWN)));
         taskCreator.createTask(new Task(1,1,0,new Point(23,Constant.PointStatus.DOWN)));
         taskCreator.createTask(new Task(2,1,1,new Point(24,Constant.PointStatus.DOWN)));
         taskCreator.createTask(new Task(2,1,1,new Point(27,Constant.PointStatus.DOWN)));
         taskCreator.createTask(new Task(2,1,1,new Point(27,Constant.PointStatus.DOWN)));
         taskCreator.createTask(new Task(2,1,2,new Point(27,Constant.PointStatus.DOWN)));
-
+        taskCreator.createTaskRandom(5,0);
 
         for (Task ltask: taskCreator.getTaskList()) {
             ltask.printInfo();
@@ -89,34 +83,45 @@ public class Main extends Application {
         System.out.println("=======================");
         taskManager = new TaskManager(taskCreator);
 
-        Context.time = 0;
-        taskManager.update();
+
+        mapManager  = new MapManager(mapBaseCreator,robotManager);
+
+        Context.Time.time = 0;
+        taskManager.update(Context.Time.time);
         taskManager.printInfo();
+        mapManager.update(Context.Time.time);
+        for (int i = 0; i < 4; i++) {
+            mapManager.getMap(i).printMapBase();
+        }
 
-        taskManager.changeTaskStatus(1,Constant.TaskStatus.RUNNING);
-        taskManager.changeTaskStatus(0,Constant.TaskStatus.DONE);
 
-        Context.time = 1;
-        taskManager.update();
+        Context.Time.time = 1;
+        taskManager.update(Context.Time.time);
         taskManager.printInfo();
+        mapManager.update(Context.Time.time);
+        for (int i = 0; i < 4; i++) {
+            mapManager.getMap(i).printMapBase();
+        }
 
-        taskManager.changeTaskStatus(0,Constant.TaskStatus.DONE);
-        Context.time = 2;
-        taskManager.update();
+        taskManager.changeTaskStatus(3,Constant.TaskStatus.RUNNING);
+
+        Context.Time.time = 2;
+        mapManager.update(Context.Time.time);
+        taskManager.update(Context.Time.time);
         taskManager.printInfo();
+        for (int i = 0; i < 4; i++) {
+            mapManager.getMap(i).printMapBase();
+        }
 
-
-        taskManager.changeTaskStatus(2,Constant.TaskStatus.DONE);
         taskManager.changeTaskStatus(3,Constant.TaskStatus.DONE);
 
-        Context.time = 3;
-        taskManager.update();
+        Context.Time.time = 3;
+        mapManager.update(Context.Time.time);
+        taskManager.update(Context.Time.time);
         taskManager.printInfo();
-
-        taskManager.changeTaskStatus(4,Constant.TaskStatus.DONE);
-        Context.time = 4;
-        taskManager.update();
-        taskManager.printInfo();
+        for (int i = 0; i < 4; i++) {
+            mapManager.getMap(i).printMapBase();
+        }
 
 
 
