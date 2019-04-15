@@ -12,7 +12,7 @@ public class Constant {
         public static final int RIGHT= 3;
         public static final int UP   = 4;
         public static final int DOWN = 5;
-        public static final int DONCARE = 6;
+        public static final int DONTCARE = 6;
     }
 
     public class TaskStatus{
@@ -33,7 +33,7 @@ public class Constant {
         public static final int RIGHT   = PointStatus.RIGHT;
         public static final int UP      = PointStatus.UP;
         public static final int DOWN    = PointStatus.DOWN;
-        public static final int DONCARE = PointStatus.DONCARE;
+        public static final int DONTCARE = PointStatus.DONTCARE;
     }
 
 

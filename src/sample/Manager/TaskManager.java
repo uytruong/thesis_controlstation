@@ -108,7 +108,7 @@ public class TaskManager {
 
 
     public void printInfo(){
-        System.out.println("======== TIME = " + Context.time +" ============ ");
+        System.out.println("======== TIME = " + Context.Time.time +" ============ ");
         System.out.println("======== TASK LIST ===========");
         for (Task task: taskList) {
             task.printInfo();

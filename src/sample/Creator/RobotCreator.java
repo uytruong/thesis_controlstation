@@ -34,11 +34,11 @@ public class RobotCreator {
         }
     }
 
-    public void createRobotRandom(int number, int type){
-        if ((robotList.size()+number) >= Context.RobotCreator.numberRobotMax){
-            number = Context.RobotCreator.numberRobotMax-robotList.size();
+    public void createRobotRandom(int numberOfRobot, int type){
+        if ((robotList.size() + numberOfRobot) >= Context.RobotCreator.numberRobotMax){
+            numberOfRobot = Context.RobotCreator.numberRobotMax-robotList.size();
         }
-        for (int i = 0; i < number; i++) {
+        for (int i = 0; i < numberOfRobot; i++) {
             while (true){
                 if (createRobot(new Robot(type, new Point(getRandomRobotPointId(),getRandomRobotPointStatus())))) {
                     break;

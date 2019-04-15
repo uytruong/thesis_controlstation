@@ -3,8 +3,8 @@ package sample.Model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Robot { ;
-    private int id, type;
+public class Robot {
+    private int id, type, heading;
     private List<Point> pointList = new ArrayList<>();
     private Task task;
 
@@ -58,11 +58,16 @@ public class Robot { ;
     public void setTask(Task task) {
         this.task = task;
     }
+    public int getHeading(int time) {
+        return pointList.get(time).getStatus();
+    }
+    public void setHeading(int heading) {
+        this.heading = heading;
+    }
 
     public int getLastTimeUpdateToMap() {
         return lastTimeUpdateToMap;
     }
-
     public void setLastTimeUpdateToMap(int lastTimeUpdateToMap) {
         this.lastTimeUpdateToMap = lastTimeUpdateToMap;
     }

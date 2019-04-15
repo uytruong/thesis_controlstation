@@ -31,11 +31,11 @@ public class TaskCreator {
         }
     }
 
-    public void createTaskRandom(int number, int type){
-        if ((taskList.size()+number) >= Context.TaskCreator.numberTaskMax){
-            number = Context.TaskCreator.numberTaskMax-taskList.size();
+    public void createTaskRandom(int numberOfTask, int type){
+        if ((taskList.size() + numberOfTask) >= Context.TaskCreator.numberTaskMax){
+            numberOfTask = Context.TaskCreator.numberTaskMax - taskList.size();
         }
-        for (int i = 0; i < number; i++) {
+        for (int i = 0; i < numberOfTask; i++) {
             while (true){
                 if (createTask(new Task(type,getRandomTimeExecute(),getRandomTimeAppear(), new Point(getRandomTaskPointId(),getRandomTaskPointStatus())))) {
                     break;
@@ -54,7 +54,7 @@ public class TaskCreator {
         return random.nextInt(max-min+1)+min;
     }
     private int getRandomTaskPointStatus(){
-        return getRandomInt(Constant.TaskPointStatus.LEFT,Constant.TaskPointStatus.DONCARE);
+        return getRandomInt(Constant.TaskPointStatus.LEFT,Constant.TaskPointStatus.DONTCARE);
     }
     private int getRandomTaskPointId(){
         return random.nextInt(mapBase.getStatusList().size());
