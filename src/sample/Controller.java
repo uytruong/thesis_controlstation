@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import sample.Creator.MapBaseCreator;
@@ -16,6 +18,7 @@ import sample.Model.Constant;
 import sample.Model.MapBase;
 import sample.Model.Robot;
 import sample.Model.Task;
+import sample.UI.ScatterView;
 import sample.UI.ViewModel.RobotViewModel;
 import sample.UI.ViewModel.TaskViewModel;
 
@@ -29,9 +32,9 @@ public class Controller implements Initializable {
     RobotCreator robotCreator     = new RobotCreator(mapBaseCreator, random);
     TaskCreator taskCreator       = new TaskCreator(mapBaseCreator, random);
 
-    MapManager mapManager;
     RobotManager robotManager;
     TaskManager taskManager;
+    MapManager mapManager;
 
     // Shelf
     public TextField txtShelfWidth;
@@ -104,9 +107,17 @@ public class Controller implements Initializable {
     public TableColumn<TaskViewModel, Integer> tableColTaskX;
     public TableColumn<TaskViewModel, Integer> tableColTaskY;
     public TableColumn<TaskViewModel, String> tableColTaskHeading;
+    // Scatter chart
+    public NumberAxis xAxis;
+    public NumberAxis yAxis;
+    public ScatterChart<Number, Number> scatterChart;
+//    private ScatterView mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        xAxis.setAutoRanging(false);
+        yAxis.setAutoRanging(false);
         txtShelfWidth.setText("2");
         txtShelfHeight.setText("3");
         txtShelfRows.setText("3");
@@ -148,6 +159,20 @@ public class Controller implements Initializable {
     }
 
     public void btnCreateRobotClick(ActionEvent event) {
+        boolean isEmpty = false;
+        isEmpty = txtRobotID.getText().isEmpty() | txtRobotType.getText().isEmpty() | txtRobotHeading.getText().isEmpty() |
+                txtRobotStartPointX.getText().isEmpty() | txtRobotStartPointY.getText().isEmpty();
+        if (isEmpty) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert robot's properties!");
+            alert.showAndWait();
+        }
+        else {
+
+        }
+    }
+
+    public void btnCreateTaskClick(ActionEvent event) {
+
     }
 
     public void btnRandomRobotClick(ActionEvent event) {
@@ -164,6 +189,7 @@ public class Controller implements Initializable {
             for (Robot lRobot: robotCreator.getRobotList()) {
                 lRobot.printInfo();
             }
+            robotManager = new RobotManager(robotCreator);
         }
 
         // Init Robot TableView
@@ -212,6 +238,7 @@ public class Controller implements Initializable {
                 lTask.printInfo();
             }
         }
+        taskManager = new TaskManager(taskCreator);
 
         // Init Robot TableView
         tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("TaskID"));
@@ -249,5 +276,10 @@ public class Controller implements Initializable {
                                             taskAppearTimeView, taskExecuteTimeView, taskHeadingView);
             tableViewTaskList.getItems().add(taskViewModel);
         }
+        mapManager = new MapManager(mapBaseCreator, robotManager);
+        mapManager.update(0);
+        ScatterView mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
+        mScatterView.PrepareDataToDisplay(0);
+        mScatterView.DisplayScatterChart();
     }
 }

@@ -16,12 +16,12 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="726.0" prefWidth="1381.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <right>
-        <ScatterChart prefHeight="800.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+        <ScatterChart fx:id="scatterChart" prefHeight="800.0" prefWidth="800.0" stylesheets="@UI/chart.css" BorderPane.alignment="CENTER">
             <xAxis>
-                <NumberAxis side="BOTTOM" upperBound="30.0" />
+                <NumberAxis minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="30.0" fx:id="xAxis" />
             </xAxis>
             <yAxis>
-                <NumberAxis side="LEFT" upperBound="30.0" />
+                <NumberAxis fx:id="yAxis" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="30.0" />
             </yAxis>
         </ScatterChart>
     </right>
@@ -86,7 +86,7 @@
                                         <TextField fx:id="txtTaskAppearTime" layoutX="90.0" layoutY="37.0" prefHeight="25.0" prefWidth="30.0" />
                                         <Label layoutX="153.0" layoutY="41.0" text="Execute Time" />
                                         <TextField fx:id="txtTaskExecuteTime" layoutX="234.0" layoutY="38.0" prefHeight="25.0" prefWidth="30.0" />
-                                        <Button fx:id="btnCreateTask" layoutX="288.0" layoutY="38.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="53.0" text="Create" />
+                                        <Button fx:id="btnCreateTask" layoutX="288.0" layoutY="38.0" mnemonicParsing="false" onAction="#btnCreateTaskClick" prefHeight="25.0" prefWidth="53.0" text="Create" />
                                         <Label layoutX="11.0" layoutY="12.0" text="ID" />
                                         <TextField fx:id="txtTaskID" layoutX="29.0" layoutY="9.0" prefHeight="25.0" prefWidth="30.0" />
                                         <Label layoutX="78.0" layoutY="12.0" text="Type" />
