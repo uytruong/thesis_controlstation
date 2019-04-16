@@ -14,6 +14,7 @@ public class TaskCreator {
     private Random     random;
     private MapBase    mapBase;
     private List<Task> taskList = new ArrayList<>();
+    private int        lastTaskNumber = 0;
 
     public TaskCreator(MapBaseCreator mapBaseCreator, Random random) {
         this.mapBase = mapBaseCreator.getMapBase();
@@ -63,7 +64,10 @@ public class TaskCreator {
     public List<Task> getTaskList() {
         return taskList;
     }
-
-
-
+    public int getLastTaskNumber() {
+        return lastTaskNumber;
+    }
+    public void setLastTaskNumber(int lastTaskNumber) {
+        this.lastTaskNumber = lastTaskNumber;
+    }
 }

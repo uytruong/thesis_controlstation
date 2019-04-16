@@ -22,15 +22,9 @@ public class MapBase {
     public void setStatusList(List<Integer> statusList) {
         this.statusList = statusList;
     }
-    public int getStatus(int x, int y){ return this.statusList.get(getIdFromXY(x,y));}
-    public void setStatus(int x, int y, int status){ this.statusList.set(getIdFromXY(x,y),status);}
     public int getStatus(int id){ return this.statusList.get(id);}
     public void setStatus(int id, int status){ this.statusList.set(id,status);}
     public int getStatus(Point point){ return this.statusList.get(point.getId());}
-    public void setStatus(Point point){
-        this.statusList.set(point.getId(),point.getStatus());
-    }
-
 
 
 

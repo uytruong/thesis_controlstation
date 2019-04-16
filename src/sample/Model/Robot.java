@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Robot {
-    private int id, type, heading;
+    private int id, type;
     private List<Point> pointList = new ArrayList<>();
     private Task task;
 
@@ -40,13 +40,13 @@ public class Robot {
         return pointList.size()-1;
     }
 
-    public int getId() {
+    public int  getId() {
         return id;
     }
     public void setId(int id) {
         this.id = id;
     }
-    public int getType() {
+    public int  getType() {
         return type;
     }
     public void setType(int type) {
@@ -58,25 +58,25 @@ public class Robot {
     public void setTask(Task task) {
         this.task = task;
     }
-    public int getHeading(int time) {
+
+    public int  getHeading(int time) {
         return pointList.get(time).getStatus();
     }
-    public void setHeading(int heading) {
-        this.heading = heading;
+
+    public void setPointList(List<Point> pointList) {
+        this.pointList = pointList;
     }
 
     public int getLastTimeUpdateToMap() {
         return lastTimeUpdateToMap;
     }
+
     public void setLastTimeUpdateToMap(int lastTimeUpdateToMap) {
         this.lastTimeUpdateToMap = lastTimeUpdateToMap;
     }
 
     public List<Point> getPointList() {
         return pointList;
-    }
-    public void setPointList(List<Point> pointList) {
-        this.pointList = pointList;
     }
 
     public Point getPoint(int time){ return pointList.get(time);}

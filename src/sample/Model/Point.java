@@ -11,6 +11,11 @@ public class Point {
     private int costEstimateFromThisPoint;
     private int costEstimateTotal;
      */
+    public Point(int x, int y, int status){
+        this.id = MapBase.getIdFromXY(x,y);
+        this.status = status;
+    }
+
     public Point(int id, int status) {
         this.id = id;
         this.status = status;

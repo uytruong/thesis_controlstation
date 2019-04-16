@@ -43,10 +43,10 @@
                                         <TextField fx:id="txtShelfRows" layoutX="175.0" layoutY="6.0" prefHeight="25.0" prefWidth="30.0" />
                                         <TextField fx:id="txtShelfCols" layoutX="175.0" layoutY="35.0" prefHeight="25.0" prefWidth="30.0" />
                                         <Label layoutX="14.0" layoutY="68.0" text="Space" />
-                                        <TextField fx:id="txtShelfSpace" layoutX="67.0" layoutY="64.0" prefHeight="25.0" prefWidth="30.0" />
+                                        <TextField fx:id="txtDistanceShelfToShelf" layoutX="67.0" layoutY="64.0" prefHeight="25.0" prefWidth="30.0" />
                                         <Button fx:id="btnSaveShelf" layoutX="222.0" layoutY="64.0" mnemonicParsing="false" onAction="#btnSaveShelfClick" prefHeight="25.0" prefWidth="42.0" text="Save" />
                                         <Label layoutX="121.0" layoutY="68.0" text="Bound" />
-                                        <TextField fx:id="txtShelfBound" layoutX="175.0" layoutY="64.0" prefHeight="25.0" prefWidth="30.0" />
+                                        <TextField fx:id="txtDistanceBoundToShelf" layoutX="175.0" layoutY="64.0" prefHeight="25.0" prefWidth="30.0" />
                                     </children></AnchorPane>
                             </content>
                         </TitledPane>
@@ -83,9 +83,9 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="443.0">
                                     <children>
                                         <Label layoutX="11.0" layoutY="41.0" text="Appear Time" />
-                                        <TextField fx:id="txtTaskAppearTime" layoutX="90.0" layoutY="37.0" prefHeight="25.0" prefWidth="30.0" />
+                                        <TextField fx:id="txtTaskTimeAppear" layoutX="90.0" layoutY="37.0" prefHeight="25.0" prefWidth="30.0" />
                                         <Label layoutX="153.0" layoutY="41.0" text="Execute Time" />
-                                        <TextField fx:id="txtTaskExecuteTime" layoutX="234.0" layoutY="38.0" prefHeight="25.0" prefWidth="30.0" />
+                                        <TextField fx:id="txtTaskTimeExecute" layoutX="234.0" layoutY="38.0" prefHeight="25.0" prefWidth="30.0" />
                                         <Button fx:id="btnCreateTask" layoutX="288.0" layoutY="38.0" mnemonicParsing="false" onAction="#btnCreateTaskClick" prefHeight="25.0" prefWidth="53.0" text="Create" />
                                         <Label layoutX="11.0" layoutY="12.0" text="ID" />
                                         <TextField fx:id="txtTaskID" layoutX="29.0" layoutY="9.0" prefHeight="25.0" prefWidth="30.0" />

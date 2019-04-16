@@ -14,6 +14,8 @@ public class RobotCreator {
     private Random      random;
     private MapBase     mapBase;
     private List<Robot> robotList = new ArrayList<>();
+    private int         lastRobotNumber = 0;
+
 
     public RobotCreator(MapBaseCreator mapBaseCreator, Random random) {
          this.mapBase = mapBaseCreator.getMapBase();
@@ -34,13 +36,13 @@ public class RobotCreator {
         }
     }
 
-    public void createRobotRandom(int numberOfRobot, int type){
-        if ((robotList.size() + numberOfRobot) >= Context.RobotCreator.numberRobotMax){
-            numberOfRobot = Context.RobotCreator.numberRobotMax-robotList.size();
+    public void createRobotRandom(int numberOfRobots, int typeOfRobots){
+        if ((robotList.size() + numberOfRobots) >= Context.RobotCreator.numberRobotMax){
+            numberOfRobots = Context.RobotCreator.numberRobotMax-robotList.size();
         }
-        for (int i = 0; i < numberOfRobot; i++) {
+        for (int i = 0; i < numberOfRobots; i++) {
             while (true){
-                if (createRobot(new Robot(type, new Point(getRandomRobotPointId(),getRandomRobotPointStatus())))) {
+                if (createRobot(new Robot(typeOfRobots, new Point(getRandomPointId(), getRandomPointStatus())))) {
                     break;
                 }
             }
@@ -50,10 +52,10 @@ public class RobotCreator {
     private int getRandomInt(int min, int max){
         return random.nextInt(max-min+1)+min;
     }
-    private int getRandomRobotPointStatus(){
+    private int getRandomPointStatus(){
         return getRandomInt(Constant.RobotPointStatus.LEFT,Constant.RobotPointStatus.DOWN);
     }
-    private int getRandomRobotPointId(){
+    private int getRandomPointId(){
         return random.nextInt(mapBase.getStatusList().size());
     }
 
@@ -62,5 +64,10 @@ public class RobotCreator {
         return robotList;
     }
 
-
+    public int getLastRobotNumber() {
+        return lastRobotNumber;
+    }
+    public void setLastRobotNumber(int lastRobotNumber) {
+        this.lastRobotNumber = lastRobotNumber;
+    }
 }
