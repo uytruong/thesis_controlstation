@@ -50,8 +50,6 @@ public class TaskManager {
                 }
             }
         }
-
-
     }
 
     public void changeTaskStatus(int id, int status){

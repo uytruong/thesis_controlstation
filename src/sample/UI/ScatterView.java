@@ -7,6 +7,7 @@ import sample.Manager.MapManager;
 import sample.Manager.TaskManager;
 import sample.Model.MapBase;
 import sample.Model.Constant;
+import sample.Model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class ScatterView {
     private TaskManager mTaskManager;
     private ScatterChart<Number, Number> mScatterChart;
     private List<Integer> mPointStatusList = new ArrayList<>();
+    private List<Task> mTaskList = new ArrayList<>();
     private List<ScatterChart.Series<Number, Number>> dataSeriesList = new ArrayList<>();
 
     public ScatterView(MapManager mapManager, TaskManager taskManager, ScatterChart<Number, Number> scatterChart) {
@@ -33,29 +35,8 @@ public class ScatterView {
     }
 
     public void PrepareDataToDisplay(int time) {
-//        ScatterChart.Series<Number, Number> series = new ScatterChart.Series<Number, Number>();
-//        ScatterChart.Series<Number, Number> series1 = new ScatterChart.Series<Number, Number>();
-//        ScatterChart.Series<Number, Number> series2 = new ScatterChart.Series<Number, Number>();
-//        ScatterChart.Series<Number, Number> series3 = new ScatterChart.Series<Number, Number>();
-//        ScatterChart.Series<Number, Number> series4 = new ScatterChart.Series<Number, Number>();
-//        ScatterChart.Series<Number, Number> series5 = new ScatterChart.Series<Number, Number>();
-//        series.setName("Option 1");
-//        series1.setName("Option 2");
-//        series2.setName("Option 3");
-//        series3.setName("Option 4");
-//        series4.setName("Option 5");
-//        series5.setName("Option 6");
-//
-//        int xValue = 0;
-//        int yValue = 0;
-//        int count = 0;
-//        series.getData().add(new ScatterChart.Data<Number, Number>(xValue + 1 + count, yValue + 1 + count));
-//        series1.getData().add(new ScatterChart.Data<Number, Number>(xValue + 2 + count, yValue + 2 + count));
-//        series2.getData().add(new ScatterChart.Data<Number, Number>(xValue + 3 + count, yValue + 3 + count));
-//        series3.getData().add(new ScatterChart.Data<Number, Number>(xValue + 4 + count, yValue + 4 + count));
-//        series4.getData().add(new ScatterChart.Data<Number, Number>(xValue + 5 + count, yValue + 5 + count));
-//        series5.getData().add(new ScatterChart.Data<Number, Number>(xValue + 6 + count, yValue + 6 + count));
         initDataSeriesList();
+        // Prepare MapBase data
         mMapBase = mMapManager.getMap(time);
         mPointStatusList = mMapBase.getStatusList();
         for (int pointID = 0; pointID < mPointStatusList.size(); pointID++) {
@@ -85,6 +66,42 @@ public class ScatterView {
                 case Constant.PointStatus.RIGHT:
                     dataSeriesList.get(4).setName("Robot Right");
                     dataSeriesList.get(4).getData().add(checkingPoint);
+                    break;
+                default:
+                    break;
+            }
+        }
+        // Prepare Task data
+        mTaskList = mTaskManager.getTaskList();
+        for (int taskID = 0; taskID < mTaskList.size(); taskID++) {
+            int pointID = mTaskList.get(taskID).getGoal().getId();
+            int goalPointStatus = mTaskList.get(taskID).getGoal().getStatus();
+            int xPoint, yPoint;
+            xPoint = MapBase.getXFromId(pointID);
+            yPoint = MapBase.getYFromId(pointID);
+            ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(xPoint, yPoint);
+            switch(goalPointStatus) {
+                case Constant.PointStatus.NONE:
+                    break;
+                case Constant.PointStatus.UP:
+                    dataSeriesList.get(5).setName("Task Up");
+                    dataSeriesList.get(5).getData().add(checkingPoint);
+                    break;
+                case Constant.PointStatus.DOWN:
+                    dataSeriesList.get(6).setName("Task Down");
+                    dataSeriesList.get(6).getData().add(checkingPoint);
+                    break;
+                case Constant.PointStatus.LEFT:
+                    dataSeriesList.get(7).setName("Task Left");
+                    dataSeriesList.get(7).getData().add(checkingPoint);
+                    break;
+                case Constant.PointStatus.RIGHT:
+                    dataSeriesList.get(8).setName("Task Right");
+                    dataSeriesList.get(8).getData().add(checkingPoint);
+                    break;
+                case Constant.PointStatus.DONTCARE:
+                    dataSeriesList.get(9).setName("Task Don'tCare");
+                    dataSeriesList.get(9).getData().add(checkingPoint);
                     break;
                 default:
                     break;
