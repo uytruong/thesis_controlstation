@@ -37,17 +37,16 @@ public class Controller implements Initializable {
     /**
      * Shelf
      */
-    public TextField txtShelfWidth;
-    public TextField txtShelfHeight;
-    public TextField txtShelfRows;
-    public TextField txtShelfCols;
+    public TextField txtShelfXLength;
+    public TextField txtShelfYLength;
+    public TextField txtShelfEachRowNumber;
+    public TextField txtShelfEachColNumber;
     public TextField txtDistanceShelfToShelf;
     public TextField txtDistanceBoundToShelf;
-    public Button    btnSaveShelf;
+    public Button    btnCreateMapBase;
     /**
      * Robot
      */
-    public TextField txtRobotID;
     public TextField txtRobotType;
     public TextField txtRobotHeading;
     public TextField txtRobotStartPointX;
@@ -58,7 +57,6 @@ public class Controller implements Initializable {
     /**
      * Task
      */
-    public TextField txtTaskID;
     public TextField txtTaskType;
     public TextField txtTaskHeading;
     public TextField txtTaskGoalPointX;
@@ -77,8 +75,7 @@ public class Controller implements Initializable {
     private int robotHeading;
     private int robotStartPointX;
     private int robotStartPointY;
-    private int robotNumOfRand;
-    private int robotTypeOfRand;
+
     /**
      * Task properties
      */
@@ -133,10 +130,10 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         xAxis.setAutoRanging(false);
         yAxis.setAutoRanging(false);
-        txtShelfWidth.setText("2");
-        txtShelfHeight.setText("3");
-        txtShelfRows.setText("3");
-        txtShelfCols.setText("3");
+        txtShelfXLength.setText("2");
+        txtShelfYLength.setText("3");
+        txtShelfEachRowNumber.setText("3");
+        txtShelfEachColNumber.setText("3");
         txtDistanceShelfToShelf.setText("2");
         txtDistanceBoundToShelf.setText("1");
         txtNumOfRandRobot.setText("5");
@@ -168,23 +165,23 @@ public class Controller implements Initializable {
     }
 
     public void btnSaveShelfClick(ActionEvent event) {
-        boolean isEmpty = txtShelfWidth.getText().isEmpty() | txtShelfHeight.getText().isEmpty()
-                | txtShelfRows.getText().isEmpty() | txtShelfCols.getText().isEmpty()
+        boolean isEmpty = txtShelfXLength.getText().isEmpty() | txtShelfYLength.getText().isEmpty()
+                | txtShelfEachRowNumber.getText().isEmpty() | txtShelfEachColNumber.getText().isEmpty()
                 | txtDistanceShelfToShelf.getText().isEmpty() | txtDistanceBoundToShelf.getText().isEmpty();
         if (isEmpty) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert shelf's properties!");
             alert.showAndWait();
         } else {
-            int shelfWidth = Integer.parseInt(txtShelfWidth.getText());
-            int shelfHeight = Integer.parseInt(txtShelfHeight.getText());
-            int shelfEachRowNumber = Integer.parseInt(txtShelfRows.getText());
-            int shelfEachColNumber = Integer.parseInt(txtShelfCols.getText());
+            int shelfXLength         = Integer.parseInt(txtShelfXLength.getText());
+            int shelfYLength         = Integer.parseInt(txtShelfYLength.getText());
+            int shelfEachRowNumber   = Integer.parseInt(txtShelfEachRowNumber.getText());
+            int shelfEachColNumber   = Integer.parseInt(txtShelfEachColNumber.getText());
             int distanceShelfToShelf = Integer.parseInt(txtDistanceShelfToShelf.getText());
             int distanceBoundToShelf = Integer.parseInt(txtDistanceBoundToShelf.getText());
 
             mapBaseCreator = new MapBaseCreator();
-            mapBaseCreator.getShelf().setxLength(shelfWidth);
-            mapBaseCreator.getShelf().setyLength(shelfHeight);
+            mapBaseCreator.getShelf().setxLength(shelfXLength);
+            mapBaseCreator.getShelf().setyLength(shelfYLength);
             mapBaseCreator.getShelf().setxNumber(shelfEachRowNumber);
             mapBaseCreator.getShelf().setyNumber(shelfEachColNumber);
             mapBaseCreator.getDistance().setShelfToHorizontalShelf(distanceShelfToShelf);
@@ -226,14 +223,14 @@ public class Controller implements Initializable {
     }
 
 
-    public void btnRandomRobotClick(ActionEvent event) {
+    public void btnCreateRobotRandomClick(ActionEvent event) {
         boolean isEmpty = txtNumOfRandRobot.getText().isEmpty() | txtTypeOfRandRobot.getText().isEmpty();
         if (isEmpty) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert input values of robot randoming!");
             alert.showAndWait();
         } else {
-            robotNumOfRand = Integer.parseInt(txtNumOfRandRobot.getText());
-            robotTypeOfRand = Integer.parseInt(txtTypeOfRandRobot.getText());
+            int robotNumOfRand  = Integer.parseInt(txtNumOfRandRobot.getText());
+            int robotTypeOfRand = Integer.parseInt(txtTypeOfRandRobot.getText());
 
             robotCreator.createRobotRandom(robotNumOfRand, robotTypeOfRand);
             viewRobotList();
@@ -290,7 +287,7 @@ public class Controller implements Initializable {
             }
         }
     }
-        public void btnRandomTaskClick (ActionEvent event){
+        public void btnCreateTaskRandomClick(ActionEvent event){
             boolean isEmpty = txtNumOfRandTask.getText().isEmpty() | txtTypeOfRandTask.getText().isEmpty();
             if (isEmpty) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert input values of task randoming!");

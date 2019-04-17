@@ -23,6 +23,15 @@ public class RobotCreator {
     }
 
     public boolean createRobot(Robot robot){
+        /*
+        if ((robot.getPointList().get(0).getStatus() != Constant.RobotPointStatus.DOWN) |
+            (robot.getPointList().get(0).getStatus() != Constant.RobotPointStatus.UP) |
+            (robot.getPointList().get(0).getStatus() != Constant.RobotPointStatus.LEFT) |
+            (robot.getPointList().get(0).getStatus() != Constant.RobotPointStatus.RIGHT)){
+            return false;
+        }
+        */
+
         for (Robot otherRobot: robotList) {
             if(otherRobot.getPoint(0).getId() == robot.getPoint(0).getId()){ return false;}
         }
