@@ -11,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import sample.Creator.MapBaseCreator;
 import sample.Creator.RobotCreator;
 import sample.Creator.TaskCreator;
+import sample.Manager.Context;
 import sample.Manager.MapManager;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
@@ -32,7 +33,6 @@ public class Controller implements Initializable {
     private MapManager     mapManager;
     private RobotManager   robotManager;
     private TaskManager    taskManager;
-
 
     /**
      * Shelf
@@ -112,7 +112,7 @@ public class Controller implements Initializable {
     public TableColumn<TaskViewModel, Integer> tableColTaskExecuteTime;
     public TableColumn<TaskViewModel, Integer> tableColTaskX;
     public TableColumn<TaskViewModel, Integer> tableColTaskY;
-    public TableColumn<TaskViewModel, String> tableColTaskHeading;
+    public TableColumn<TaskViewModel, String> tableColTaskStatus;
 
     private ObservableList<RobotViewModel> taskObservableList = FXCollections.observableArrayList();
 
@@ -123,6 +123,7 @@ public class Controller implements Initializable {
     public NumberAxis xAxis;
     public NumberAxis yAxis;
     public ScatterChart<Number, Number> scatterChart;
+    private ScatterView mScatterView;
     //private ScatterView mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
 
 
@@ -157,11 +158,9 @@ public class Controller implements Initializable {
         tableColTaskY.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointY"));
         tableColTaskAppearTime.setCellValueFactory(new PropertyValueFactory<>("TaskAppearTime"));
         tableColTaskExecuteTime.setCellValueFactory(new PropertyValueFactory<>("TaskExecuteTime"));
-        tableColTaskHeading.setCellValueFactory(new PropertyValueFactory<>("TaskHeading"));
+        tableColTaskStatus.setCellValueFactory(new PropertyValueFactory<>("TaskStatus"));
         // Set TableView data
         tableViewTaskList.setItems(taskObservableList);
-
-
     }
 
     public void btnSaveShelfClick(ActionEvent event) {
@@ -199,7 +198,6 @@ public class Controller implements Initializable {
             taskManager  = new TaskManager(taskCreator);
 
             viewScatter();
-
         }
     }
 
@@ -222,7 +220,6 @@ public class Controller implements Initializable {
         }
     }
 
-
     public void btnCreateRobotRandomClick(ActionEvent event) {
         boolean isEmpty = txtNumOfRandRobot.getText().isEmpty() | txtTypeOfRandRobot.getText().isEmpty();
         if (isEmpty) {
@@ -236,8 +233,6 @@ public class Controller implements Initializable {
             viewRobotList();
             viewScatter();
         }
-
-
     }
 
     private void viewRobotList() {
@@ -262,6 +257,9 @@ public class Controller implements Initializable {
             tableViewRobotList.getItems().add(robotViewModel);
         }
         robotCreator.setLastRobotNumber(robotCreator.getRobotList().size());
+//        for (Robot lRobot: robotCreator.getRobotList()) {
+//            lRobot.printInfo();
+//        }
     }
 
     public void btnCreateTaskClick(ActionEvent event) {
@@ -287,20 +285,20 @@ public class Controller implements Initializable {
             }
         }
     }
-        public void btnCreateTaskRandomClick(ActionEvent event){
-            boolean isEmpty = txtNumOfRandTask.getText().isEmpty() | txtTypeOfRandTask.getText().isEmpty();
-            if (isEmpty) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert input values of task randoming!");
-                alert.showAndWait();
-            } else {
-                taskNumOfRand = Integer.parseInt(txtNumOfRandTask.getText());
-                taskTypeOfRand = Integer.parseInt(txtTypeOfRandTask.getText());
-                taskCreator.createTaskRandom(taskNumOfRand, taskTypeOfRand);
-                viewTaskList();
-                viewScatter();
-            }
-        }
 
+    public void btnCreateTaskRandomClick(ActionEvent event){
+        boolean isEmpty = txtNumOfRandTask.getText().isEmpty() | txtTypeOfRandTask.getText().isEmpty();
+        if (isEmpty) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert input values of task randoming!");
+            alert.showAndWait();
+        } else {
+            taskNumOfRand = Integer.parseInt(txtNumOfRandTask.getText());
+            taskTypeOfRand = Integer.parseInt(txtTypeOfRandTask.getText());
+            taskCreator.createTaskRandom(taskNumOfRand, taskTypeOfRand);
+            viewTaskList();
+            viewScatter();
+        }
+    }
 
     private void viewTaskList() {
         for (int idx = taskCreator.getLastTaskNumber(); idx < taskCreator.getTaskList().size(); idx++) {
@@ -311,32 +309,40 @@ public class Controller implements Initializable {
             int taskYView           = MapBase.getYFromId(task.getGoal().getId());
             int taskAppearTimeView  = task.getTimeAppear();
             int taskExecuteTimeView = task.getTimeExecute();
-            int taskHeadingInt      = task.getGoal().getStatus();
-            String taskHeadingView  = "NONE";
-            if (taskHeadingInt == Constant.TaskPointStatus.UP) {
-                taskHeadingView = "UP";
-            } else if (taskHeadingInt == Constant.TaskPointStatus.DOWN) {
-                taskHeadingView = "DOWN";
-            } else if (taskHeadingInt == Constant.TaskPointStatus.LEFT) {
-                taskHeadingView = "LEFT";
-            } else if (taskHeadingInt == Constant.TaskPointStatus.RIGHT) {
-                taskHeadingView = "RIGHT";
-            } else if (taskHeadingInt == Constant.TaskPointStatus.DONTCARE) {
-                taskHeadingView = "DONTCARE";
+            int taskStatusInt      = task.getStatus();
+            String taskStatusView  = "NONE";
+            if (taskStatusInt == Constant.TaskStatus.NEW) {
+                taskStatusView = "NEW";
+            } else if (taskStatusInt == Constant.TaskStatus.READY) {
+                taskStatusView = "READY";
+            } else if (taskStatusInt == Constant.TaskStatus.RUNNING) {
+                taskStatusView = "RUNNING";
+            } else if (taskStatusInt == Constant.TaskStatus.DONE) {
+                taskStatusView = "DONE";
             }
             TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskTypeView, taskXView, taskYView,
-                                                            taskAppearTimeView, taskExecuteTimeView, taskHeadingView);
+                                                            taskAppearTimeView, taskExecuteTimeView, taskStatusView);
             tableViewTaskList.getItems().add(taskViewModel);
 
         }
         taskCreator.setLastTaskNumber(taskCreator.getTaskList().size());
+//        for (Task ltask: taskCreator.getTaskList()) {
+//            ltask.printInfo();
+//        }
     }
 
-
-    private void viewScatter(){
+    private void viewScatter() {
         robotManager.update(0);
-        ScatterView mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
+        mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
         mScatterView.PrepareDataToDisplay(0);
+        mScatterView.DisplayScatterChart();
+    }
+
+    public void btnTestClick(ActionEvent event) {
+        robotManager.update(1);
+        taskManager.update(1);
+        mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
+        mScatterView.PrepareDataToDisplay(1);
         mScatterView.DisplayScatterChart();
     }
 }

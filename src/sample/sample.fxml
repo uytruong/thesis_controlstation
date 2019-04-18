@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.ScatterChart?>
@@ -19,8 +13,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="726.0" prefWidth="1381.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="726.0" prefWidth="1381.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <right>
         <ScatterChart fx:id="scatterChart" prefHeight="800.0" prefWidth="800.0" stylesheets="@UI/chart.css" BorderPane.alignment="CENTER">
             <xAxis>
@@ -201,6 +196,7 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
+                              <Button fx:id="btnTest" layoutX="339.0" layoutY="19.0" mnemonicParsing="false" onAction="#btnTestClick" text="Test" />
                                     </children></AnchorPane>
                             </content>
                         </TitledPane>
@@ -245,7 +241,7 @@
                                         <TableColumn fx:id="tableColTaskExecuteTime" prefWidth="114.0" text="Execute Time" />
                                         <TableColumn fx:id="tableColTaskX" prefWidth="57.0" text="x" />
                                         <TableColumn fx:id="tableColTaskY" prefWidth="58.0" text="y" />
-                                        <TableColumn fx:id="tableColTaskHeading" prefWidth="124.0" text="Heading" />
+                                        <TableColumn fx:id="tableColTaskStatus" prefWidth="124.0" text="Status" />
                                     </columns>
                                 </TableView>
                             </children></AnchorPane>

@@ -18,7 +18,8 @@ public class ScatterView {
     private TaskManager mTaskManager;
     private ScatterChart<Number, Number> mScatterChart;
     private List<Integer> mPointStatusList = new ArrayList<>();
-    private List<Task> mTaskList = new ArrayList<>();
+    private List<Task> mReadyTaskList = new ArrayList<>();
+    private List<Task> mRunningTaskList = new ArrayList<>();
     private List<ScatterChart.Series<Number, Number>> dataSeriesList = new ArrayList<>();
 
     public ScatterView(MapManager mapManager, TaskManager taskManager, ScatterChart<Number, Number> scatterChart) {
@@ -29,16 +30,16 @@ public class ScatterView {
     }
 
     public void initDataSeriesList() {
-        for (int idx = 0; idx < 10; idx++) {
+        for (int idx = 0; idx < 6; idx++) {
             dataSeriesList.add(new ScatterChart.Series<Number, Number>());
         }
     }
 
     public void PrepareDataToDisplay(int time) {
-        initDataSeriesList();
         // Prepare MapBase data
         mMapBase = mMapManager.getMap(time);
         mPointStatusList = mMapBase.getStatusList();
+        mMapBase.printMapBase();
         for (int pointID = 0; pointID < mPointStatusList.size(); pointID++) {
             int xPoint, yPoint;
             xPoint = MapBase.getXFromId(pointID);
@@ -72,41 +73,27 @@ public class ScatterView {
             }
         }
         // Prepare Task data
-        mTaskList = mTaskManager.getTaskList();
-        for (int taskID = 0; taskID < mTaskList.size(); taskID++) {
-            int pointID = mTaskList.get(taskID).getGoal().getId();
-            int goalPointStatus = mTaskList.get(taskID).getGoal().getStatus();
+        mReadyTaskList = mTaskManager.getReadyTaskList();
+        mRunningTaskList = mTaskManager.getRunningTaskList();
+        for (int taskID = 0; taskID < mReadyTaskList.size(); taskID++) {
+            int pointID = mReadyTaskList.get(taskID).getGoal().getId();
             int xPoint, yPoint;
             xPoint = MapBase.getXFromId(pointID);
             yPoint = MapBase.getYFromId(pointID);
             ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(xPoint, yPoint);
-            switch(goalPointStatus) {
-                case Constant.PointStatus.NONE:
-                    break;
-                case Constant.PointStatus.UP:
-                    dataSeriesList.get(5).setName("Task Up");
-                    dataSeriesList.get(5).getData().add(checkingPoint);
-                    break;
-                case Constant.PointStatus.DOWN:
-                    dataSeriesList.get(6).setName("Task Down");
-                    dataSeriesList.get(6).getData().add(checkingPoint);
-                    break;
-                case Constant.PointStatus.LEFT:
-                    dataSeriesList.get(7).setName("Task Left");
-                    dataSeriesList.get(7).getData().add(checkingPoint);
-                    break;
-                case Constant.PointStatus.RIGHT:
-                    dataSeriesList.get(8).setName("Task Right");
-                    dataSeriesList.get(8).getData().add(checkingPoint);
-                    break;
-                case Constant.PointStatus.DONTCARE:
-                    dataSeriesList.get(9).setName("Task Don'tCare");
-                    dataSeriesList.get(9).getData().add(checkingPoint);
-                    break;
-                default:
-                    break;
-            }
+            dataSeriesList.get(5).setName("Ready Task");
+            dataSeriesList.get(5).getData().add(checkingPoint);
         }
+        for (int taskID = 0; taskID < mRunningTaskList.size(); taskID++) {
+            int pointID = mRunningTaskList.get(taskID).getGoal().getId();
+            int xPoint, yPoint;
+            xPoint = MapBase.getXFromId(pointID);
+            yPoint = MapBase.getYFromId(pointID);
+            ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(xPoint, yPoint);
+            dataSeriesList.get(6).setName("Running Task");
+            dataSeriesList.get(6).getData().add(checkingPoint);
+        }
+        mTaskManager.printInfo();
     }
 
     public void DisplayScatterChart() {

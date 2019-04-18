@@ -10,16 +10,16 @@ public class TaskViewModel {
     private SimpleIntegerProperty taskGoalPointY;
     private SimpleIntegerProperty taskAppearTime;
     private SimpleIntegerProperty taskExecuteTime;
-    private SimpleStringProperty taskHeading;
+    private SimpleStringProperty taskStatus;
 
-    public TaskViewModel(int taskID, int taskType, int taskGoalPointX, int taskGoalPointY, int taskAppearTime, int taskExecuteTime, String taskHeading) {
+    public TaskViewModel(int taskID, int taskType, int taskGoalPointX, int taskGoalPointY, int taskAppearTime, int taskExecuteTime, String taskStatus) {
         this.taskID = new SimpleIntegerProperty(taskID);
         this.taskType = new SimpleIntegerProperty(taskType);
         this.taskGoalPointX = new SimpleIntegerProperty(taskGoalPointX);
         this.taskGoalPointY = new SimpleIntegerProperty(taskGoalPointY);
         this.taskAppearTime = new SimpleIntegerProperty(taskAppearTime);
         this.taskExecuteTime = new SimpleIntegerProperty(taskExecuteTime);
-        this.taskHeading = new SimpleStringProperty(taskHeading);
+        this.taskStatus = new SimpleStringProperty(taskStatus);
     }
 
     public int getTaskID() {
@@ -70,11 +70,11 @@ public class TaskViewModel {
         this.taskExecuteTime = new SimpleIntegerProperty(taskExecuteTime);
     }
 
-    public String getTaskHeading() {
-        return taskHeading.get();
+    public String getTaskStatus() {
+        return taskStatus.get();
     }
 
-    public void setTaskHeading(String taskHeading) {
-        this.taskHeading = new SimpleStringProperty(taskHeading);
+    public void setTaskStatus(String taskStatus) {
+        this.taskStatus = new SimpleStringProperty(taskStatus);
     }
 }
