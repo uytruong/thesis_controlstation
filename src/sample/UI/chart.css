@@ -4,8 +4,20 @@
     -fx-scale-x: 2;
     -fx-scale-y: 2;
 }
+.series1.chart-symbol { /* solid square ready task */
+    -fx-background-color: #237c17;
+    -fx-background-radius: 0;
+    -fx-scale-x: 2;
+    -fx-scale-y: 2;
+}
 
-.series1.chart-symbol { /* solid triangle up arrow */
+.series2.chart-symbol { /* solid square running task */
+    -fx-background-color: #e50909;
+    -fx-background-radius: 0;
+    -fx-scale-x: 2;
+    -fx-scale-y: 2;
+}
+.series3.chart-symbol { /* solid triangle up arrow */
     -fx-background-color: #2f357f;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
@@ -14,7 +26,7 @@
     -fx-scale-y: 1.5;
 }
 
-.series2.chart-symbol { /* solid triangle down arrow */
+.series4.chart-symbol { /* solid triangle down arrow */
     -fx-background-color: #2f357f;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
@@ -23,7 +35,7 @@
     -fx-scale-y: 1.5;
 }
 
-.series3.chart-symbol { /* solid triangle left arrow */
+.series5.chart-symbol { /* solid triangle left arrow */
     -fx-background-color: #2f357f;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
@@ -32,7 +44,7 @@
     -fx-scale-y: 1.5;
 }
 
-.series4.chart-symbol { /* solid triangle right arrow */
+.series6.chart-symbol { /* solid triangle right arrow */
     -fx-background-color: #2f357f;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
@@ -41,19 +53,7 @@
     -fx-scale-y: 1.5;
 }
 
-.series5.chart-symbol { /* solid square ready task */
-    -fx-background-color: #237c17;
-    -fx-background-radius: 0;
-    -fx-scale-x: 2;
-    -fx-scale-y: 2;
-}
 
-.series6.chart-symbol { /* solid square running task */
-    -fx-background-color: #e50909;
-    -fx-background-radius: 0;
-    -fx-scale-x: 2;
-    -fx-scale-y: 2;
-}
 
 
 

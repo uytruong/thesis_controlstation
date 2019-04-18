@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.ScatterChart?>
@@ -15,14 +21,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="726.0" prefWidth="1381.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="726.0" prefWidth="1381.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <right>
         <ScatterChart fx:id="scatterChart" prefHeight="800.0" prefWidth="800.0" stylesheets="@UI/chart.css" BorderPane.alignment="CENTER">
             <xAxis>
-                <NumberAxis lowerBound="-1.0" minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="30.0" fx:id="xAxis" />
+                <NumberAxis lowerBound="-1.0" minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="20.0" fx:id="xAxis" />
             </xAxis>
             <yAxis>
-                <NumberAxis fx:id="yAxis" lowerBound="-2.0" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="30.0" />
+                <NumberAxis fx:id="yAxis" lowerBound="-2.0" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="20.0" />
             </yAxis>
         </ScatterChart>
     </right>
@@ -131,15 +137,15 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="443.0">
                                     <children>
-                                        <Label layoutX="8.0" layoutY="57.0" text="Appear &amp; Exe Time">
+                                        <Label layoutX="4.0" layoutY="57.0" text="Appear &amp; Exe Time">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Label>
-                                        <TextField fx:id="txtTaskTimeAppear" layoutX="96.0" layoutY="51.0" prefHeight="25.0" prefWidth="30.0">
+                                        <TextField fx:id="txtTaskTimeAppear" layoutX="94.0" layoutY="51.0" prefHeight="25.0" prefWidth="24.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                                        <TextField fx:id="txtTaskTimeExecute" layoutX="129.0" layoutY="51.0" prefHeight="25.0" prefWidth="30.0">
+                                        <TextField fx:id="txtTaskTimeExecute" layoutX="122.0" layoutY="51.0" prefHeight="25.0" prefWidth="26.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
@@ -148,31 +154,23 @@
                                     <Font size="10.0" />
                                  </font>
                               </Button>
-                                        <Label layoutX="2.0" layoutY="4.0" text="Type">
+                                        <Label layoutX="7.0" layoutY="4.0" text="Type">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Label>
-                                        <TextField fx:id="txtTaskType" layoutX="35.0" layoutY="-1.0" prefHeight="25.0" prefWidth="30.0">
+                                        <TextField fx:id="txtTaskType" layoutX="123.0" layoutY="-1.0" prefHeight="25.0" prefWidth="25.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                                        <Label layoutX="77.0" layoutY="4.0" text="Heading">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                                        <TextField fx:id="txtTaskHeading" layoutX="130.0" layoutY="-1.0" prefHeight="25.0" prefWidth="30.0">
+                                        <TextField fx:id="txtTaskGoalPointX" layoutX="94.0" layoutY="25.0" prefHeight="25.0" prefWidth="24.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                                        <TextField fx:id="txtTaskGoalPointX" layoutX="100.0" layoutY="25.0" prefHeight="25.0" prefWidth="27.0">
+                                        <TextField fx:id="txtTaskGoalPointY" layoutX="122.0" layoutY="25.0" prefHeight="25.0" prefWidth="26.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                                        <TextField fx:id="txtTaskGoalPointY" layoutX="130.0" layoutY="25.0" prefHeight="25.0" prefWidth="30.0">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></TextField>
-                                        <Label layoutX="3.0" layoutY="31.0" text="Goal position X,Y:">
+                                        <Label layoutX="6.0" layoutY="31.0" text="Goal position X,Y:">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Label>

@@ -48,26 +48,26 @@ public class Main extends Application {
 //        mapBaseCreator.update();
 //        mapBaseCreator.getMapBase().printMapBase();
 //
-//        robotCreator.createRobot(new Robot(0,new Point(0,Constant.PointStatus.LEFT)));
-//        robotCreator.createRobot(new Robot(1,new Point(1,Constant.PointStatus.LEFT)));
-//        robotCreator.createRobot(new Robot(2,new Point(2,Constant.PointStatus.DOWN)));
+//        robotCreator.createRobot(new Robot(0,new Point(0,Constant.PointStatus.ROBOT_LEFT)));
+//        robotCreator.createRobot(new Robot(1,new Point(1,Constant.PointStatus.ROBOT_LEFT)));
+//        robotCreator.createRobot(new Robot(2,new Point(2,Constant.PointStatus.ROBOT_DOWN)));
 //        robotCreator.createRobotRandom(2,0);
 //        robotCreator.createRobotRandom(6,0);
 //        for (Robot lRobot: robotCreator.getRobotList()) {
 //            lRobot.printInfo();
 //        }
 //        robotManager = new RobotManager(robotCreator);
-//        robotManager.getRobot(2).addPoint(new Point(3,Constant.PointStatus.LEFT));
-//        robotManager.getRobot(2).addPoint(new Point(4,Constant.PointStatus.LEFT));
+//        robotManager.getRobot(2).addPoint(new Point(3,Constant.PointStatus.ROBOT_LEFT));
+//        robotManager.getRobot(2).addPoint(new Point(4,Constant.PointStatus.ROBOT_LEFT));
 //
 //        System.out.println("=======================");
 //
-//        taskCreator.createTask(new Task(0,1,0,new Point(19,Constant.PointStatus.DOWN)));
-//        taskCreator.createTask(new Task(1,1,0,new Point(23,Constant.PointStatus.DOWN)));
-//        taskCreator.createTask(new Task(2,1,1,new Point(24,Constant.PointStatus.DOWN)));
-//        taskCreator.createTask(new Task(2,1,1,new Point(27,Constant.PointStatus.DOWN)));
-//        taskCreator.createTask(new Task(2,1,1,new Point(27,Constant.PointStatus.DOWN)));
-//        taskCreator.createTask(new Task(2,1,2,new Point(27,Constant.PointStatus.DOWN)));
+//        taskCreator.createTask(new Task(0,1,0,new Point(19,Constant.PointStatus.ROBOT_DOWN)));
+//        taskCreator.createTask(new Task(1,1,0,new Point(23,Constant.PointStatus.ROBOT_DOWN)));
+//        taskCreator.createTask(new Task(2,1,1,new Point(24,Constant.PointStatus.ROBOT_DOWN)));
+//        taskCreator.createTask(new Task(2,1,1,new Point(27,Constant.PointStatus.ROBOT_DOWN)));
+//        taskCreator.createTask(new Task(2,1,1,new Point(27,Constant.PointStatus.ROBOT_DOWN)));
+//        taskCreator.createTask(new Task(2,1,2,new Point(27,Constant.PointStatus.ROBOT_DOWN)));
 //        taskCreator.createTaskRandom(5,0);
 //        for (Task ltask: taskCreator.getTaskList()) {
 //            ltask.printInfo();

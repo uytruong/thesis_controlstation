@@ -22,7 +22,7 @@ public class TaskCreator {
     }
 
     public boolean createTask(Task task) {
-        if (mapBase.getStatus(task.getGoal()) == Constant.PointStatus.PERM){
+        if (mapBase.getStatus(task.getGoal()) == Constant.PointStatus.SHELF){
             return false;
         }
         else {

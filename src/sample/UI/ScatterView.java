@@ -22,6 +22,9 @@ public class ScatterView {
     private List<Task> mRunningTaskList = new ArrayList<>();
     private List<ScatterChart.Series<Number, Number>> dataSeriesList = new ArrayList<>();
 
+
+
+
     public ScatterView(MapManager mapManager, TaskManager taskManager, ScatterChart<Number, Number> scatterChart) {
         this.mMapManager = mapManager;
         this.mTaskManager = taskManager;
@@ -30,9 +33,16 @@ public class ScatterView {
     }
 
     public void initDataSeriesList() {
-        for (int idx = 0; idx < 6; idx++) {
+        for (int idx = 0; idx < 7; idx++) {
             dataSeriesList.add(new ScatterChart.Series<Number, Number>());
         }
+        dataSeriesList.get(SymbolViewPriority.ROBOT_RIGHT).setName("Robot Right");
+        dataSeriesList.get(SymbolViewPriority.ROBOT_LEFT).setName("Robot Left");
+        dataSeriesList.get(SymbolViewPriority.ROBOT_DOWN).setName("Robot Down");
+        dataSeriesList.get(SymbolViewPriority.ROBOT_UP).setName("Robot Up");
+        dataSeriesList.get(SymbolViewPriority.RUNNING_TASK).setName("Running Task");
+        dataSeriesList.get(SymbolViewPriority.READY_TASK).setName("Ready Task");
+        dataSeriesList.get(SymbolViewPriority.SHELF).setName("Shelf");
     }
 
     public void PrepareDataToDisplay(int time) {
@@ -48,25 +58,20 @@ public class ScatterView {
             switch(mPointStatusList.get(pointID)) {
                 case Constant.PointStatus.NONE:
                     break;
-                case Constant.PointStatus.PERM:
-                    dataSeriesList.get(0).setName("Shelf");
-                    dataSeriesList.get(0).getData().add(checkingPoint);
+                case Constant.PointStatus.SHELF:
+                    dataSeriesList.get(SymbolViewPriority.SHELF).getData().add(checkingPoint);
                     break;
-                case Constant.PointStatus.UP:
-                    dataSeriesList.get(1).setName("Robot Up");
-                    dataSeriesList.get(1).getData().add(checkingPoint);
+                case Constant.PointStatus.ROBOT_UP:
+                    dataSeriesList.get(SymbolViewPriority.ROBOT_UP).getData().add(checkingPoint);
                     break;
-                case Constant.PointStatus.DOWN:
-                    dataSeriesList.get(2).setName("Robot Down");
-                    dataSeriesList.get(2).getData().add(checkingPoint);
+                case Constant.PointStatus.ROBOT_DOWN:
+                    dataSeriesList.get(SymbolViewPriority.ROBOT_DOWN).getData().add(checkingPoint);
                     break;
-                case Constant.PointStatus.LEFT:
-                    dataSeriesList.get(3).setName("Robot Left");
-                    dataSeriesList.get(3).getData().add(checkingPoint);
+                case Constant.PointStatus.ROBOT_LEFT:
+                    dataSeriesList.get(SymbolViewPriority.ROBOT_LEFT).getData().add(checkingPoint);
                     break;
-                case Constant.PointStatus.RIGHT:
-                    dataSeriesList.get(4).setName("Robot Right");
-                    dataSeriesList.get(4).getData().add(checkingPoint);
+                case Constant.PointStatus.ROBOT_RIGHT:
+                    dataSeriesList.get(SymbolViewPriority.ROBOT_RIGHT).getData().add(checkingPoint);
                     break;
                 default:
                     break;
@@ -81,8 +86,7 @@ public class ScatterView {
             xPoint = MapBase.getXFromId(pointID);
             yPoint = MapBase.getYFromId(pointID);
             ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(xPoint, yPoint);
-            dataSeriesList.get(5).setName("Ready Task");
-            dataSeriesList.get(5).getData().add(checkingPoint);
+            dataSeriesList.get(SymbolViewPriority.READY_TASK).getData().add(checkingPoint);
         }
         for (int taskID = 0; taskID < mRunningTaskList.size(); taskID++) {
             int pointID = mRunningTaskList.get(taskID).getGoal().getId();
@@ -90,10 +94,8 @@ public class ScatterView {
             xPoint = MapBase.getXFromId(pointID);
             yPoint = MapBase.getYFromId(pointID);
             ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(xPoint, yPoint);
-            dataSeriesList.get(6).setName("Running Task");
-            dataSeriesList.get(6).getData().add(checkingPoint);
+            dataSeriesList.get(SymbolViewPriority.RUNNING_TASK).getData().add(checkingPoint);
         }
-        mTaskManager.printInfo();
     }
 
     public void DisplayScatterChart() {
@@ -102,5 +104,24 @@ public class ScatterView {
         for (int idx = 0; idx < dataSeriesList.size(); idx++) {
             mScatterChart.getData().add(dataSeriesList.get(idx));
         }
+    }
+
+
+
+
+
+    private class SymbolViewPriority {
+        /**
+         * The scatter plot view data from idx = 0 to dataSeriesList.size()
+         * The less priority value the more priority in view
+         * */
+        private static final int SHELF = 0;
+        private static final int READY_TASK   = 1;
+        private static final int RUNNING_TASK = 2;
+        private static final int ROBOT_UP     = 3;
+        private static final int ROBOT_DOWN   = 4;
+        private static final int ROBOT_LEFT   = 5;
+        private static final int ROBOT_RIGHT  = 6;
+
     }
 }

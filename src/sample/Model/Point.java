@@ -15,6 +15,9 @@ public class Point {
         this.id = MapBase.getIdFromXY(x,y);
         this.status = status;
     }
+    public Point(int id){
+        this.id = id;
+    }
 
     public Point(int id, int status) {
         this.id = id;

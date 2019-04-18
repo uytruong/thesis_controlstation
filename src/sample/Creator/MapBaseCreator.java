@@ -37,7 +37,7 @@ public class MapBaseCreator {
                         int x = distance.getBoundToVerticalShelf() + i + (distance.getShelfToVerticalShelf()+shelf.getxLength())*k;
                         int y = distance.getBoundToHorizontalShelf() + j + (distance.getShelfToHorizontalShelf()+shelf.getyLength())*l;
                         int id = MapBase.getIdFromXY(x,y);
-                        mapBase.getStatusList().set(id,Constant.PointStatus.PERM);
+                        mapBase.getStatusList().set(id,Constant.PointStatus.SHELF);
                     }
                 }
             }

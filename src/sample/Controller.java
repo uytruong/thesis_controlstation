@@ -58,7 +58,6 @@ public class Controller implements Initializable {
      * Task
      */
     public TextField txtTaskType;
-    public TextField txtTaskHeading;
     public TextField txtTaskGoalPointX;
     public TextField txtTaskGoalPointY;
     public TextField txtTaskTimeAppear;
@@ -243,29 +242,26 @@ public class Controller implements Initializable {
             int robotXView = MapBase.getXFromId(robot.getPoint(0).getId());
             int robotYView = MapBase.getYFromId(robot.getPoint(0).getId());
             int robotHeadingInt = robot.getHeading(0);
-            String robotHeadingView = "NONE";
+            String robotHeadingView = "ROBOT_UP";
             if (robotHeadingInt == Constant.RobotPointStatus.UP) {
-                robotHeadingView = "UP";
+                robotHeadingView = "ROBOT_UP";
             } else if (robotHeadingInt == Constant.RobotPointStatus.DOWN) {
-                robotHeadingView = "DOWN";
+                robotHeadingView = "ROBOT_DOWN";
             } else if (robotHeadingInt == Constant.RobotPointStatus.LEFT) {
-                robotHeadingView = "LEFT";
+                robotHeadingView = "ROBOT_LEFT";
             } else if (robotHeadingInt == Constant.RobotPointStatus.RIGHT) {
-                robotHeadingView = "RIGHT";
+                robotHeadingView = "ROBOT_RIGHT";
             }
             RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotTypeView, robotXView, robotYView, robotHeadingView);
             tableViewRobotList.getItems().add(robotViewModel);
         }
         robotCreator.setLastRobotNumber(robotCreator.getRobotList().size());
-//        for (Robot lRobot: robotCreator.getRobotList()) {
-//            lRobot.printInfo();
-//        }
     }
 
     public void btnCreateTaskClick(ActionEvent event) {
-        boolean isEmpty = txtTaskType.getText().isEmpty() | txtTaskHeading.getText().isEmpty()
-                | txtTaskGoalPointX.getText().isEmpty() | txtTaskGoalPointY.getText().isEmpty()
-                | txtTaskTimeAppear.getText().isEmpty() | txtTaskTimeExecute.getText().isEmpty();
+        boolean isEmpty = txtTaskType.getText().isEmpty()       | txtTaskGoalPointX.getText().isEmpty() |
+                          txtTaskGoalPointY.getText().isEmpty() | txtTaskTimeAppear.getText().isEmpty() |
+                          txtTaskTimeExecute.getText().isEmpty();
 
         if (isEmpty) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert robot's properties!");
@@ -274,10 +270,10 @@ public class Controller implements Initializable {
             int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
             int taskTimeAppear = Integer.parseInt(txtTaskTimeAppear.getText());
             int taskType = Integer.parseInt(txtTaskType.getText());
-            int taskHeading = Integer.parseInt(txtTaskHeading.getText());
             int taskGoalPointX = Integer.parseInt(txtTaskGoalPointX.getText());
             int taskGoalPointY = Integer.parseInt(txtTaskGoalPointY.getText());
-            Point taskGoalPoint = new Point(taskGoalPointX, taskGoalPointY, taskHeading);
+            int taskGoalId     = MapBase.getIdFromXY(taskGoalPointX,taskGoalPointY);
+            Point taskGoalPoint = new Point(taskGoalId);
 
             if (taskCreator.createTask(new Task(taskType, taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
                 viewTaskList();
@@ -326,13 +322,11 @@ public class Controller implements Initializable {
 
         }
         taskCreator.setLastTaskNumber(taskCreator.getTaskList().size());
-//        for (Task ltask: taskCreator.getTaskList()) {
-//            ltask.printInfo();
-//        }
     }
 
     private void viewScatter() {
         robotManager.update(0);
+        taskManager.update(0);
         mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
         mScatterView.PrepareDataToDisplay(0);
         mScatterView.DisplayScatterChart();
