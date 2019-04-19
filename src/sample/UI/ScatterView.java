@@ -110,7 +110,7 @@ public class ScatterView {
 
 
 
-    private class SymbolViewPriority {
+    private class   SymbolViewPriority {
         /**
          * The scatter plot view data from idx = 0 to dataSeriesList.size()
          * The less priority value the more priority in view
