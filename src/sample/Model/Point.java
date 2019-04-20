@@ -6,9 +6,7 @@ public class Point {
     private int id;
     private int status;
 
-    /**
-     * These methods are only for path planning
-     */
+    /**These methods are only for path planning*/
     private int robotId = -1;
 
 
@@ -23,6 +21,7 @@ public class Point {
     }
     public Point(int id){
         this.id = id;
+        updateXY();
     }
 
     public Point(int id, int status) {
@@ -34,6 +33,7 @@ public class Point {
     public Point(Point point){
         this.id     = point.getId();
         this.status = point.getStatus();
+        this.robotId= point.getRobotId();
         updateXY();
     }
 
@@ -73,5 +73,8 @@ public class Point {
     }
 
     private void updateId(){id = MapBase.getIdFromXY(x,y);}
-    private void updateXY(){x = MapBase.getXFromId(id); y = MapBase.getYFromId(id);}
+    private void updateXY(){
+        x  = MapBase.getXFromId(id);
+        y = MapBase.getYFromId(id);
+    }
 }

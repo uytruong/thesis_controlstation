@@ -9,7 +9,7 @@ public class Context {
 
     public static class TaskCreator {
         public static int numberTaskMax  = 100;
-        public static int timeAppearMax  = 1;
+        public static int timeAppearMax  = 3;
         public static int timeExecuteMax = 4;
     }
 

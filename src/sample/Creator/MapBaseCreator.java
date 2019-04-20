@@ -2,8 +2,7 @@ package sample.Creator;
 
 import sample.Model.Constant;
 import sample.Model.MapBase;
-
-import java.util.ArrayList;
+import sample.Model.Point;
 
 public class MapBaseCreator {
     private Shelf shelf;
@@ -23,12 +22,11 @@ public class MapBaseCreator {
         MapBase.xLength = bound.getxLength();
         MapBase.yLength = bound.getyLength();
 
-        mapBase.setStatusList(new ArrayList<>());
-        for (int i = 0; i < bound.getxLength() ; i++) {
-            for (int j = 0; j < bound.getyLength(); j++) {
-                mapBase.getStatusList().add(Constant.PointStatus.NONE);
-            }
-        }
+        mapBase.setPointMatrix(new Point[MapBase.xLength][MapBase.yLength]);
+        for (int i = 0; i < bound.getxLength() ; i++)
+            for (int j = 0; j < bound.getyLength(); j++)
+                mapBase.getPointMatrix()[i][j] = new Point(i,j,Constant.PointStatus.NONE);
+
 
         for (int i = 0; i < shelf.getxLength(); i++) {
             for (int j = 0; j < shelf.getyLength(); j++) {
@@ -36,8 +34,7 @@ public class MapBaseCreator {
                     for (int l = 0; l < shelf.getyNumber(); l++) {
                         int x = distance.getBoundToVerticalShelf() + i + (distance.getShelfToVerticalShelf()+shelf.getxLength())*k;
                         int y = distance.getBoundToHorizontalShelf() + j + (distance.getShelfToHorizontalShelf()+shelf.getyLength())*l;
-                        int id = MapBase.getIdFromXY(x,y);
-                        mapBase.getStatusList().set(id,Constant.PointStatus.SHELF);
+                        mapBase.getPointMatrix()[x][y].setStatus(Constant.PointStatus.SHELF);
                     }
                 }
             }
@@ -47,9 +44,6 @@ public class MapBaseCreator {
 
     public Shelf getShelf() {
         return shelf;
-    }
-    public Bound getBound() {
-        return bound;
     }
     public Distance getDistance() {
         return distance;

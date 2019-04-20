@@ -23,15 +23,6 @@ public class MapManager {
 
 
 
-    public List<MapBase> getMapListClone(int offsetTime){
-        List<MapBase> mapListClone = new ArrayList<>();
-        for (int i = offsetTime; i < mapList.size(); i++) {
-            mapListClone.add(mapList.get(i).getClone());
-        }
-        return mapListClone;
-    }
-
-
     public List<MapBase> getMapList() {
         return mapList;
     }

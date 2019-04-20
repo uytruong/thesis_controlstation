@@ -14,9 +14,6 @@ public class RobotManager {
         this.robotList  = robotCreator.getRobotList();
     }
 
-
-
-
     public void update(int timeUpdate){
         for (Robot robot: robotList) {
             if (robot.getLastTimeBusy() <= timeUpdate) {

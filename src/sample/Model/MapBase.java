@@ -2,52 +2,45 @@ package sample.Model;
 
 import sample.Creator.MapBaseCreator;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class MapBase {
-    private List<Integer> statusList = new ArrayList<>();
-    
-
+    private Point[][] pointMatrix;
     public static int xLength, yLength;
 
-    public MapBase() {
-    }
+    public MapBase() {}
     public MapBase(MapBaseCreator mapBaseCreator){
-        this.statusList = new ArrayList<>(mapBaseCreator.getMapBase().getStatusList());
+        this.pointMatrix = mapBaseCreator.getMapBase().getPointMatrixClone();
     }
 
-    public List<Integer> getStatusList() {
-        return statusList;
+    public Point[][] getPointMatrix() {
+        return pointMatrix;
     }
-    public void setStatusList(List<Integer> statusList) {
-        this.statusList = statusList;
-    }
-    public int getStatus(int id){ return this.statusList.get(id);}
-    public void setStatus(int id, int status){ this.statusList.set(id,status);}
-    public int getStatus(Point point){ return this.statusList.get(point.getId());}
-
-
-
-    public MapBase getClone(){
-        MapBase mapBase = new MapBase();
-        mapBase.setStatusList(new ArrayList<>(this.statusList));
-        return mapBase;
+    public void setPointMatrix(Point[][] pointMatrix) {
+        this.pointMatrix = pointMatrix;
     }
 
-    public void printMapBase(){
-        System.out.println("MapBase.xLength = " + xLength);
-        System.out.println("MapBase.yLength = " + yLength);
+    public int getStatus(int id){ return getPoint(id).getStatus();}
+    public void setStatus(int id, int status){ getPoint(id).setStatus(status);}
+    public int getStatus(Point point){ return getPoint(point.getId()).getStatus();}
 
-        for (int i = yLength-1; i>= 0; i--) {
-            for (int j = 0; j < xLength; j++) {
-                System.out.print(statusList.get(getIdFromXY(j,i)) + "-");
+
+
+
+
+
+    public Point getPoint(int id){
+        return pointMatrix[getXFromId(id)][getYFromId(id)];
+    }
+    public Point[][] getPointMatrixClone(){
+        Point[][] cloneMatrix = new Point[pointMatrix.length][pointMatrix[0].length];
+        for(int i=0; i<pointMatrix.length; i++){
+            for(int j=0; j<pointMatrix[i].length; j++) {
+                cloneMatrix[i][j] = new Point(pointMatrix[i][j]);
             }
-            System.out.println();
         }
+        return cloneMatrix;
     }
-
-
 
     public static int getIdFromXY(int x, int y){
         return (x + y*xLength);

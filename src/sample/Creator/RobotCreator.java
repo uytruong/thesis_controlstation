@@ -62,7 +62,7 @@ public class RobotCreator {
         return getRandomInt(Constant.RobotPointHeading.LEFT, Constant.RobotPointHeading.DOWN);
     }
     private int getRandomPointId(){
-        return random.nextInt(mapBase.getStatusList().size());
+        return random.nextInt(MapBase.xLength*MapBase.yLength);
     }
 
 

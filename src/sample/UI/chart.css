@@ -1,8 +1,8 @@
 .series0.chart-symbol { /* solid square */
     -fx-background-color: #000000;
     -fx-background-radius: 0;
-    -fx-scale-x: 2;
-    -fx-scale-y: 2;
+    -fx-scale-x: 5;
+    -fx-scale-y: 5;
 }
 .series1.chart-symbol { /* solid square ready task */
     -fx-background-color: #237c17;

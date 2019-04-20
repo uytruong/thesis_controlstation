@@ -49,9 +49,8 @@ public class TaskCreator {
     private int getRandomTimeExecute(){
         return random.nextInt(Context.TaskCreator.timeExecuteMax);
     }
-
     private int getRandomTaskPointId(){
-        return random.nextInt(mapBase.getStatusList().size());
+        return random.nextInt(MapBase.xLength*MapBase.yLength);
     }
 
     public List<Task> getTaskList() {
