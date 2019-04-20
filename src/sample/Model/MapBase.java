@@ -7,6 +7,7 @@ import java.util.List;
 
 public class MapBase {
     private List<Integer> statusList = new ArrayList<>();
+    
 
     public static int xLength, yLength;
 
@@ -57,4 +58,45 @@ public class MapBase {
     public static int getYFromId(int id){
         return id/xLength;
     }
+    public static int getEstimateCost(Point start,Point goal){
+        int deltaX = getXFromId(start.getId()) - getXFromId(goal.getId());
+        int deltaY = getYFromId(start.getId()) - getYFromId(goal.getId());
+        return (Math.abs(deltaX)+Math.abs(deltaY));
+    }
+
+    public static Point getForwardPoint(Point point){
+        int x = point.getX();
+        int y = point.getY();
+        int h = point.getStatus();
+        Point fwPoint = new Point(point);
+        switch (h){
+            case Constant.PointStatus.ROBOT_RIGHT:
+                if(x == xLength){return null;}
+                else{
+                    fwPoint.setX(x+1);
+                }
+                break;
+            case Constant.PointStatus.ROBOT_LEFT:
+                if(x == 0){return null;}
+                else{
+                    fwPoint.setX(x-1);
+                }
+                break;
+            case Constant.PointStatus.ROBOT_UP:
+                if(y == yLength){return null;}
+                else{
+                    fwPoint.setY(y+1);
+                }
+                break;
+            default:
+                if(y == 0){return null;}
+                else{
+                    fwPoint.setY(y-1);
+                }
+                break;
+        }
+        return fwPoint;
+    }
+
+
 }

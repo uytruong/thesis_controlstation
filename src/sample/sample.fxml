@@ -23,13 +23,16 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="726.0" prefWidth="1381.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <right>
-        <ScatterChart fx:id="scatterChart" prefHeight="800.0" prefWidth="800.0" stylesheets="@UI/chart.css" BorderPane.alignment="CENTER">
+        <ScatterChart fx:id="scatterChart" prefHeight="726.0" prefWidth="609.0" stylesheets="@UI/chart.css" BorderPane.alignment="CENTER">
             <xAxis>
-                <NumberAxis lowerBound="-1.0" minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="20.0" fx:id="xAxis" />
+                <NumberAxis lowerBound="-0.5" minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="10.0" fx:id="xAxis" />
             </xAxis>
             <yAxis>
-                <NumberAxis fx:id="yAxis" lowerBound="-2.0" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="20.0" />
+                <NumberAxis fx:id="yAxis" lowerBound="-0.5" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="10.0" />
             </yAxis>
+         <opaqueInsets>
+            <Insets bottom="10.0" />
+         </opaqueInsets>
         </ScatterChart>
     </right>
     <center>
@@ -73,7 +76,7 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                                        <Button fx:id="btnCreateMapBase" layoutX="193.0" layoutY="77.0" mnemonicParsing="false" onAction="#btnSaveShelfClick" prefHeight="18.0" prefWidth="68.0" text="Create Map">
+                                        <Button fx:id="btnCreateMapBase" layoutX="193.0" layoutY="77.0" mnemonicParsing="false" onAction="#btnSaveShelfConfigClick" prefHeight="18.0" prefWidth="68.0" text="Create Map">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
@@ -85,6 +88,8 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
+                              <Button fx:id="btnTest" layoutX="195.0" layoutY="44.0" mnemonicParsing="false" onAction="#btnTestClick" text="Test" />
+                              <Button fx:id="btnStartSimulation" layoutX="212.0" layoutY="28.0" mnemonicParsing="false" onAction="#btnStartSimulationClick" text="Start Simulation" />
                                     </children></AnchorPane>
                             </content>
                         </TitledPane>
@@ -133,9 +138,9 @@
                 </HBox>
                 <HBox layoutX="10.0" layoutY="10.0" prefHeight="131.0" prefWidth="502.0" spacing="8.0">
                     <children>
-                        <TitledPane fx:id="titledPaneTask" animated="false" collapsible="false" prefHeight="131.0" prefWidth="572.0" text="Task">
+                        <TitledPane fx:id="titledPaneTask" animated="false" collapsible="false" prefHeight="131.0" prefWidth="440.0" text="Task">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="443.0">
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="373.0">
                                     <children>
                                         <Label layoutX="4.0" layoutY="57.0" text="Appear &amp; Exe Time">
                                  <font>
@@ -174,38 +179,72 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></Label>
-                              <Label layoutX="223.0" layoutY="16.0" text="Nụm">
+                              <Label layoutX="164.0" layoutY="8.0" text="Nụm">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Label>
-                              <TextField fx:id="txtNumOfRandTask" layoutX="254.0" layoutY="13.0" prefHeight="25.0" prefWidth="30.0">
+                              <TextField fx:id="txtNumOfRandTask" layoutX="195.0" layoutY="5.0" prefHeight="25.0" prefWidth="30.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                              <Label layoutX="223.0" layoutY="49.0" text="Type">
+                              <Label layoutX="164.0" layoutY="41.0" text="Type">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Label>
-                              <TextField fx:id="txtTypeOfRandTask" layoutX="254.0" layoutY="44.0" prefHeight="25.0" prefWidth="30.0">
+                              <TextField fx:id="txtTypeOfRandTask" layoutX="195.0" layoutY="36.0" prefHeight="25.0" prefWidth="30.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                              <Button fx:id="btnRandomTask" layoutX="222.0" layoutY="66.0" mnemonicParsing="false" onAction="#btnCreateTaskRandomClick" prefHeight="25.0" prefWidth="64.0" text="Random">
+                              <Button fx:id="btnRandomTask" layoutX="163.0" layoutY="58.0" mnemonicParsing="false" onAction="#btnCreateTaskRandomClick" prefHeight="25.0" prefWidth="64.0" text="Random">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
-                              <Button fx:id="btnTest" layoutX="339.0" layoutY="19.0" mnemonicParsing="false" onAction="#btnTestClick" text="Test" />
                                     </children></AnchorPane>
                             </content>
                         </TitledPane>
-                        <TitledPane fx:id="titledPaneEvaluation" animated="false" collapsible="false" prefHeight="145.0" prefWidth="245.0" text="Evaluation">
+                        <TitledPane fx:id="titledPaneEvaluation" animated="false" collapsible="false" prefHeight="145.0" prefWidth="245.0" text="System">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="27.0">
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="327.0">
                                     <children>
-                                        <Label layoutX="10.0" layoutY="10.0" text="Total cost" />
-                                        <Label layoutX="11.0" layoutY="39.0" text="Total time" />
-                                        <TextField layoutX="72.0" layoutY="6.0" prefHeight="25.0" prefWidth="30.0" />
-                                        <TextField layoutX="72.0" layoutY="35.0" prefHeight="25.0" prefWidth="30.0" />
+                                        <Label layoutX="10.0" layoutY="10.0" text="Total cost">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Label>
+                                        <TextField editable="false" layoutX="72.0" layoutY="6.0" prefHeight="14.0" prefWidth="30.0">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></TextField>
+                              <TextField fx:id="txtRandomSeed" layoutX="72.0" layoutY="72.0" prefHeight="13.0" prefWidth="30.0">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </TextField>
+                              <Label layoutX="11.0" layoutY="76.0" text="Random Seed">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="btnSaveSystemConfig" layoutX="13.0" layoutY="53.0" mnemonicParsing="false" onAction="#btnSaveSimulationConfigClick" text="Save" />
+                              <Label layoutX="13.0" layoutY="37.0" text="Time">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="txtTime" editable="false" layoutX="72.0" layoutY="32.0" prefHeight="25.0" prefWidth="30.0">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="txtTimeMax" editable="false" layoutX="150.0" layoutY="13.0" prefHeight="25.0" prefWidth="30.0">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </TextField>
+                              <Label layoutX="120.0" layoutY="18.0" text="Time max">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
                                     </children></AnchorPane>
                             </content>
                         </TitledPane>

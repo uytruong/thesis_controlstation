@@ -14,7 +14,6 @@ public class TaskCreator {
     private Random     random;
     private MapBase    mapBase;
     private List<Task> taskList = new ArrayList<>();
-    private int        lastTaskNumber = 0;
 
     public TaskCreator(MapBaseCreator mapBaseCreator, Random random) {
         this.mapBase = mapBaseCreator.getMapBase();
@@ -32,13 +31,13 @@ public class TaskCreator {
         }
     }
 
-    public void createTaskRandom(int numberOfTask, int type){
-        if ((taskList.size() + numberOfTask) >= Context.TaskCreator.numberTaskMax){
-            numberOfTask = Context.TaskCreator.numberTaskMax - taskList.size();
+    public void createTaskRandom(int numberOfTasks, int typeofTasks){
+        if ((taskList.size() + numberOfTasks) >= Context.TaskCreator.numberTaskMax){
+            numberOfTasks = Context.TaskCreator.numberTaskMax - taskList.size();
         }
-        for (int i = 0; i < numberOfTask; i++) {
+        for (int i = 0; i < numberOfTasks; i++) {
             while (true){
-                if (createTask(new Task(type,getRandomTimeExecute(),getRandomTimeAppear(), new Point(getRandomTaskPointId(),getRandomTaskPointStatus())))) {
+                if (createTask(new Task(typeofTasks,getRandomTimeExecute(),getRandomTimeAppear(), new Point(getRandomTaskPointId())))) {
                     break;
                 }
             }
@@ -51,23 +50,11 @@ public class TaskCreator {
         return random.nextInt(Context.TaskCreator.timeExecuteMax);
     }
 
-    private int getRandomInt(int min, int max){
-        return random.nextInt(max-min+1)+min;
-    }
-    private int getRandomTaskPointStatus(){
-        return getRandomInt(Constant.TaskPointStatus.LEFT,Constant.TaskPointStatus.DONTCARE);
-    }
     private int getRandomTaskPointId(){
         return random.nextInt(mapBase.getStatusList().size());
     }
 
     public List<Task> getTaskList() {
         return taskList;
-    }
-    public int getLastTaskNumber() {
-        return lastTaskNumber;
-    }
-    public void setLastTaskNumber(int lastTaskNumber) {
-        this.lastTaskNumber = lastTaskNumber;
     }
 }

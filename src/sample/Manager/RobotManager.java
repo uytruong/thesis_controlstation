@@ -11,13 +11,10 @@ public class RobotManager {
 
     public RobotManager(RobotCreator robotCreator, MapManager mapManager) {
         this.mapManager = mapManager;
-        robotList = robotCreator.getRobotList();
-
-        init();
+        this.robotList  = robotCreator.getRobotList();
     }
 
-    private void init(){
-    }
+
 
 
     public void update(int timeUpdate){
@@ -42,11 +39,5 @@ public class RobotManager {
         return robotList;
     }
 
-
-    public void printRobotListInfo(){
-        for (Robot robot: robotList) {
-            robot.printInfo();
-        }
-    }
 
 }

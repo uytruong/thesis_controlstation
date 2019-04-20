@@ -14,7 +14,6 @@ public class RobotCreator {
     private Random      random;
     private MapBase     mapBase;
     private List<Robot> robotList = new ArrayList<>();
-    private int         lastRobotNumber = 0;
 
 
     public RobotCreator(MapBaseCreator mapBaseCreator, Random random) {
@@ -23,14 +22,12 @@ public class RobotCreator {
     }
 
     public boolean createRobot(Robot robot){
-        /*
-        if ((robot.getPointList().get(0).getStatus() != Constant.RobotPointStatus.ROBOT_DOWN) |
-            (robot.getPointList().get(0).getStatus() != Constant.RobotPointStatus.ROBOT_UP) |
-            (robot.getPointList().get(0).getStatus() != Constant.RobotPointStatus.ROBOT_LEFT) |
-            (robot.getPointList().get(0).getStatus() != Constant.RobotPointStatus.ROBOT_RIGHT)){
+        if ((robot.getPointList().get(0).getStatus() != Constant.RobotPointHeading.DOWN) &
+            (robot.getPointList().get(0).getStatus() != Constant.RobotPointHeading.UP) &
+            (robot.getPointList().get(0).getStatus() != Constant.RobotPointHeading.LEFT) &
+            (robot.getPointList().get(0).getStatus() != Constant.RobotPointHeading.RIGHT)){
             return false;
         }
-        */
 
         for (Robot otherRobot: robotList) {
             if(otherRobot.getPoint(0).getId() == robot.getPoint(0).getId()){ return false;}
@@ -62,7 +59,7 @@ public class RobotCreator {
         return random.nextInt(max-min+1)+min;
     }
     private int getRandomPointStatus(){
-        return getRandomInt(Constant.RobotPointStatus.LEFT,Constant.RobotPointStatus.DOWN);
+        return getRandomInt(Constant.RobotPointHeading.LEFT, Constant.RobotPointHeading.DOWN);
     }
     private int getRandomPointId(){
         return random.nextInt(mapBase.getStatusList().size());
@@ -73,10 +70,4 @@ public class RobotCreator {
         return robotList;
     }
 
-    public int getLastRobotNumber() {
-        return lastRobotNumber;
-    }
-    public void setLastRobotNumber(int lastRobotNumber) {
-        this.lastRobotNumber = lastRobotNumber;
-    }
 }

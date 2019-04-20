@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,9 +10,11 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Duration;
 import sample.Creator.MapBaseCreator;
 import sample.Creator.RobotCreator;
 import sample.Creator.TaskCreator;
+import sample.Manager.Context;
 import sample.Manager.MapManager;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
@@ -20,14 +24,11 @@ import sample.UI.ViewModel.RobotViewModel;
 import sample.UI.ViewModel.TaskViewModel;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class Controller implements Initializable {
     private Random         random = new Random();
-    private MapBaseCreator mapBaseCreator;
+    private MapBaseCreator mapBaseCreator = new MapBaseCreator();
     private RobotCreator   robotCreator;
     private TaskCreator    taskCreator;
 
@@ -66,29 +67,6 @@ public class Controller implements Initializable {
     public Button    btnCreateTask;
     public TextField txtNumOfRandTask;
     public TextField txtTypeOfRandTask;
-
-    /**
-     * Robot properties
-     */
-    private int robotID;
-    private int robotType;
-    private int robotHeading;
-    private int robotStartPointX;
-    private int robotStartPointY;
-
-    /**
-     * Task properties
-     */
-    private int taskID;
-    private int taskType;
-    private int taskHeading;
-    private int taskGoalPointX;
-    private int taskGoalPointY;
-    private int taskAppearTime;
-    private int taskExecuteTime;
-    private int taskNumOfRand;
-    private int taskTypeOfRand;
-
     /**
      * Robot TableView
      */
@@ -98,10 +76,7 @@ public class Controller implements Initializable {
     public TableColumn<RobotViewModel, Integer> tableColRobotX;
     public TableColumn<RobotViewModel, Integer> tableColRobotY;
     public TableColumn<RobotViewModel, String> tableColRobotHeading;
-
     private ObservableList<RobotViewModel> robotObservableList = FXCollections.observableArrayList();
-
-
     /**
      * Task TableView
      */
@@ -113,58 +88,46 @@ public class Controller implements Initializable {
     public TableColumn<TaskViewModel, Integer> tableColTaskX;
     public TableColumn<TaskViewModel, Integer> tableColTaskY;
     public TableColumn<TaskViewModel, String> tableColTaskStatus;
-
     private ObservableList<RobotViewModel> taskObservableList = FXCollections.observableArrayList();
-
-
     /**
      * Scatter chart
      */
     public NumberAxis xAxis;
     public NumberAxis yAxis;
     public ScatterChart<Number, Number> scatterChart;
-    private ScatterView mScatterView;
 
+
+    /**
+     * System
+     * */
+    public TextField txtRandomSeed;
+    public Button    btnSaveSystemConfig;
+
+    public Button    btnStartSimulation;
+    public TextField txtTime;
+    public TextField txtTimeMax;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         xAxis.setAutoRanging(false);
         yAxis.setAutoRanging(false);
-        txtShelfXLength.setText("2");
-        txtShelfYLength.setText("3");
-        txtShelfEachRowNumber.setText("3");
-        txtShelfEachColNumber.setText("3");
-        txtDistanceShelfToShelf.setText("2");
-        txtDistanceBoundToShelf.setText("1");
-        txtNumOfRandRobot.setText("5");
-        txtTypeOfRandRobot.setText("0");
-        txtNumOfRandTask.setText("3");
-        txtTypeOfRandTask.setText("0");
 
 
-        // Init Robot TableView
-        tableColRobotID.setCellValueFactory(new PropertyValueFactory<>("RobotID"));
-        tableColRobotType.setCellValueFactory(new PropertyValueFactory<>("RobotType"));
-        tableColRobotX.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointX"));
-        tableColRobotY.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointY"));
-        tableColRobotHeading.setCellValueFactory(new PropertyValueFactory<>("RobotHeading"));
-        tableViewRobotList.setItems(robotObservableList);
+        initializeTextField();
+        initializeTableView();
+    }
+    public void btnSaveSimulationConfigClick(){
+        int randomSeed = Integer.parseInt(txtRandomSeed.getText());
+        int timeMax    = Integer.parseInt(txtTimeMax.getText());
 
+        random.setSeed(randomSeed);
+        Context.Time.timeMax = timeMax;
 
-        tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("TaskID"));
-        tableColTaskType.setCellValueFactory(new PropertyValueFactory<>("TaskType"));
-        tableColTaskX.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointX"));
-        tableColTaskY.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointY"));
-        tableColTaskAppearTime.setCellValueFactory(new PropertyValueFactory<>("TaskAppearTime"));
-        tableColTaskExecuteTime.setCellValueFactory(new PropertyValueFactory<>("TaskExecuteTime"));
-        tableColTaskStatus.setCellValueFactory(new PropertyValueFactory<>("TaskStatus"));
-        // Set TableView data
-        tableViewTaskList.setItems(taskObservableList);
     }
 
-    public void btnSaveShelfClick(ActionEvent event) {
+    public void btnSaveShelfConfigClick(ActionEvent event) {
         boolean isEmpty = txtShelfXLength.getText().isEmpty() | txtShelfYLength.getText().isEmpty()
-                | txtShelfEachRowNumber.getText().isEmpty() | txtShelfEachColNumber.getText().isEmpty()
+                | txtShelfEachRowNumber.getText().isEmpty()   | txtShelfEachColNumber.getText().isEmpty()
                 | txtDistanceShelfToShelf.getText().isEmpty() | txtDistanceBoundToShelf.getText().isEmpty();
         if (isEmpty) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert shelf's properties!");
@@ -177,7 +140,6 @@ public class Controller implements Initializable {
             int distanceShelfToShelf = Integer.parseInt(txtDistanceShelfToShelf.getText());
             int distanceBoundToShelf = Integer.parseInt(txtDistanceBoundToShelf.getText());
 
-            mapBaseCreator = new MapBaseCreator();
             mapBaseCreator.getShelf().setxLength(shelfXLength);
             mapBaseCreator.getShelf().setyLength(shelfYLength);
             mapBaseCreator.getShelf().setxNumber(shelfEachRowNumber);
@@ -186,9 +148,7 @@ public class Controller implements Initializable {
             mapBaseCreator.getDistance().setShelfToVerticalShelf(distanceShelfToShelf);
             mapBaseCreator.getDistance().setBoundToHorizontalShelf(distanceBoundToShelf);
             mapBaseCreator.getDistance().setBoundToVerticalShelf(distanceBoundToShelf);
-
             mapBaseCreator.update();
-            mapBaseCreator.getMapBase().printMapBase();
 
             mapManager   = new MapManager(mapBaseCreator);
             robotCreator = new RobotCreator(mapBaseCreator, random);
@@ -196,29 +156,26 @@ public class Controller implements Initializable {
             robotManager = new RobotManager(robotCreator, mapManager);
             taskManager  = new TaskManager(taskCreator);
 
-            doUpdateAndDisplay(0);
+            updateAndView(0);
         }
     }
-
     public void btnCreateRobotClick(ActionEvent event) {
-        boolean isEmpty = txtRobotType.getText().isEmpty() | txtRobotHeading.getText().isEmpty()
-                | txtRobotStartPointX.getText().isEmpty() | txtRobotStartPointY.getText().isEmpty();
+        boolean isEmpty = txtRobotType.getText().isEmpty()        | txtRobotHeading.getText().isEmpty()
+                        | txtRobotStartPointX.getText().isEmpty() | txtRobotStartPointY.getText().isEmpty();
         if (isEmpty) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert robot's properties!");
             alert.showAndWait();
         } else {
-            int robotType = Integer.parseInt(txtRobotType.getText());
-            int robotHeading = Integer.parseInt(txtRobotHeading.getText());
-            int robotStartPointX = Integer.parseInt(txtRobotStartPointX.getText());
-            int robotStartPointY = Integer.parseInt(txtRobotStartPointY.getText());
+            int robotType         = Integer.parseInt(txtRobotType.getText());
+            int robotHeading      = Integer.parseInt(txtRobotHeading.getText());
+            int robotStartPointX  = Integer.parseInt(txtRobotStartPointX.getText());
+            int robotStartPointY  = Integer.parseInt(txtRobotStartPointY.getText());
             Point robotStartPoint = new Point(robotStartPointX, robotStartPointY, robotHeading);
             if (robotCreator.createRobot(new Robot(robotType, robotStartPoint))) {
-                viewRobotList();
-                doUpdateAndDisplay(0);
+                updateAndView(0);
             }
         }
     }
-
     public void btnCreateRobotRandomClick(ActionEvent event) {
         boolean isEmpty = txtNumOfRandRobot.getText().isEmpty() | txtTypeOfRandRobot.getText().isEmpty();
         if (isEmpty) {
@@ -229,61 +186,9 @@ public class Controller implements Initializable {
             int robotTypeOfRand = Integer.parseInt(txtTypeOfRandRobot.getText());
 
             robotCreator.createRobotRandom(robotNumOfRand, robotTypeOfRand);
-            viewRobotList();
-            doUpdateAndDisplay(0);
+            updateAndView(0);
         }
     }
-
-    private void updateTableViewRobotList(int updateTime) {
-        List<RobotViewModel> newRobotList = new ArrayList<RobotViewModel>();
-        for (int idx = 0; idx < robotCreator.getRobotList().size(); idx++) {
-            Robot robot = robotCreator.getRobotList().get(idx);
-            int robotIDView = robot.getId();
-            int robotTypeView = robot.getType();
-            int robotXView = MapBase.getXFromId(robot.getPoint(0).getId());
-            int robotYView = MapBase.getYFromId(robot.getPoint(0).getId());
-            int robotHeadingInt = robot.getHeading(updateTime);
-            String robotHeadingView = "ROBOT UP";
-            if (robotHeadingInt == Constant.RobotPointStatus.UP) {
-                robotHeadingView = "ROBOT UP";
-            } else if (robotHeadingInt == Constant.RobotPointStatus.DOWN) {
-                robotHeadingView = "ROBOT DOWN";
-            } else if (robotHeadingInt == Constant.RobotPointStatus.LEFT) {
-                robotHeadingView = "ROBOT LEFT";
-            } else if (robotHeadingInt == Constant.RobotPointStatus.RIGHT) {
-                robotHeadingView = "ROBOT RIGHT";
-            }
-            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotTypeView, robotXView, robotYView, robotHeadingView);
-            newRobotList.add(robotViewModel);
-        }
-        tableViewRobotList.getItems().clear();
-        tableViewRobotList.getItems().addAll(newRobotList);
-    }
-
-    private void viewRobotList() {
-        for (int idx = robotCreator.getLastRobotNumber(); idx < robotCreator.getRobotList().size(); idx++) {
-            Robot robot = robotCreator.getRobotList().get(idx);
-            int robotIDView = robot.getId();
-            int robotTypeView = robot.getType();
-            int robotXView = MapBase.getXFromId(robot.getPoint(0).getId());
-            int robotYView = MapBase.getYFromId(robot.getPoint(0).getId());
-            int robotHeadingInt = robot.getHeading(0);
-            String robotHeadingView = "ROBOT UP";
-            if (robotHeadingInt == Constant.RobotPointStatus.UP) {
-                robotHeadingView = "ROBOT UP";
-            } else if (robotHeadingInt == Constant.RobotPointStatus.DOWN) {
-                robotHeadingView = "ROBOT DOWN";
-            } else if (robotHeadingInt == Constant.RobotPointStatus.LEFT) {
-                robotHeadingView = "ROBOT LEFT";
-            } else if (robotHeadingInt == Constant.RobotPointStatus.RIGHT) {
-                robotHeadingView = "ROBOT RIGHT";
-            }
-            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotTypeView, robotXView, robotYView, robotHeadingView);
-            tableViewRobotList.getItems().add(robotViewModel);
-        }
-        robotCreator.setLastRobotNumber(robotCreator.getRobotList().size());
-    }
-
     public void btnCreateTaskClick(ActionEvent event) {
         boolean isEmpty = txtTaskType.getText().isEmpty()       | txtTaskGoalPointX.getText().isEmpty() |
                           txtTaskGoalPointY.getText().isEmpty() | txtTaskTimeAppear.getText().isEmpty() |
@@ -294,36 +199,91 @@ public class Controller implements Initializable {
             alert.showAndWait();
         } else {
             int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
-            int taskTimeAppear = Integer.parseInt(txtTaskTimeAppear.getText());
-            int taskType = Integer.parseInt(txtTaskType.getText());
-            int taskGoalPointX = Integer.parseInt(txtTaskGoalPointX.getText());
-            int taskGoalPointY = Integer.parseInt(txtTaskGoalPointY.getText());
-            int taskGoalId     = MapBase.getIdFromXY(taskGoalPointX,taskGoalPointY);
+            int taskTimeAppear  = Integer.parseInt(txtTaskTimeAppear.getText());
+            int taskType        = Integer.parseInt(txtTaskType.getText());
+            int taskGoalPointX  = Integer.parseInt(txtTaskGoalPointX.getText());
+            int taskGoalPointY  = Integer.parseInt(txtTaskGoalPointY.getText());
+            int taskGoalId      = MapBase.getIdFromXY(taskGoalPointX,taskGoalPointY);
             Point taskGoalPoint = new Point(taskGoalId);
 
             if (taskCreator.createTask(new Task(taskType, taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
-                viewTaskList();
-                doUpdateAndDisplay(0);
+                updateAndView(0);
             }
         }
     }
-
     public void btnCreateTaskRandomClick(ActionEvent event){
         boolean isEmpty = txtNumOfRandTask.getText().isEmpty() | txtTypeOfRandTask.getText().isEmpty();
         if (isEmpty) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert input values of task randoming!");
             alert.showAndWait();
         } else {
-            taskNumOfRand = Integer.parseInt(txtNumOfRandTask.getText());
-            taskTypeOfRand = Integer.parseInt(txtTypeOfRandTask.getText());
+            int taskNumOfRand = Integer.parseInt(txtNumOfRandTask.getText());
+            int taskTypeOfRand = Integer.parseInt(txtTypeOfRandTask.getText());
+
             taskCreator.createTaskRandom(taskNumOfRand, taskTypeOfRand);
-            viewTaskList();
-            doUpdateAndDisplay(0);
+            updateAndView(0);
         }
     }
 
-    private void updateTableViewTaskList(int updateTime) {
-        List<TaskViewModel> newTaskList = new ArrayList<TaskViewModel>();
+
+
+
+    public void btnStartSimulationClick(){
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
+            Context.Time.time++;
+            updateAndView(Context.Time.time);
+
+            txtTime.setText(Integer.toString(Context.Time.time));
+
+
+
+            }));
+        timeline.setCycleCount(Context.Time.timeMax);
+        timeline.play();
+    }
+
+    public void btnTestClick(ActionEvent event) {
+        List<Robot> robotList = robotManager.getRobotList();
+        robotList.get(2).addPoint(new Point(3,Constant.PointStatus.ROBOT_RIGHT));
+        robotList.get(2).addPoint(new Point(4,Constant.PointStatus.ROBOT_RIGHT));
+        robotList.get(2).addPoint(new Point(5,Constant.PointStatus.ROBOT_DOWN));
+        robotList.get(2).addPoint(new Point(6,Constant.PointStatus.ROBOT_RIGHT));
+        robotList.get(2).addPoint(new Point(7,Constant.PointStatus.ROBOT_UP));
+    }
+
+
+
+    private void initializeTextField(){
+        txtShelfXLength.setText("2");
+        txtShelfYLength.setText("3");
+        txtShelfEachRowNumber.setText("2");
+        txtShelfEachColNumber.setText("2");
+        txtDistanceShelfToShelf.setText("2");
+        txtDistanceBoundToShelf.setText("1");
+        txtNumOfRandRobot.setText("3");
+        txtTypeOfRandRobot.setText("0");
+        txtNumOfRandTask.setText("3");
+        txtTypeOfRandTask.setText("0");
+    }
+    private void initializeTableView(){
+        tableColRobotID.setCellValueFactory(new PropertyValueFactory<>("RobotID"));
+        tableColRobotType.setCellValueFactory(new PropertyValueFactory<>("RobotType"));
+        tableColRobotX.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointX"));
+        tableColRobotY.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointY"));
+        tableColRobotHeading.setCellValueFactory(new PropertyValueFactory<>("RobotHeading"));
+        tableViewRobotList.setItems(robotObservableList);
+
+        tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("TaskID"));
+        tableColTaskType.setCellValueFactory(new PropertyValueFactory<>("TaskType"));
+        tableColTaskX.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointX"));
+        tableColTaskY.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointY"));
+        tableColTaskAppearTime.setCellValueFactory(new PropertyValueFactory<>("TaskAppearTime"));
+        tableColTaskExecuteTime.setCellValueFactory(new PropertyValueFactory<>("TaskExecuteTime"));
+        tableColTaskStatus.setCellValueFactory(new PropertyValueFactory<>("TaskStatus"));
+        tableViewTaskList.setItems(taskObservableList);
+    }
+    private void viewTaskListToTableView() {
+        List<TaskViewModel> taskViewModelList = new ArrayList<>();
         for (int idx = 0; idx < taskCreator.getTaskList().size(); idx++) {
             Task task = taskCreator.getTaskList().get(idx);
             int taskIDView          = task.getId();
@@ -332,113 +292,72 @@ public class Controller implements Initializable {
             int taskYView           = MapBase.getYFromId(task.getGoal().getId());
             int taskAppearTimeView  = task.getTimeAppear();
             int taskExecuteTimeView = task.getTimeExecute();
-            int taskStatusInt      = task.getStatus();
-            String taskStatusView  = "NONE";
-            if (taskStatusInt == Constant.TaskStatus.NEW) {
-                taskStatusView = "NEW";
-            } else if (taskStatusInt == Constant.TaskStatus.READY) {
-                taskStatusView = "READY";
-            } else if (taskStatusInt == Constant.TaskStatus.RUNNING) {
-                taskStatusView = "RUNNING";
-            } else if (taskStatusInt == Constant.TaskStatus.DONE) {
-                taskStatusView = "DONE";
+            int taskStatus          = task.getStatus();
+            String taskStatusView;
+            switch (taskStatus){
+                case Constant.TaskStatus.NEW:
+                    taskStatusView = "NEW";
+                    break;
+                case Constant.TaskStatus.READY:
+                    taskStatusView = "READY";
+                    break;
+                case Constant.TaskStatus.RUNNING:
+                    taskStatusView = "RUNNING";
+                    break;
+                default:
+                    taskStatusView = "DONE";
+                    break;
             }
+
             TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskTypeView, taskXView, taskYView,
                     taskAppearTimeView, taskExecuteTimeView, taskStatusView);
-            newTaskList.add(taskViewModel);
+            taskViewModelList.add(taskViewModel);
         }
         tableViewTaskList.getItems().clear();
-        tableViewTaskList.getItems().addAll(newTaskList);
+        tableViewTaskList.getItems().addAll(taskViewModelList);
     }
-
-    private void viewTaskList() {
-        for (int idx = taskCreator.getLastTaskNumber(); idx < taskCreator.getTaskList().size(); idx++) {
-            Task task = taskCreator.getTaskList().get(idx);
-            int taskIDView          = task.getId();
-            int taskTypeView        = task.getType();
-            int taskXView           = MapBase.getXFromId(task.getGoal().getId());
-            int taskYView           = MapBase.getYFromId(task.getGoal().getId());
-            int taskAppearTimeView  = task.getTimeAppear();
-            int taskExecuteTimeView = task.getTimeExecute();
-            int taskStatusInt      = task.getStatus();
-            String taskStatusView  = "NONE";
-            if (taskStatusInt == Constant.TaskStatus.NEW) {
-                taskStatusView = "NEW";
-            } else if (taskStatusInt == Constant.TaskStatus.READY) {
-                taskStatusView = "READY";
-            } else if (taskStatusInt == Constant.TaskStatus.RUNNING) {
-                taskStatusView = "RUNNING";
-            } else if (taskStatusInt == Constant.TaskStatus.DONE) {
-                taskStatusView = "DONE";
+    private void viewRobotListToTableView(int timeUpdate) {
+        List<RobotViewModel> robotViewModelList = new ArrayList<>();
+        for (int idx = 0; idx < robotCreator.getRobotList().size(); idx++) {
+            Robot robot       = robotCreator.getRobotList().get(idx);
+            int robotIDView   = robot.getId();
+            int robotTypeView = robot.getType();
+            int robotXView    = MapBase.getXFromId(robot.getPoint(timeUpdate).getId());
+            int robotYView    = MapBase.getYFromId(robot.getPoint(timeUpdate).getId());
+            int robotHeading  = robot.getHeading(timeUpdate);
+            String robotHeadingView;
+            switch (robotHeading){
+                case Constant.RobotPointHeading.UP:
+                    robotHeadingView = "UP";
+                    break;
+                case Constant.RobotPointHeading.DOWN:
+                    robotHeadingView = "DOWN";
+                    break;
+                case Constant.RobotPointHeading.LEFT:
+                    robotHeadingView = "LEFT";
+                    break;
+                default:
+                    robotHeadingView = "RIGHT";
             }
-            TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskTypeView, taskXView, taskYView,
-                                                            taskAppearTimeView, taskExecuteTimeView, taskStatusView);
-            tableViewTaskList.getItems().add(taskViewModel);
 
+            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotTypeView, robotXView, robotYView, robotHeadingView);
+            robotViewModelList.add(robotViewModel);
         }
-        taskCreator.setLastTaskNumber(taskCreator.getTaskList().size());
+        tableViewRobotList.getItems().clear();
+        tableViewRobotList.getItems().addAll(robotViewModelList);
+    }
+    private void viewMapToScatter(int timeUpdate) {
+        ScatterView scatterView = new ScatterView(mapManager, taskManager, scatterChart);
+        scatterView.prepareDataToDisplay(timeUpdate);
+        scatterView.display();
+    }
+    private void updateAndView(int timeUpdate) {
+        robotManager.update(timeUpdate);
+        taskManager.update(timeUpdate);
+        viewRobotListToTableView(timeUpdate);
+        viewTaskListToTableView();
+        viewMapToScatter(timeUpdate);
     }
 
-    private void viewScatter(int time) {
-        mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
-        mScatterView.PrepareDataToDisplay(time);
-        mScatterView.DisplayScatterChart();
-    }
 
-    private int testTime = 0;
-    public void btnTestClick(ActionEvent event) {
-        testManualSimulation(testTime);
-        testTime++;
-//        updateTableViewRobotList(0);
-//        updateTableViewTaskList(0);
-//        robotManager.update(1);
-//        taskManager.update(1);
-//        mScatterView = new ScatterView(mapManager, taskManager, scatterChart);
-//        mScatterView.PrepareDataToDisplay(1);
-//        mScatterView.DisplayScatterChart();
-    }
-
-    private void testManualSimulation(int time) {
-        List<Robot> robotList = new ArrayList<Robot>();
-        robotList = robotManager.getRobotList();
-        robotList.get(2).addPoint(new Point(3,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPoint(new Point(4,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPoint(new Point(5,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPoint(new Point(6,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPoint(new Point(7,Constant.PointStatus.ROBOT_RIGHT));
-        switch (time) {
-            case 0:
-                doUpdateAndDisplay(time);
-                break;
-            case 1:
-                taskManager.changeTaskStatus(0,Constant.TaskStatus.RUNNING);
-                doUpdateAndDisplay(time);
-                break;
-            case 2:
-                taskManager.changeTaskStatus(1,Constant.TaskStatus.RUNNING);
-                doUpdateAndDisplay(time);
-                break;
-            case 3:
-                doUpdateAndDisplay(time);
-                break;
-            case 4:
-                taskManager.changeTaskStatus(1,Constant.TaskStatus.DONE);
-                doUpdateAndDisplay(time);
-                break;
-            case 5:
-                taskManager.changeTaskStatus(0,Constant.TaskStatus.DONE);
-                doUpdateAndDisplay(time);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void doUpdateAndDisplay(int updateTime) {
-        robotManager.update(updateTime);
-        taskManager.update(updateTime);
-        updateTableViewRobotList(updateTime);
-        updateTableViewTaskList(updateTime);
-        viewScatter(updateTime);
-    }
 }

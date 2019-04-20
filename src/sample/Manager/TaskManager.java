@@ -36,14 +36,12 @@ public class TaskManager {
                         break;
                     }
                 }
-
                 for (Task readyTask: readyTaskList) {
                     if (task.getGoal().getId() == readyTask.getGoal().getId()){
                         valid = false;
                         break;
                     }
                 }
-
                 if(valid){
                     task.setStatus(Constant.TaskStatus.READY);
                     readyTaskList.add(task);
@@ -62,7 +60,7 @@ public class TaskManager {
             runningTaskList.add(task);
 
             for (int i = 0; i < readyTaskList.size(); i++) {
-                if (id == readyTaskList.get(i).getId()){
+                if (task == readyTaskList.get(i)){
                     readyTaskList.remove(i);
                     break;
                 }
@@ -90,10 +88,6 @@ public class TaskManager {
         return (taskList.size() == doneTaskNumber);
     }
 
-
-    public List<Task> getTaskList() {
-        return taskList;
-    }
     public List<Task> getReadyTaskList() {
         return readyTaskList;
     }
@@ -105,20 +99,4 @@ public class TaskManager {
     }
 
 
-    public void printInfo(){
-        System.out.println("======== TIME = " + Context.Time.time +" ============ ");
-        System.out.println("======== TASK LIST ===========");
-        for (Task task: taskList) {
-            task.printInfo();
-        }
-        System.out.println("===== READY TASK LIST ========");
-        for (Task task: readyTaskList) {
-            task.printInfo();
-        }
-        System.out.println("===== RUNNING TASK LIST ======");
-        for (Task task: runningTaskList) {
-            task.printInfo();
-        }
-
-    }
 }

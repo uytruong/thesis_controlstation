@@ -6,32 +6,29 @@ import java.util.List;
 public class Robot {
     private int id, type;
     private List<Point> pointList = new ArrayList<>();
-    private Task task;
-
     private int lastTimeUpdateToMap = -1;
+
+    private Task task;
 
     public Robot(int type, Point start) {
         this.type = type;
         this.pointList.add(start);
-        init();
     }
 
-    private void init(){
-
-    }
 
     /*this update is for robot doesn't have any task so it does not move*/
     public void update(int timeUpdate){
-        if (getLastTimeBusy() <= timeUpdate) {
-            Point lastPoint = new Point(pointList.get(getLastTimeBusy()));
-            for (int i = 0; i < timeUpdate - getLastTimeBusy(); i++) {
-                pointList.add(new Point(lastPoint));
-            }
+        Point lastPoint = new Point(pointList.get(getLastTimeBusy()));
+        for (int i = 0; i < timeUpdate - getLastTimeBusy(); i++) {
+            pointList.add(new Point(lastPoint));
         }
     }
 
     public void addPoint(Point point){
         pointList.add(new Point(point));
+    }
+    public void addPointList(List<Point> addPointList){
+        pointList.addAll(addPointList);
     }
 
 

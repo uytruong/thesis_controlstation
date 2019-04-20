@@ -2,8 +2,6 @@ package sample.Manager;
 
 import sample.Creator.MapBaseCreator;
 import sample.Model.MapBase;
-import sample.Model.Robot;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +10,6 @@ public class MapManager {
 
 
     private List<MapBase> mapList = new ArrayList<>();
-    private int           lastTimeUpdate = -1;
-
     public MapManager(MapBaseCreator mapBaseCreator) {
         this.mapBaseCreator = mapBaseCreator;
         init();

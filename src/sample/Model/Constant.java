@@ -19,19 +19,13 @@ public class Constant {
         public static final int DONE = 3;
     }
 
-    public class RobotPointStatus{
+    public class RobotPointHeading {
         public static final int LEFT  = PointStatus.ROBOT_LEFT;
         public static final int RIGHT = PointStatus.ROBOT_RIGHT;
         public static final int UP    = PointStatus.ROBOT_UP;
         public static final int DOWN  = PointStatus.ROBOT_DOWN;
     }
-    public class TaskPointStatus{
-        public static final int LEFT    = PointStatus.ROBOT_LEFT;
-        public static final int RIGHT   = PointStatus.ROBOT_RIGHT;
-        public static final int UP      = PointStatus.ROBOT_UP;
-        public static final int DOWN    = PointStatus.ROBOT_DOWN;
-        public static final int DONTCARE = PointStatus.DONTCARE;
-    }
+
 
 
 
