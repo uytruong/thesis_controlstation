@@ -2,6 +2,7 @@ package sample.Manager;
 
 import sample.Creator.TaskCreator;
 import sample.Model.Constant;
+import sample.Model.Point;
 import sample.Model.Task;
 
 import java.util.ArrayList;
@@ -11,16 +12,14 @@ public class TaskManager {
     private List<Task>  taskList;
     private List<Task>  readyTaskList   = new ArrayList<>();
     private List<Task>  runningTaskList = new ArrayList<>();
-    private int         doneTaskNumber = 0;
+    private int         doneTaskNumber  = 0;
+
+    private boolean     assignable      = true;
 
     public TaskManager(TaskCreator taskCreator) {
         this.taskList = taskCreator.getTaskList();
-        init();
     }
 
-    private void init(){
-
-    }
 
     public void update(int timeUpdate){
          /* find new TaskCreator from taskCreator.taskList and add to readyTaskList if:
@@ -31,13 +30,13 @@ public class TaskManager {
             if ((task.getStatus() == Constant.TaskStatus.NEW) & (task.getTimeAppear() <= timeUpdate)){
                 boolean valid = true;
                 for (Task runningTask: runningTaskList) {
-                    if(task.getGoal().getId() == runningTask.getGoal().getId()){
+                    if(Point.isCoincident(task.getGoal(), runningTask.getGoal()) ){
                         valid = false;
                         break;
                     }
                 }
                 for (Task readyTask: readyTaskList) {
-                    if (task.getGoal().getId() == readyTask.getGoal().getId()){
+                    if(Point.isCoincident(task.getGoal(), readyTask.getGoal()) ){
                         valid = false;
                         break;
                     }
@@ -98,5 +97,10 @@ public class TaskManager {
         return doneTaskNumber;
     }
 
-
+    public boolean isAssignable() {
+        return assignable;
+    }
+    public void setAssignable(boolean assignable) {
+        this.assignable = assignable;
+    }
 }

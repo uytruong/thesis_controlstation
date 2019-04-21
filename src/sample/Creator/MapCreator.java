@@ -2,30 +2,31 @@ package sample.Creator;
 
 import sample.Model.Constant;
 import sample.Model.MapBase;
-import sample.Model.Point;
+import sample.Model.PointInfo;
 
-public class MapBaseCreator {
+public class MapCreator {
     private Shelf shelf;
     private Distance distance;
     private Bound bound;
     private MapBase mapBase;
 
-    public MapBaseCreator() {
+    public MapCreator() {
         shelf    = new Shelf();
         distance = new Distance();
         bound    = new Bound();
         mapBase  = new MapBase();
     }
 
-    public void update(){
-        bound.updateBound(distance,shelf);
+    public void create(){
+        bound.update(distance,shelf);
         MapBase.xLength = bound.getxLength();
         MapBase.yLength = bound.getyLength();
 
-        mapBase.setPointMatrix(new Point[MapBase.xLength][MapBase.yLength]);
+
+        mapBase.setPointInfoMatrix(new PointInfo[MapBase.xLength][MapBase.yLength]);
         for (int i = 0; i < bound.getxLength() ; i++)
             for (int j = 0; j < bound.getyLength(); j++)
-                mapBase.getPointMatrix()[i][j] = new Point(i,j,Constant.PointStatus.NONE);
+                mapBase.getPointInfoMatrix()[i][j] = new PointInfo(Constant.PointStatus.NONE);
 
 
         for (int i = 0; i < shelf.getxLength(); i++) {
@@ -34,7 +35,7 @@ public class MapBaseCreator {
                     for (int l = 0; l < shelf.getyNumber(); l++) {
                         int x = distance.getBoundToVerticalShelf() + i + (distance.getShelfToVerticalShelf()+shelf.getxLength())*k;
                         int y = distance.getBoundToHorizontalShelf() + j + (distance.getShelfToHorizontalShelf()+shelf.getyLength())*l;
-                        mapBase.getPointMatrix()[x][y].setStatus(Constant.PointStatus.SHELF);
+                        mapBase.getPointInfo(x,y).setStatus(Constant.PointStatus.SHELF);
                     }
                 }
             }
@@ -118,20 +119,20 @@ public class MapBaseCreator {
             this.shelfToHorizontalShelf = shelfToHorizontalShelf;
         }
     }
-    public class Bound {
+    private class Bound {
         private int xLength, yLength;
-        public Bound() {
+        private Bound() {
         }
 
-        public void updateBound(Distance distance, Shelf shelf) {
+        private void update(Distance distance, Shelf shelf) {
             this.xLength = distance.getBoundToVerticalShelf()*2 + shelf.getxNumber()*(shelf.getxLength() + distance.getShelfToVerticalShelf()) - distance.getShelfToVerticalShelf();
             this.yLength = distance.getBoundToHorizontalShelf()*2 + shelf.getyNumber()*(shelf.getyLength() + distance.getShelfToHorizontalShelf()) - distance.getShelfToHorizontalShelf();
         }
 
-        public int getxLength() {
+        private int getxLength() {
             return xLength;
         }
-        public int getyLength() {
+        private int getyLength() {
             return yLength;
         }
     }

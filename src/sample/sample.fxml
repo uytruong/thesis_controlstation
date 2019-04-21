@@ -25,10 +25,10 @@
     <right>
         <ScatterChart fx:id="scatterChart" prefHeight="726.0" prefWidth="609.0" stylesheets="@UI/chart.css" BorderPane.alignment="CENTER">
             <xAxis>
-                <NumberAxis lowerBound="-0.5" minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="10.0" fx:id="xAxis" />
+                <NumberAxis lowerBound="-0.5" minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="15.0" fx:id="xAxis" />
             </xAxis>
             <yAxis>
-                <NumberAxis fx:id="yAxis" lowerBound="-0.5" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="10.0" />
+                <NumberAxis fx:id="yAxis" lowerBound="-0.5" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="15.0" />
             </yAxis>
          <opaqueInsets>
             <Insets bottom="10.0" />
@@ -107,8 +107,8 @@
                                     <Font size="10.0" />
                                  </font></Label>
                                         <TextField fx:id="txtRobotHeading" layoutX="118.0" prefHeight="25.0" prefWidth="30.0" />
-                                        <TextField fx:id="txtRobotStartPointX" layoutX="84.0" layoutY="29.0" prefHeight="25.0" prefWidth="30.0" />
-                                        <TextField fx:id="txtRobotStartPointY" layoutX="118.0" layoutY="28.0" prefHeight="25.0" prefWidth="30.0" />
+                                        <TextField fx:id="txtRobotStartX" layoutX="84.0" layoutY="29.0" prefHeight="25.0" prefWidth="30.0" />
+                                        <TextField fx:id="txtRobotStartY" layoutX="118.0" layoutY="28.0" prefHeight="25.0" prefWidth="30.0" />
                                         <Label layoutX="1.0" layoutY="35.0" text="Start position X,Y:">
                                  <font>
                                     <Font size="10.0" />
@@ -136,11 +136,11 @@
                         </TitledPane>
                     </children>
                 </HBox>
-                <HBox layoutX="10.0" layoutY="10.0" prefHeight="131.0" prefWidth="502.0" spacing="8.0">
+                <HBox layoutX="10.0" layoutY="10.0" prefHeight="131.0" prefWidth="682.0" spacing="8.0">
                     <children>
-                        <TitledPane fx:id="titledPaneTask" animated="false" collapsible="false" prefHeight="131.0" prefWidth="440.0" text="Task">
+                        <TitledPane fx:id="titledPaneTask" animated="false" collapsible="false" prefHeight="131.0" prefWidth="481.0" text="Task">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="373.0">
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="520.0">
                                     <children>
                                         <Label layoutX="4.0" layoutY="57.0" text="Appear &amp; Exe Time">
                                  <font>
@@ -167,11 +167,11 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                                        <TextField fx:id="txtTaskGoalPointX" layoutX="94.0" layoutY="25.0" prefHeight="25.0" prefWidth="24.0">
+                                        <TextField fx:id="txtTaskGoalX" layoutX="94.0" layoutY="25.0" prefHeight="25.0" prefWidth="24.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                                        <TextField fx:id="txtTaskGoalPointY" layoutX="122.0" layoutY="25.0" prefHeight="25.0" prefWidth="26.0">
+                                        <TextField fx:id="txtTaskGoalY" layoutX="122.0" layoutY="25.0" prefHeight="25.0" prefWidth="26.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
@@ -204,7 +204,7 @@
                         </TitledPane>
                         <TitledPane fx:id="titledPaneEvaluation" animated="false" collapsible="false" prefHeight="145.0" prefWidth="245.0" text="System">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="327.0">
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="150.0">
                                     <children>
                                         <Label layoutX="10.0" layoutY="10.0" text="Total cost">
                                  <font>
@@ -254,7 +254,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TableView fx:id="tableViewRobotList" prefHeight="181.0" prefWidth="563.0">
+                                <TableView fx:id="tableViewRobotList" prefHeight="181.0" prefWidth="761.0">
                                     <columns>
                                         <TableColumn fx:id="tableColRobotID" prefWidth="101.0" text="ID" />
                                         <TableColumn fx:id="tableColRobotType" prefWidth="107.0" text="Type" />
@@ -270,7 +270,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TableView fx:id="tableViewTaskList" prefHeight="181.0" prefWidth="564.0">
+                                <TableView fx:id="tableViewTaskList" prefHeight="181.0" prefWidth="469.0">
                                     <columns>
                                         <TableColumn fx:id="tableColTaskID" prefWidth="49.0" text="ID" />
                                         <TableColumn fx:id="tableColTaskType" prefWidth="66.99996948242188" text="Type" />

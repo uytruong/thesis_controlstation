@@ -1,10 +1,7 @@
 package sample.Creator;
 
 import sample.Manager.Context;
-import sample.Model.Constant;
-import sample.Model.MapBase;
-import sample.Model.Point;
-import sample.Model.Robot;
+import sample.Model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,39 +13,40 @@ public class RobotCreator {
     private List<Robot> robotList = new ArrayList<>();
 
 
-    public RobotCreator(MapBaseCreator mapBaseCreator, Random random) {
-         this.mapBase = mapBaseCreator.getMapBase();
+    public RobotCreator(MapCreator mapCreator, Random random) {
+         this.mapBase = mapCreator.getMapBase();
          this.random  = random;
     }
 
-    public boolean createRobot(Robot robot){
-        if ((robot.getPointList().get(0).getStatus() != Constant.RobotPointHeading.DOWN) &
-            (robot.getPointList().get(0).getStatus() != Constant.RobotPointHeading.UP) &
-            (robot.getPointList().get(0).getStatus() != Constant.RobotPointHeading.LEFT) &
-            (robot.getPointList().get(0).getStatus() != Constant.RobotPointHeading.RIGHT)){
+    public boolean create(Robot robot){
+        if ((robot.getPoint(0).getStatus() != Constant.RobotPointHeading.DOWN) &
+            (robot.getPoint(0).getStatus() != Constant.RobotPointHeading.UP)   &
+            (robot.getPoint(0).getStatus() != Constant.RobotPointHeading.LEFT) &
+            (robot.getPoint(0).getStatus() != Constant.RobotPointHeading.RIGHT)){
             return false;
         }
 
         for (Robot otherRobot: robotList) {
-            if(otherRobot.getPoint(0).getId() == robot.getPoint(0).getId()){ return false;}
+            if (Point.isCoincident(robot.getPoint(0), otherRobot.getPoint(0)))
+                return false;
         }
-        if (mapBase.getStatus(robot.getPoint(0).getId()) == Constant.PointStatus.NONE){
+
+        if (mapBase.getStatus(robot.getPoint(0).getX(), robot.getPoint(0).getY()) == Constant.PointStatus.NONE){
             robot.setId(robotList.size());
             robotList.add(robot);
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
-    public void createRobotRandom(int numberOfRobots, int typeOfRobots){
+    public void createRandom(int numberOfRobots, int typeOfRobots){
         if ((robotList.size() + numberOfRobots) >= Context.RobotCreator.numberRobotMax){
             numberOfRobots = Context.RobotCreator.numberRobotMax-robotList.size();
         }
         for (int i = 0; i < numberOfRobots; i++) {
             while (true){
-                if (createRobot(new Robot(typeOfRobots, new Point(getRandomPointId(), getRandomPointStatus())))) {
+                Point start = new Point(getRandomX(), getRandomY(), getRandomHeading());
+                if (create(new Robot(typeOfRobots, start))) {
                     break;
                 }
             }
@@ -58,11 +56,14 @@ public class RobotCreator {
     private int getRandomInt(int min, int max){
         return random.nextInt(max-min+1)+min;
     }
-    private int getRandomPointStatus(){
+    private int getRandomHeading(){
         return getRandomInt(Constant.RobotPointHeading.LEFT, Constant.RobotPointHeading.DOWN);
     }
-    private int getRandomPointId(){
-        return random.nextInt(MapBase.xLength*MapBase.yLength);
+    private int getRandomX(){
+        return random.nextInt(MapBase.xLength);
+    }
+    private int getRandomY(){
+        return random.nextInt(MapBase.yLength);
     }
 
 

@@ -5,36 +5,28 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import sample.Manager.MapManager;
 import sample.Manager.TaskManager;
-import sample.Model.MapBase;
 import sample.Model.Constant;
-import sample.Model.Point;
+import sample.Model.PointInfo;
 import sample.Model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScatterView {
-    private MapManager  mapManager;
-    private TaskManager taskManager;
-    private ScatterChart<Number, Number> mScatterChart;
-
-    private Point[][] pointMatrix;
-
-    private List<Task> mReadyTaskList = new ArrayList<>();
-    private List<Task> mRunningTaskList = new ArrayList<>();
+    private MapManager                   mapManager;
+    private TaskManager                  taskManager;
+    private ScatterChart<Number, Number> scatterChart;
     private List<ScatterChart.Series<Number, Number>> dataSeriesList = new ArrayList<>();
 
 
-
-
     public ScatterView(MapManager mapManager, TaskManager taskManager, ScatterChart<Number, Number> scatterChart) {
-        this.mapManager = mapManager;
-        this.taskManager = taskManager;
-        this.mScatterChart = scatterChart;
+        this.mapManager   = mapManager;
+        this.taskManager  = taskManager;
+        this.scatterChart = scatterChart;
         initDataSeriesList();
     }
 
-    public void initDataSeriesList() {
+    private void initDataSeriesList() {
         for (int idx = 0; idx < 7; idx++) {
             dataSeriesList.add(new ScatterChart.Series<>());
         }
@@ -49,61 +41,56 @@ public class ScatterView {
 
     public void prepareDataToDisplay(int time) {
         // Prepare MapBase data
-        MapBase mapBase = mapManager.getMap(time);
-        pointMatrix = mapBase.getPointMatrix();
-        for (int idx = 0; idx < (pointMatrix.length*pointMatrix[0].length); idx++) {
-            int xPoint, yPoint;
-            xPoint = MapBase.getXFromId(idx);
-            yPoint = MapBase.getYFromId(idx);
-            ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(xPoint, yPoint);
-            switch(pointMatrix[xPoint][yPoint].getStatus()) {
-                case Constant.PointStatus.SHELF:
-                    dataSeriesList.get(SymbolViewPriority.SHELF).getData().add(checkingPoint);
-                    break;
-                case Constant.PointStatus.ROBOT_UP:
-                    dataSeriesList.get(SymbolViewPriority.ROBOT_UP).getData().add(checkingPoint);
-                    break;
-                case Constant.PointStatus.ROBOT_DOWN:
-                    dataSeriesList.get(SymbolViewPriority.ROBOT_DOWN).getData().add(checkingPoint);
-                    break;
-                case Constant.PointStatus.ROBOT_LEFT:
-                    dataSeriesList.get(SymbolViewPriority.ROBOT_LEFT).getData().add(checkingPoint);
-                    break;
-                case Constant.PointStatus.ROBOT_RIGHT:
-                    dataSeriesList.get(SymbolViewPriority.ROBOT_RIGHT).getData().add(checkingPoint);
-                    break;
-                default:
-                    break;
+        PointInfo[][] pointInfoMatrices = mapManager.getMap(time).getPointInfoMatrix();
+
+        for (int x = 0; x < pointInfoMatrices.length; x++) {
+            for (int y = 0; y < pointInfoMatrices[0].length; y++) {
+                ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(x, y);
+                switch (pointInfoMatrices[x][y].getStatus()) {
+                    case Constant.PointStatus.SHELF:
+                        dataSeriesList.get(SymbolViewPriority.SHELF).getData().add(checkingPoint);
+                        break;
+                    case Constant.PointStatus.ROBOT_UP:
+                        dataSeriesList.get(SymbolViewPriority.ROBOT_UP).getData().add(checkingPoint);
+                        break;
+                    case Constant.PointStatus.ROBOT_DOWN:
+                        dataSeriesList.get(SymbolViewPriority.ROBOT_DOWN).getData().add(checkingPoint);
+                        break;
+                    case Constant.PointStatus.ROBOT_LEFT:
+                        dataSeriesList.get(SymbolViewPriority.ROBOT_LEFT).getData().add(checkingPoint);
+                        break;
+                    case Constant.PointStatus.ROBOT_RIGHT:
+                        dataSeriesList.get(SymbolViewPriority.ROBOT_RIGHT).getData().add(checkingPoint);
+                        break;
+                }
             }
         }
+
         // Prepare Task data
-        mReadyTaskList = taskManager.getReadyTaskList();
-        mRunningTaskList = taskManager.getRunningTaskList();
-        for (int taskID = 0; taskID < mReadyTaskList.size(); taskID++) {
-            int pointID = mReadyTaskList.get(taskID).getGoal().getId();
-            int xPoint, yPoint;
-            xPoint = MapBase.getXFromId(pointID);
-            yPoint = MapBase.getYFromId(pointID);
-            ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(xPoint, yPoint);
+        List<Task> readyTaskList   = taskManager.getReadyTaskList();
+        List<Task> runningTaskList = taskManager.getRunningTaskList();
+
+        for (Task readyTask: readyTaskList) {
+            int x = readyTask.getGoal().getX();
+            int y = readyTask.getGoal().getY();
+            ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(x, y);
             dataSeriesList.get(SymbolViewPriority.TASK_READY).getData().add(checkingPoint);
         }
-        for (int taskID = 0; taskID < mRunningTaskList.size(); taskID++) {
-            int pointID = mRunningTaskList.get(taskID).getGoal().getId();
-            int xPoint, yPoint;
-            xPoint = MapBase.getXFromId(pointID);
-            yPoint = MapBase.getYFromId(pointID);
-            ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(xPoint, yPoint);
+        for (Task runningTask: runningTaskList) {
+            int x = runningTask.getGoal().getX();
+            int y = runningTask.getGoal().getY();
+            ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(x, y);
             dataSeriesList.get(SymbolViewPriority.TASK_RUNNING).getData().add(checkingPoint);
         }
+
     }
 
     public void display() {
-        mScatterChart.setData(FXCollections.<XYChart.Series<Number, Number>>observableArrayList());
+        scatterChart.setData(FXCollections.<XYChart.Series<Number, Number>>observableArrayList());
         //Setting the data to scatter chart
         for (ScatterChart.Series<Number, Number> dataSeries: dataSeriesList) {
-            mScatterChart.getData().add(dataSeries);
+            scatterChart.getData().add(dataSeries);
         }
-
     }
 
 

@@ -1,22 +1,21 @@
 package sample.Manager;
 
-import sample.Creator.MapBaseCreator;
+import sample.Creator.MapCreator;
 import sample.Model.MapBase;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapManager {
-    private MapBaseCreator mapBaseCreator;
+    private MapCreator    mapCreator;
+    private List<MapBase> mapList   = new ArrayList<>();
 
-
-    private List<MapBase> mapList = new ArrayList<>();
-    public MapManager(MapBaseCreator mapBaseCreator) {
-        this.mapBaseCreator = mapBaseCreator;
+    public MapManager(MapCreator mapCreator) {
+        this.mapCreator = mapCreator;
         init();
     }
     private void init(){
         for (int i = 0; i < Context.Time.timeMax; i++) {
-            mapList.add(mapBaseCreator.getMapBaseClone());
+            mapList.add(mapCreator.getMapBaseClone());
         }
     }
 

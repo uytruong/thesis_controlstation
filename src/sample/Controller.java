@@ -11,7 +11,8 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
-import sample.Creator.MapBaseCreator;
+import sample.Algorithm.Assignment;
+import sample.Creator.MapCreator;
 import sample.Creator.RobotCreator;
 import sample.Creator.TaskCreator;
 import sample.Manager.Context;
@@ -27,8 +28,8 @@ import java.net.URL;
 import java.util.*;
 
 public class Controller implements Initializable {
-    private Random         random = new Random();
-    private MapBaseCreator mapBaseCreator = new MapBaseCreator();
+    private Random         random     = new Random();
+    private MapCreator     mapCreator = new MapCreator();
     private RobotCreator   robotCreator;
     private TaskCreator    taskCreator;
 
@@ -51,8 +52,8 @@ public class Controller implements Initializable {
      */
     public TextField txtRobotType;
     public TextField txtRobotHeading;
-    public TextField txtRobotStartPointX;
-    public TextField txtRobotStartPointY;
+    public TextField txtRobotStartX;
+    public TextField txtRobotStartY;
     public Button    btnCreateRobot;
     public TextField txtNumOfRandRobot;
     public TextField txtTypeOfRandRobot;
@@ -60,8 +61,8 @@ public class Controller implements Initializable {
      * Task
      */
     public TextField txtTaskType;
-    public TextField txtTaskGoalPointX;
-    public TextField txtTaskGoalPointY;
+    public TextField txtTaskGoalX;
+    public TextField txtTaskGoalY;
     public TextField txtTaskTimeAppear;
     public TextField txtTaskTimeExecute;
     public Button    btnCreateTask;
@@ -140,19 +141,19 @@ public class Controller implements Initializable {
             int distanceShelfToShelf = Integer.parseInt(txtDistanceShelfToShelf.getText());
             int distanceBoundToShelf = Integer.parseInt(txtDistanceBoundToShelf.getText());
 
-            mapBaseCreator.getShelf().setxLength(shelfXLength);
-            mapBaseCreator.getShelf().setyLength(shelfYLength);
-            mapBaseCreator.getShelf().setxNumber(shelfEachRowNumber);
-            mapBaseCreator.getShelf().setyNumber(shelfEachColNumber);
-            mapBaseCreator.getDistance().setShelfToHorizontalShelf(distanceShelfToShelf);
-            mapBaseCreator.getDistance().setShelfToVerticalShelf(distanceShelfToShelf);
-            mapBaseCreator.getDistance().setBoundToHorizontalShelf(distanceBoundToShelf);
-            mapBaseCreator.getDistance().setBoundToVerticalShelf(distanceBoundToShelf);
-            mapBaseCreator.update();
+            mapCreator.getShelf().setxLength(shelfXLength);
+            mapCreator.getShelf().setyLength(shelfYLength);
+            mapCreator.getShelf().setxNumber(shelfEachRowNumber);
+            mapCreator.getShelf().setyNumber(shelfEachColNumber);
+            mapCreator.getDistance().setShelfToHorizontalShelf(distanceShelfToShelf);
+            mapCreator.getDistance().setShelfToVerticalShelf(distanceShelfToShelf);
+            mapCreator.getDistance().setBoundToHorizontalShelf(distanceBoundToShelf);
+            mapCreator.getDistance().setBoundToVerticalShelf(distanceBoundToShelf);
+            mapCreator.create();
 
-            mapManager   = new MapManager(mapBaseCreator);
-            robotCreator = new RobotCreator(mapBaseCreator, random);
-            taskCreator  = new TaskCreator(mapBaseCreator, random);
+            mapManager   = new MapManager(mapCreator);
+            robotCreator = new RobotCreator(mapCreator, random);
+            taskCreator  = new TaskCreator(mapCreator, random);
             robotManager = new RobotManager(robotCreator, mapManager);
             taskManager  = new TaskManager(taskCreator);
 
@@ -160,18 +161,18 @@ public class Controller implements Initializable {
         }
     }
     public void btnCreateRobotClick(ActionEvent event) {
-        boolean isEmpty = txtRobotType.getText().isEmpty()        | txtRobotHeading.getText().isEmpty()
-                        | txtRobotStartPointX.getText().isEmpty() | txtRobotStartPointY.getText().isEmpty();
+        boolean isEmpty = txtRobotType.getText().isEmpty()   | txtRobotHeading.getText().isEmpty()
+                        | txtRobotStartX.getText().isEmpty() | txtRobotStartY.getText().isEmpty();
         if (isEmpty) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert robot's properties!");
             alert.showAndWait();
         } else {
             int robotType         = Integer.parseInt(txtRobotType.getText());
-            int robotHeading      = Integer.parseInt(txtRobotHeading.getText());
-            int robotStartPointX  = Integer.parseInt(txtRobotStartPointX.getText());
-            int robotStartPointY  = Integer.parseInt(txtRobotStartPointY.getText());
-            Point robotStartPoint = new Point(robotStartPointX, robotStartPointY, robotHeading);
-            if (robotCreator.createRobot(new Robot(robotType, robotStartPoint))) {
+            int robotStartHeading = Integer.parseInt(txtRobotHeading.getText());
+            int robotStartX       = Integer.parseInt(txtRobotStartX.getText());
+            int robotStartY       = Integer.parseInt(txtRobotStartY.getText());
+            Point robotStartPoint = new Point(robotStartX, robotStartY, robotStartHeading);
+            if (robotCreator.create(new Robot(robotType, robotStartPoint))) {
                 updateAndView(0);
             }
         }
@@ -185,13 +186,13 @@ public class Controller implements Initializable {
             int robotNumOfRand  = Integer.parseInt(txtNumOfRandRobot.getText());
             int robotTypeOfRand = Integer.parseInt(txtTypeOfRandRobot.getText());
 
-            robotCreator.createRobotRandom(robotNumOfRand, robotTypeOfRand);
+            robotCreator.createRandom(robotNumOfRand, robotTypeOfRand);
             updateAndView(0);
         }
     }
     public void btnCreateTaskClick(ActionEvent event) {
-        boolean isEmpty = txtTaskType.getText().isEmpty()       | txtTaskGoalPointX.getText().isEmpty() |
-                          txtTaskGoalPointY.getText().isEmpty() | txtTaskTimeAppear.getText().isEmpty() |
+        boolean isEmpty = txtTaskType.getText().isEmpty()       | txtTaskGoalX.getText().isEmpty() |
+                          txtTaskGoalY.getText().isEmpty() | txtTaskTimeAppear.getText().isEmpty() |
                           txtTaskTimeExecute.getText().isEmpty();
 
         if (isEmpty) {
@@ -201,12 +202,11 @@ public class Controller implements Initializable {
             int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
             int taskTimeAppear  = Integer.parseInt(txtTaskTimeAppear.getText());
             int taskType        = Integer.parseInt(txtTaskType.getText());
-            int taskGoalPointX  = Integer.parseInt(txtTaskGoalPointX.getText());
-            int taskGoalPointY  = Integer.parseInt(txtTaskGoalPointY.getText());
-            int taskGoalId      = MapBase.getIdFromXY(taskGoalPointX,taskGoalPointY);
-            Point taskGoalPoint = new Point(taskGoalId);
+            int taskGoalX       = Integer.parseInt(txtTaskGoalX.getText());
+            int taskGoalY       = Integer.parseInt(txtTaskGoalY.getText());
+            Point taskGoalPoint = new Point(taskGoalX,taskGoalY);
 
-            if (taskCreator.createTask(new Task(taskType, taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
+            if (taskCreator.create(new Task(taskType, taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
                 updateAndView(0);
             }
         }
@@ -217,10 +217,10 @@ public class Controller implements Initializable {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert input values of task randoming!");
             alert.showAndWait();
         } else {
-            int taskNumOfRand = Integer.parseInt(txtNumOfRandTask.getText());
+            int taskNumOfRand  = Integer.parseInt(txtNumOfRandTask.getText());
             int taskTypeOfRand = Integer.parseInt(txtTypeOfRandTask.getText());
 
-            taskCreator.createTaskRandom(taskNumOfRand, taskTypeOfRand);
+            taskCreator.createRandom(taskNumOfRand, taskTypeOfRand);
             updateAndView(0);
         }
     }
@@ -233,9 +233,16 @@ public class Controller implements Initializable {
             Context.Time.time++;
             updateAndView(Context.Time.time);
 
+            if(Context.Time.time == 2){
+                Assignment assignment = new Assignment(robotManager, taskManager);
+                assignment.calculation(2);
+                assignment.printResult();
+            }
             txtTime.setText(Integer.toString(Context.Time.time));
 
-
+            if (taskManager.isAssignable()){
+                /**Create Thread*/
+            }
 
             }));
         timeline.setCycleCount(Context.Time.timeMax);
@@ -244,11 +251,11 @@ public class Controller implements Initializable {
 
     public void btnTestClick(ActionEvent event) {
         List<Robot> robotList = robotManager.getRobotList();
-        robotList.get(2).addPoint(new Point(3,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPoint(new Point(4,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPoint(new Point(5,Constant.PointStatus.ROBOT_DOWN));
-        robotList.get(2).addPoint(new Point(6,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPoint(new Point(7,Constant.PointStatus.ROBOT_UP));
+        robotList.get(2).addPointToPointList(new Point(3,0,Constant.PointStatus.ROBOT_RIGHT));
+        robotList.get(2).addPointToPointList(new Point(4,0,Constant.PointStatus.ROBOT_RIGHT));
+        robotList.get(2).addPointToPointList(new Point(5,0,Constant.PointStatus.ROBOT_DOWN));
+        robotList.get(2).addPointToPointList(new Point(6,0,Constant.PointStatus.ROBOT_RIGHT));
+        robotList.get(2).addPointToPointList(new Point(7,0,Constant.PointStatus.ROBOT_UP));
     }
 
 
@@ -288,8 +295,8 @@ public class Controller implements Initializable {
             Task task = taskCreator.getTaskList().get(idx);
             int taskIDView          = task.getId();
             int taskTypeView        = task.getType();
-            int taskXView           = MapBase.getXFromId(task.getGoal().getId());
-            int taskYView           = MapBase.getYFromId(task.getGoal().getId());
+            int taskXView           = task.getGoal().getX();
+            int taskYView           = task.getGoal().getY();
             int taskAppearTimeView  = task.getTimeAppear();
             int taskExecuteTimeView = task.getTimeExecute();
             int taskStatus          = task.getStatus();
@@ -322,8 +329,8 @@ public class Controller implements Initializable {
             Robot robot       = robotCreator.getRobotList().get(idx);
             int robotIDView   = robot.getId();
             int robotTypeView = robot.getType();
-            int robotXView    = MapBase.getXFromId(robot.getPoint(timeUpdate).getId());
-            int robotYView    = MapBase.getYFromId(robot.getPoint(timeUpdate).getId());
+            int robotXView    = robot.getPoint(timeUpdate).getX();
+            int robotYView    = robot.getPoint(timeUpdate).getY();
             int robotHeading  = robot.getHeading(timeUpdate);
             String robotHeadingView;
             switch (robotHeading){

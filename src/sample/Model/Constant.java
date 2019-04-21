@@ -9,7 +9,6 @@ public class Constant {
         public static final int ROBOT_RIGHT = 3;
         public static final int ROBOT_UP    = 4;
         public static final int ROBOT_DOWN  = 5;
-        public static final int DONTCARE    = 6;
     }
 
     public class TaskStatus{

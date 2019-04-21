@@ -15,13 +15,13 @@ public class TaskCreator {
     private MapBase    mapBase;
     private List<Task> taskList = new ArrayList<>();
 
-    public TaskCreator(MapBaseCreator mapBaseCreator, Random random) {
-        this.mapBase = mapBaseCreator.getMapBase();
-        this.random = random;
+    public TaskCreator(MapCreator mapCreator, Random random) {
+        this.mapBase = mapCreator.getMapBase();
+        this.random  = random;
     }
 
-    public boolean createTask(Task task) {
-        if (mapBase.getStatus(task.getGoal()) == Constant.PointStatus.SHELF){
+    public boolean create(Task task) {
+        if (mapBase.getStatus(task.getGoal().getX(),task.getGoal().getY()) == Constant.PointStatus.SHELF){
             return false;
         }
         else {
@@ -31,13 +31,15 @@ public class TaskCreator {
         }
     }
 
-    public void createTaskRandom(int numberOfTasks, int typeofTasks){
+    public void createRandom(int numberOfTasks, int typeOfTasks){
         if ((taskList.size() + numberOfTasks) >= Context.TaskCreator.numberTaskMax){
             numberOfTasks = Context.TaskCreator.numberTaskMax - taskList.size();
         }
         for (int i = 0; i < numberOfTasks; i++) {
             while (true){
-                if (createTask(new Task(typeofTasks,getRandomTimeExecute(),getRandomTimeAppear(), new Point(getRandomTaskPointId())))) {
+                Point goal = new Point(getRandomTaskPointX(),getRandomTaskPointY());
+                Task  task = new Task(typeOfTasks,getRandomTimeExecute(),getRandomTimeAppear(),goal);
+                if (create(task)) {
                     break;
                 }
             }
@@ -49,8 +51,11 @@ public class TaskCreator {
     private int getRandomTimeExecute(){
         return random.nextInt(Context.TaskCreator.timeExecuteMax);
     }
-    private int getRandomTaskPointId(){
-        return random.nextInt(MapBase.xLength*MapBase.yLength);
+    private int getRandomTaskPointX(){
+        return random.nextInt(MapBase.xLength);
+    }
+    private int getRandomTaskPointY(){
+        return random.nextInt(MapBase.yLength);
     }
 
     public List<Task> getTaskList() {

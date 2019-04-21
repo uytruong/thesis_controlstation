@@ -1,59 +1,47 @@
 package sample.Model;
 
-import sample.Creator.MapBaseCreator;
-
-
+import sample.Creator.MapCreator;
 
 public class MapBase {
-    private Point[][] pointMatrix;
     public static int xLength, yLength;
+    private PointInfo[][] pointInfoMatrix;
 
     public MapBase() {}
-    public MapBase(MapBaseCreator mapBaseCreator){
-        this.pointMatrix = mapBaseCreator.getMapBase().getPointMatrixClone();
+    public MapBase(MapCreator mapCreator){
+        this.pointInfoMatrix = mapCreator.getMapBase().getPointInfoMatrixClone();
     }
 
-    public Point[][] getPointMatrix() {
-        return pointMatrix;
+
+    public PointInfo[][] getPointInfoMatrix() {
+        return pointInfoMatrix;
     }
-    public void setPointMatrix(Point[][] pointMatrix) {
-        this.pointMatrix = pointMatrix;
+    public void setPointInfoMatrix(PointInfo[][] pointInfoMatrix) {
+        this.pointInfoMatrix = pointInfoMatrix;
     }
 
-    public int getStatus(int id){ return getPoint(id).getStatus();}
-    public void setStatus(int id, int status){ getPoint(id).setStatus(status);}
-    public int getStatus(Point point){ return getPoint(point.getId()).getStatus();}
 
-
-
-
-
-
-    public Point getPoint(int id){
-        return pointMatrix[getXFromId(id)][getYFromId(id)];
+    public void setStatus(int x, int y, int status){ getPointInfo(x,y).setStatus(status);}
+    public int getStatus(int x, int y){ return getPointInfo(x,y).getStatus();}
+    public PointInfo getPointInfo(int x, int y){
+        return pointInfoMatrix[x][y];
     }
-    public Point[][] getPointMatrixClone(){
-        Point[][] cloneMatrix = new Point[pointMatrix.length][pointMatrix[0].length];
-        for(int i=0; i<pointMatrix.length; i++){
-            for(int j=0; j<pointMatrix[i].length; j++) {
-                cloneMatrix[i][j] = new Point(pointMatrix[i][j]);
+    public void setPointInfo(int x, int y, PointInfo pointInfo){
+        pointInfoMatrix[x][y] = pointInfo;
+    }
+
+    private PointInfo[][] getPointInfoMatrixClone(){
+        PointInfo[][] cloneMatrix = new PointInfo[pointInfoMatrix.length][pointInfoMatrix[0].length];
+        for(int i = 0; i< pointInfoMatrix.length; i++){
+            for(int j = 0; j< pointInfoMatrix[i].length; j++) {
+                cloneMatrix[i][j] = new PointInfo(pointInfoMatrix[i][j]);
             }
         }
         return cloneMatrix;
     }
 
-    public static int getIdFromXY(int x, int y){
-        return (x + y*xLength);
-    }
-    public static int getXFromId(int id){
-        return id%xLength;
-    }
-    public static int getYFromId(int id){
-        return id/xLength;
-    }
-    public static int getEstimateCost(Point start,Point goal){
-        int deltaX = getXFromId(start.getId()) - getXFromId(goal.getId());
-        int deltaY = getYFromId(start.getId()) - getYFromId(goal.getId());
+    public static int getEstimatePathCost(Point start, Point goal){
+        int deltaX = start.getX() - goal.getX();
+        int deltaY = start.getY() - goal.getY();
         return (Math.abs(deltaX)+Math.abs(deltaY));
     }
 

@@ -11,12 +11,9 @@ public class Task {
         this.timeExecute = timeExecute;
         this.timeAppear  = timeAppear;
         this.goal        = goal;
-        init();
+        this.status      = Constant.TaskStatus.NEW;
     }
 
-    private void init(){
-        this.status    = Constant.TaskStatus.NEW;
-    }
 
     public int getId() {
         return id;
@@ -55,8 +52,4 @@ public class Task {
         this.status = status;
     }
 
-    public void printInfo(){
-        String info = "Task id = " + id + "; type = " + type + "; goal at: id = " + goal.getId() + "; status = " + status;
-        System.out.println(info);
-    }
 }

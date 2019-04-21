@@ -19,22 +19,22 @@ public class RobotManager {
             if (robot.getLastTimeBusy() <= timeUpdate) {
                 robot.update(timeUpdate);
                 for (int i = robot.getLastTimeUpdateToMap()+1; i <= timeUpdate; i++) {
-                    mapManager.getMapList().get(i).setStatus(robot.getPoint(i).getId(), robot.getPoint(i).getStatus());
+                    mapManager.getMap(i).setStatus(robot.getPoint(i).getX(),robot.getPoint(i).getY(), robot.getPoint(i).getStatus());
                 }
                 robot.setLastTimeUpdateToMap(timeUpdate);
             }
             else{
                 for (int i = robot.getLastTimeUpdateToMap()+1; i <= robot.getLastTimeBusy(); i++) {
-                    mapManager.getMapList().get(i).setStatus(robot.getPoint(i).getId(),robot.getPoint(i).getStatus());
+                    mapManager.getMap(i).setStatus(robot.getPoint(i).getX(),robot.getPoint(i).getY(),robot.getPoint(i).getStatus());
                 }
                 robot.setLastTimeUpdateToMap(robot.getLastTimeBusy());
             }
         }
     }
 
+
+
     public List<Robot> getRobotList() {
         return robotList;
     }
-
-
 }

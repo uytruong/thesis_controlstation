@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import sample.Model.Point;
+import sample.Model.PointInfo;
 
 
 public class Main extends Application {
@@ -18,7 +20,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
 
-
+        PointInfo pointInfo = new Point();
     }
 
     public static void main(String[] args) {
