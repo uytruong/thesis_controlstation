@@ -1,7 +1,6 @@
 package sample.Manager;
 
 import sample.Creator.TaskCreator;
-import sample.Model.Constant;
 import sample.Model.Point;
 import sample.Model.Task;
 
@@ -27,7 +26,7 @@ public class TaskManager {
             - there is no task in readyTaskList having same Goal
          */
         for (Task task: taskList) {
-            if ((task.getStatus() == Constant.TaskStatus.NEW) & (task.getTimeAppear() <= timeUpdate)){
+            if ((task.getStatus() == Task.Status.NEW) & (task.getTimeAppear() <= timeUpdate)){
                 boolean valid = true;
                 for (Task runningTask: runningTaskList) {
                     if(Point.isCoincident(task.getGoal(), runningTask.getGoal()) ){
@@ -42,17 +41,17 @@ public class TaskManager {
                     }
                 }
                 if(valid){
-                    task.setStatus(Constant.TaskStatus.READY);
+                    task.setStatus(Task.Status.READY);
                     readyTaskList.add(task);
                 }
             }
         }
     }
 
-    public void changeTaskStatus(int id, int status){
+    public void changeTaskStatus(int id, Task.Status status){
         Task task = taskList.get(id);
 
-        if ((status == Constant.TaskStatus.RUNNING) & (task.getStatus() == Constant.TaskStatus.READY)){
+        if ((status == Task.Status.RUNNING) & (task.getStatus() == Task.Status.READY)){
             /* Convert task <status> from READY to RUNNING then add task to <runningTaskList>
              * then remove task from <readyTaskList>*/
             task.setStatus(status);
@@ -66,8 +65,8 @@ public class TaskManager {
             }
 
         }
-        //& (task.getStatus() == Constant.TaskStatus.RUNNING)
-        else if ((status == Constant.TaskStatus.DONE)  ){
+        //& (task.getStatus() == Task.Status_.RUNNING)
+        else if ((status == Task.Status.DONE)  ){
             /* Convert task <status> from RUNNING to DONE, and also counting number of tasks wereDone;
              * then remove task from <runningTaskList> */
             task.setStatus(status);

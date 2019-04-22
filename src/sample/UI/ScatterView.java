@@ -5,7 +5,6 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import sample.Manager.MapManager;
 import sample.Manager.TaskManager;
-import sample.Model.Constant;
 import sample.Model.PointInfo;
 import sample.Model.Task;
 
@@ -47,19 +46,19 @@ public class ScatterView {
             for (int y = 0; y < pointInfoMatrices[0].length; y++) {
                 ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(x, y);
                 switch (pointInfoMatrices[x][y].getStatus()) {
-                    case Constant.PointStatus.SHELF:
+                    case SHELF:
                         dataSeriesList.get(SymbolViewPriority.SHELF).getData().add(checkingPoint);
                         break;
-                    case Constant.PointStatus.ROBOT_UP:
+                    case ROBOT_UP:
                         dataSeriesList.get(SymbolViewPriority.ROBOT_UP).getData().add(checkingPoint);
                         break;
-                    case Constant.PointStatus.ROBOT_DOWN:
+                    case ROBOT_DOWN:
                         dataSeriesList.get(SymbolViewPriority.ROBOT_DOWN).getData().add(checkingPoint);
                         break;
-                    case Constant.PointStatus.ROBOT_LEFT:
+                    case ROBOT_LEFT:
                         dataSeriesList.get(SymbolViewPriority.ROBOT_LEFT).getData().add(checkingPoint);
                         break;
-                    case Constant.PointStatus.ROBOT_RIGHT:
+                    case ROBOT_RIGHT:
                         dataSeriesList.get(SymbolViewPriority.ROBOT_RIGHT).getData().add(checkingPoint);
                         break;
                 }

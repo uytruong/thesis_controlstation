@@ -17,10 +17,9 @@ public class Point extends PointInfo {
         this.x = point.getX();
         this.y = point.getY();
         this.setStatus(point.getStatus());
-        this.setRobotId(point.getRobotId());
     }
 
-    public Point(int x, int y, int status) {
+    public Point(int x, int y, Status status) {
         super(status);
         this.x = x;
         this.y = y;

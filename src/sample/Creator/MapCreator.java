@@ -1,6 +1,5 @@
 package sample.Creator;
 
-import sample.Model.Constant;
 import sample.Model.MapBase;
 import sample.Model.PointInfo;
 
@@ -26,7 +25,7 @@ public class MapCreator {
         mapBase.setPointInfoMatrix(new PointInfo[MapBase.xLength][MapBase.yLength]);
         for (int i = 0; i < bound.getxLength() ; i++)
             for (int j = 0; j < bound.getyLength(); j++)
-                mapBase.getPointInfoMatrix()[i][j] = new PointInfo(Constant.PointStatus.NONE);
+                mapBase.getPointInfoMatrix()[i][j] = new PointInfo(PointInfo.Status.NONE);
 
 
         for (int i = 0; i < shelf.getxLength(); i++) {
@@ -35,7 +34,7 @@ public class MapCreator {
                     for (int l = 0; l < shelf.getyNumber(); l++) {
                         int x = distance.getBoundToVerticalShelf() + i + (distance.getShelfToVerticalShelf()+shelf.getxLength())*k;
                         int y = distance.getBoundToHorizontalShelf() + j + (distance.getShelfToHorizontalShelf()+shelf.getyLength())*l;
-                        mapBase.getPointInfo(x,y).setStatus(Constant.PointStatus.SHELF);
+                        mapBase.getPointInfo(x,y).setStatus(PointInfo.Status.SHELF);
                     }
                 }
             }

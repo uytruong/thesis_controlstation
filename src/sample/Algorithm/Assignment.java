@@ -38,26 +38,37 @@ public class Assignment {
         for (int i = 0; i < robotList.size() ; i++) {
             Robot robot = robotList.get(i);
             for (int j = 0; j < readyTaskList.size(); j++) {
-                costMatrix[i][j] += MapBase.getEstimateCost(robot.getPoint(robot.getLastTimeBusy()), readyTaskList.get(j).getGoal());
+                costMatrix[i][j] += MapBase.getEstimatePathCost(robot.getPoint(robot.getLastTimeBusy()), readyTaskList.get(j).getGoal());
             }
         }
     }
 
 
-    public void execute(int time){
+    public void calculation(int time){
         initializeCostMatrix(time);
         HungarianBipartiteMatching hungarian = new HungarianBipartiteMatching(costMatrix);
         assign = hungarian.execute();
+
+        /**convert index of readyTaskList into taskId*/
+        for (int i = 0; i < assign.length; i++) {
+            if (assign[i]>=0)
+                assign[i] = readyTaskList.get(assign[i]).getId();
+        }
+
     }
 
-    public void printCostMatrix(){
+    public void printResult(){
         for (int i = 0; i < costMatrix.length; i++) {
             for (int j = 0; j < costMatrix[0].length; j++) {
-                System.out.println(costMatrix[i][j]+"-");
+                System.out.print(costMatrix[i][j]+"-");
             }
             System.out.println();
         }
+        for (int i = 0; i < assign.length; i++) {
+            System.out.print(assign[i] + " - ");
+        }
     }
+
 
 
     public int[] getAssign() {

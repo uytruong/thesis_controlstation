@@ -1,10 +1,7 @@
 package sample.Creator;
 
 import sample.Manager.Context;
-import sample.Model.Constant;
-import sample.Model.MapBase;
-import sample.Model.Point;
-import sample.Model.Task;
+import sample.Model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +18,7 @@ public class TaskCreator {
     }
 
     public boolean create(Task task) {
-        if (mapBase.getStatus(task.getGoal().getX(),task.getGoal().getY()) == Constant.PointStatus.SHELF){
+        if (mapBase.getStatus(task.getGoal().getX(),task.getGoal().getY()) == PointInfo.Status.SHELF){
             return false;
         }
         else {

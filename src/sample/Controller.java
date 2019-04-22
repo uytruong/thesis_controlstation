@@ -167,10 +167,11 @@ public class Controller implements Initializable {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert robot's properties!");
             alert.showAndWait();
         } else {
-            int robotType         = Integer.parseInt(txtRobotType.getText());
-            int robotStartHeading = Integer.parseInt(txtRobotHeading.getText());
-            int robotStartX       = Integer.parseInt(txtRobotStartX.getText());
-            int robotStartY       = Integer.parseInt(txtRobotStartY.getText());
+            int robotType                      = Integer.parseInt(txtRobotType.getText());
+            int robotStartX                    = Integer.parseInt(txtRobotStartX.getText());
+            int robotStartY                    = Integer.parseInt(txtRobotStartY.getText());
+            PointInfo.Status robotStartHeading = PointInfo.Status.getEnum(Integer.parseInt(txtRobotHeading.getText()));
+
             Point robotStartPoint = new Point(robotStartX, robotStartY, robotStartHeading);
             if (robotCreator.create(new Robot(robotType, robotStartPoint))) {
                 updateAndView(0);
@@ -192,7 +193,7 @@ public class Controller implements Initializable {
     }
     public void btnCreateTaskClick(ActionEvent event) {
         boolean isEmpty = txtTaskType.getText().isEmpty()       | txtTaskGoalX.getText().isEmpty() |
-                          txtTaskGoalY.getText().isEmpty() | txtTaskTimeAppear.getText().isEmpty() |
+                          txtTaskGoalY.getText().isEmpty()      | txtTaskTimeAppear.getText().isEmpty() |
                           txtTaskTimeExecute.getText().isEmpty();
 
         if (isEmpty) {
@@ -251,11 +252,11 @@ public class Controller implements Initializable {
 
     public void btnTestClick(ActionEvent event) {
         List<Robot> robotList = robotManager.getRobotList();
-        robotList.get(2).addPointToPointList(new Point(3,0,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPointToPointList(new Point(4,0,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPointToPointList(new Point(5,0,Constant.PointStatus.ROBOT_DOWN));
-        robotList.get(2).addPointToPointList(new Point(6,0,Constant.PointStatus.ROBOT_RIGHT));
-        robotList.get(2).addPointToPointList(new Point(7,0,Constant.PointStatus.ROBOT_UP));
+        robotList.get(2).addPointToPointList(new Point(3,0,PointInfo.Status.ROBOT_RIGHT));
+        robotList.get(2).addPointToPointList(new Point(4,0,PointInfo.Status.ROBOT_RIGHT));
+        robotList.get(2).addPointToPointList(new Point(5,0,PointInfo.Status.ROBOT_DOWN));
+        robotList.get(2).addPointToPointList(new Point(6,0,PointInfo.Status.ROBOT_RIGHT));
+        robotList.get(2).addPointToPointList(new Point(7,0,PointInfo.Status.ROBOT_UP));
     }
 
 
@@ -299,16 +300,16 @@ public class Controller implements Initializable {
             int taskYView           = task.getGoal().getY();
             int taskAppearTimeView  = task.getTimeAppear();
             int taskExecuteTimeView = task.getTimeExecute();
-            int taskStatus          = task.getStatus();
+            Task.Status taskStatus  = task.getStatus();
             String taskStatusView;
             switch (taskStatus){
-                case Constant.TaskStatus.NEW:
+                case NEW:
                     taskStatusView = "NEW";
                     break;
-                case Constant.TaskStatus.READY:
+                case READY:
                     taskStatusView = "READY";
                     break;
-                case Constant.TaskStatus.RUNNING:
+                case RUNNING:
                     taskStatusView = "RUNNING";
                     break;
                 default:
@@ -331,16 +332,16 @@ public class Controller implements Initializable {
             int robotTypeView = robot.getType();
             int robotXView    = robot.getPoint(timeUpdate).getX();
             int robotYView    = robot.getPoint(timeUpdate).getY();
-            int robotHeading  = robot.getHeading(timeUpdate);
+            PointInfo.Status robotHeading  = robot.getHeading(timeUpdate);
             String robotHeadingView;
             switch (robotHeading){
-                case Constant.RobotPointHeading.UP:
+                case ROBOT_UP:
                     robotHeadingView = "UP";
                     break;
-                case Constant.RobotPointHeading.DOWN:
+                case ROBOT_DOWN:
                     robotHeadingView = "DOWN";
                     break;
-                case Constant.RobotPointHeading.LEFT:
+                case ROBOT_LEFT:
                     robotHeadingView = "LEFT";
                     break;
                 default:

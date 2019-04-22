@@ -1,17 +1,37 @@
 package sample.Model;
 
 public class Task {
+    public enum Status{
+        NEW(0),
+        READY(1),
+        RUNNING(2),
+        DONE(3);
+
+        private final int value;
+
+        Status(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+
+        public static Status getEnum(int value){ return Status.values()[value];}
+    }
+
+
     private int id, type;
     private int timeExecute, timeAppear;
     private Point goal;
-    private int status;
+    private Status status;
 
     public Task(int type, int timeExecute, int timeAppear, Point goal) {
         this.type        = type;
         this.timeExecute = timeExecute;
         this.timeAppear  = timeAppear;
         this.goal        = goal;
-        this.status      = Constant.TaskStatus.NEW;
+        this.status      = Status.NEW;
     }
 
 
@@ -45,10 +65,10 @@ public class Task {
     public void setGoal(Point goal) {
         this.goal = goal;
     }
-    public int getStatus() {
+    public Status getStatus() {
         return status;
     }
-    public void setStatus(int status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

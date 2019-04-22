@@ -2,6 +2,9 @@ package sample.Model;
 
 import sample.Creator.MapCreator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MapBase {
     public static int xLength, yLength;
     private PointInfo[][] pointInfoMatrix;
@@ -20,14 +23,12 @@ public class MapBase {
     }
 
 
-    public void setStatus(int x, int y, int status){ getPointInfo(x,y).setStatus(status);}
-    public int getStatus(int x, int y){ return getPointInfo(x,y).getStatus();}
+    public void setStatus(int x, int y, PointInfo.Status status){ getPointInfo(x,y).setStatus(status);}
+    public PointInfo.Status getStatus(int x, int y){ return getPointInfo(x,y).getStatus();}
     public PointInfo getPointInfo(int x, int y){
         return pointInfoMatrix[x][y];
     }
-    public void setPointInfo(int x, int y, PointInfo pointInfo){
-        pointInfoMatrix[x][y] = pointInfo;
-    }
+
 
     private PointInfo[][] getPointInfoMatrixClone(){
         PointInfo[][] cloneMatrix = new PointInfo[pointInfoMatrix.length][pointInfoMatrix[0].length];
@@ -45,38 +46,19 @@ public class MapBase {
         return (Math.abs(deltaX)+Math.abs(deltaY));
     }
 
-    public static Point getForwardPoint(Point point){
-        int x = point.getX();
-        int y = point.getY();
-        int h = point.getStatus();
-        Point fwPoint = new Point(point);
-        switch (h){
-            case Constant.PointStatus.ROBOT_RIGHT:
-                if(x == xLength){return null;}
-                else{
-                    fwPoint.setX(x+1);
-                }
-                break;
-            case Constant.PointStatus.ROBOT_LEFT:
-                if(x == 0){return null;}
-                else{
-                    fwPoint.setX(x-1);
-                }
-                break;
-            case Constant.PointStatus.ROBOT_UP:
-                if(y == yLength){return null;}
-                else{
-                    fwPoint.setY(y+1);
-                }
-                break;
-            default:
-                if(y == 0){return null;}
-                else{
-                    fwPoint.setY(y-1);
-                }
-                break;
+    public static List<Node> getNeighborNodeList(Node node){
+        List<Node> neighborNodeList = new ArrayList<>();
+
+        Motion.Action[] suitableActions = Motion.getSuitableActions(node.getActionToGetThis());
+
+        for (int i = 0; i < suitableActions.length; i++) {
         }
-        return fwPoint;
+
+
+
+
+
+        return neighborNodeList;
     }
 
 

@@ -35,7 +35,7 @@ public class Robot {
     public int getLastTimeBusy() {
         return pointList.size()-1;
     }
-    public int getHeading(int time) {
+    public PointInfo.Status getHeading(int time) {
         return pointList.get(time).getStatus();
     }
     public Point getPoint(int time){

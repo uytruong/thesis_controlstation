@@ -19,10 +19,10 @@ public class RobotCreator {
     }
 
     public boolean create(Robot robot){
-        if ((robot.getPoint(0).getStatus() != Constant.RobotPointHeading.DOWN) &
-            (robot.getPoint(0).getStatus() != Constant.RobotPointHeading.UP)   &
-            (robot.getPoint(0).getStatus() != Constant.RobotPointHeading.LEFT) &
-            (robot.getPoint(0).getStatus() != Constant.RobotPointHeading.RIGHT)){
+        if ((robot.getPoint(0).getStatus() != PointInfo.Status.ROBOT_DOWN) &
+            (robot.getPoint(0).getStatus() != PointInfo.Status.ROBOT_UP)   &
+            (robot.getPoint(0).getStatus() != PointInfo.Status.ROBOT_LEFT) &
+            (robot.getPoint(0).getStatus() != PointInfo.Status.ROBOT_RIGHT)){
             return false;
         }
 
@@ -31,7 +31,7 @@ public class RobotCreator {
                 return false;
         }
 
-        if (mapBase.getStatus(robot.getPoint(0).getX(), robot.getPoint(0).getY()) == Constant.PointStatus.NONE){
+        if (mapBase.getStatus(robot.getPoint(0).getX(), robot.getPoint(0).getY()) == PointInfo.Status.NONE){
             robot.setId(robotList.size());
             robotList.add(robot);
             return true;
@@ -56,8 +56,9 @@ public class RobotCreator {
     private int getRandomInt(int min, int max){
         return random.nextInt(max-min+1)+min;
     }
-    private int getRandomHeading(){
-        return getRandomInt(Constant.RobotPointHeading.LEFT, Constant.RobotPointHeading.DOWN);
+    private PointInfo.Status getRandomHeading(){
+        int status = getRandomInt(PointInfo.Status.ROBOT_UP.getValue(), PointInfo.Status.ROBOT_RIGHT.getValue());
+        return PointInfo.Status.getEnum(status);
     }
     private int getRandomX(){
         return random.nextInt(MapBase.xLength);
