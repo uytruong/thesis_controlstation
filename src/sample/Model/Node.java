@@ -1,5 +1,8 @@
 package sample.Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Node extends Point {
     private Motion.Action actionToGetThis;
 
@@ -8,7 +11,7 @@ public class Node extends Point {
     private Node previousNode;
 
     private Point goal;
-    private int timeArrived, timeStay;
+    private int timeArrived;
 
     private Node(){
     }
@@ -31,6 +34,7 @@ public class Node extends Point {
         node.setGoal(goal);
 
         node.setActionToGetThis(action);
+        node.setTimeArrived(timeArrived+Motion.getActionTimeCost(action));
         node.setPreviousNode(this);
 
         node.updatehScore();
@@ -127,19 +131,42 @@ public class Node extends Point {
 
 
 
-
-
-
-
-
-
-
-
-
-    public void printInfo(){
-        String info = "x="+getX() +", y=" + getY() + ", h="+getStatus();
-        System.out.println(info);
+    public boolean isGoal(){
+        if ((actionToGetThis== Motion.Action.SPEED_UP) | (actionToGetThis == Motion.Action.SPEED_DOWN) |
+            (actionToGetThis== Motion.Action.MOVE_CONSTANT))
+            return false;
+        else
+            return ((isCoincident(this,goal)));
     }
+
+
+
+
+    public List<Point> getCorrespondPointList(){
+        List<Point> correspondPointList = new ArrayList<>();
+        switch (actionToGetThis){
+            case ROTATE_BACK:
+                correspondPointList.add(new Point(getX(),getY(),getNeighborNodeStatus(Motion.Action.ROTATE_RIGHT)));
+                break;
+            case SPEED_DOWN:
+                correspondPointList.add(new Point(this));
+                break;
+            case SPEED_UP:
+                correspondPointList.add(new Point(previousNode));
+                break;
+            case STEP:
+                correspondPointList.add(new Point(this));
+        }
+        correspondPointList.add(new Point(getX(),getY(),getStatus()));
+        return correspondPointList;
+    }
+
+
+
+
+
+
+
 
     public Motion.Action getActionToGetThis() {
         return actionToGetThis;
@@ -178,11 +205,5 @@ public class Node extends Point {
     }
     public void setTimeArrived(int timeArrived) {
         this.timeArrived = timeArrived;
-    }
-    public int getTimeStay() {
-        return timeStay;
-    }
-    public void setTimeStay(int timeStay) {
-        this.timeStay = timeStay;
     }
 }

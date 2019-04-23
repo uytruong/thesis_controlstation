@@ -46,21 +46,21 @@ public class Motion {
 
     public static int getActionPathCost(Action action){
         switch (action){
-            case SPEED_UP:   return 2;
-            case SPEED_DOWN: return 2;
-            case STEP:       return 2;
-            case ROTATE_BACK:return 2;
-            default:         return 1;
+            case NONE:          return 0;
+            case ROTATE_LEFT:   return 1;
+            case ROTATE_RIGHT:  return 1;
+            case MOVE_CONSTANT: return 1;
+            default:            return 2;
         }
     }
 
     public static int getActionTimeCost(Action action){
         switch (action){
-            case SPEED_UP:   return 2;
-            case SPEED_DOWN: return 2;
-            case STEP:       return 2;
-            case ROTATE_BACK:return 2;
-            default:         return 1;
+            case NONE:          return 1;
+            case ROTATE_LEFT:   return 1;
+            case ROTATE_RIGHT:  return 1;
+            case MOVE_CONSTANT: return 1;
+            default:            return 2;
         }
     }
 

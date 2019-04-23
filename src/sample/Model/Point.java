@@ -41,7 +41,10 @@ public class Point extends PointInfo {
     }
 
 
-
+    public void printInfo(){
+        String info = "x=" + x + ", y=" + y + ", status=" + getStatus();
+        System.out.println(info);
+    }
     /**
      * ===========================   STATIC PUBLIC METHODS =========================== *
      * */
