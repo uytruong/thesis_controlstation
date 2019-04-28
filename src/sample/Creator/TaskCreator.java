@@ -9,16 +9,16 @@ import java.util.Random;
 
 public class TaskCreator {
     private Random     random;
-    private MapBase    mapBase;
+    private final Map  map;
     private List<Task> taskList = new ArrayList<>();
 
     public TaskCreator(MapCreator mapCreator, Random random) {
-        this.mapBase = mapCreator.getMapBase();
+        this.map     = mapCreator.getMap();
         this.random  = random;
     }
 
     public boolean create(Task task) {
-        if (mapBase.getStatus(task.getGoal().getX(),task.getGoal().getY()) == PointInfo.Status.SHELF){
+        if (!map.getPointInfoByXY(task.getGoal().getX(),task.getGoal().getY()).isEmpty()){
             return false;
         }
         else {
@@ -29,8 +29,8 @@ public class TaskCreator {
     }
 
     public void createRandom(int numberOfTasks, int typeOfTasks){
-        if ((taskList.size() + numberOfTasks) >= Context.TaskCreator.numberTaskMax){
-            numberOfTasks = Context.TaskCreator.numberTaskMax - taskList.size();
+        if ((taskList.size() + numberOfTasks) >= Config.numberTaskMax){
+            numberOfTasks = Config.numberTaskMax - taskList.size();
         }
         for (int i = 0; i < numberOfTasks; i++) {
             while (true){
@@ -43,19 +43,26 @@ public class TaskCreator {
         }
     }
     private int getRandomTimeAppear(){
-        return random.nextInt(Context.TaskCreator.timeAppearMax);
+        return random.nextInt(Config.timeAppearMax);
     }
     private int getRandomTimeExecute(){
-        return random.nextInt(Context.TaskCreator.timeExecuteMax);
+        return random.nextInt(Config.timeExecuteMax);
     }
     private int getRandomTaskPointX(){
-        return random.nextInt(MapBase.xLength);
+        return random.nextInt(Map.xLength);
     }
     private int getRandomTaskPointY(){
-        return random.nextInt(MapBase.yLength);
+        return random.nextInt(Map.yLength);
     }
 
     public List<Task> getTaskList() {
         return taskList;
+    }
+
+
+    public static class Config {
+        public static int numberTaskMax  = 100;
+        public static int timeAppearMax  = 3;
+        public static int timeExecuteMax = 4;
     }
 }

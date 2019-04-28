@@ -3,7 +3,7 @@ package sample.Algorithm;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class HungarianBipartiteMatching
+public class Hungarian
 {
     private final double[][] costMatrix;
     private final int        rows, cols, dim;
@@ -14,7 +14,7 @@ public class HungarianBipartiteMatching
     private final int[]      parentWorkerByCommittedJob;
     private final boolean[]  committedWorkers;
 
-    public HungarianBipartiteMatching(double[][] costMatrix)
+    public Hungarian(double[][] costMatrix)
     {
         this.dim = Math.max(costMatrix.length, costMatrix[0].length);
         this.rows = costMatrix.length;

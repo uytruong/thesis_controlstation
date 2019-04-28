@@ -3,7 +3,7 @@ package sample.UI;
 import javafx.collections.FXCollections;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import sample.Manager.MapManager;
+import sample.Manager.MapData;
 import sample.Manager.TaskManager;
 import sample.Model.PointInfo;
 import sample.Model.Task;
@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScatterView {
-    private MapManager                   mapManager;
+    private MapData mapData;
     private TaskManager                  taskManager;
     private ScatterChart<Number, Number> scatterChart;
     private List<ScatterChart.Series<Number, Number>> dataSeriesList = new ArrayList<>();
 
 
-    public ScatterView(MapManager mapManager, TaskManager taskManager, ScatterChart<Number, Number> scatterChart) {
-        this.mapManager   = mapManager;
+    public ScatterView(MapData mapData, TaskManager taskManager, ScatterChart<Number, Number> scatterChart) {
+        this.mapData = mapData;
         this.taskManager  = taskManager;
         this.scatterChart = scatterChart;
         initDataSeriesList();
@@ -38,9 +38,9 @@ public class ScatterView {
         dataSeriesList.get(SymbolViewPriority.SHELF).setName("Shelf");
     }
 
-    public void prepareDataToDisplay(int time) {
+    private void prepareDataToDisplay(int time) {
         // Prepare MapBase data
-        PointInfo[][] pointInfoMatrices = mapManager.getMap(time).getPointInfoMatrix();
+        PointInfo[][] pointInfoMatrices = mapData.getMapByTime(time).getPointInfos();
 
         for (int x = 0; x < pointInfoMatrices.length; x++) {
             for (int y = 0; y < pointInfoMatrices[0].length; y++) {
@@ -84,7 +84,8 @@ public class ScatterView {
 
     }
 
-    public void display() {
+    public void display(int time) {
+        prepareDataToDisplay(time);
         scatterChart.setData(FXCollections.<XYChart.Series<Number, Number>>observableArrayList());
         //Setting the data to scatter chart
         for (ScatterChart.Series<Number, Number> dataSeries: dataSeriesList) {

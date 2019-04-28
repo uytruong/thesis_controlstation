@@ -11,15 +11,16 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
-import sample.Algorithm.Assignment;
+import sample.Algorithm.MultiPathPlanning;
 import sample.Creator.MapCreator;
 import sample.Creator.RobotCreator;
 import sample.Creator.TaskCreator;
 import sample.Manager.Context;
-import sample.Manager.MapManager;
+import sample.Manager.MapData;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
 import sample.Model.*;
+import sample.Model.Map;
 import sample.UI.ScatterView;
 import sample.UI.ViewModel.RobotViewModel;
 import sample.UI.ViewModel.TaskViewModel;
@@ -33,9 +34,12 @@ public class Controller implements Initializable {
     private RobotCreator   robotCreator;
     private TaskCreator    taskCreator;
 
-    private MapManager     mapManager;
+    private MapData        mapData;
     private RobotManager   robotManager;
     private TaskManager    taskManager;
+
+    private Timeline       timeline;
+    private Timeline       thread;
 
     /**
      * Shelf
@@ -57,6 +61,7 @@ public class Controller implements Initializable {
     public Button    btnCreateRobot;
     public TextField txtNumOfRandRobot;
     public TextField txtTypeOfRandRobot;
+    public Button    btnCreateRobotRandom;
     /**
      * Task
      */
@@ -68,6 +73,7 @@ public class Controller implements Initializable {
     public Button    btnCreateTask;
     public TextField txtNumOfRandTask;
     public TextField txtTypeOfRandTask;
+    public Button    btnCreateTaskRandom;
     /**
      * Robot TableView
      */
@@ -76,8 +82,8 @@ public class Controller implements Initializable {
     public TableColumn<RobotViewModel, Integer> tableColRobotType;
     public TableColumn<RobotViewModel, Integer> tableColRobotX;
     public TableColumn<RobotViewModel, Integer> tableColRobotY;
-    public TableColumn<RobotViewModel, String> tableColRobotHeading;
-    private ObservableList<RobotViewModel> robotObservableList = FXCollections.observableArrayList();
+    public TableColumn<RobotViewModel, String>  tableColRobotHeading;
+    private ObservableList<RobotViewModel>      robotObservableList = FXCollections.observableArrayList();
     /**
      * Task TableView
      */
@@ -88,52 +94,48 @@ public class Controller implements Initializable {
     public TableColumn<TaskViewModel, Integer> tableColTaskExecuteTime;
     public TableColumn<TaskViewModel, Integer> tableColTaskX;
     public TableColumn<TaskViewModel, Integer> tableColTaskY;
-    public TableColumn<TaskViewModel, String> tableColTaskStatus;
-    private ObservableList<RobotViewModel> taskObservableList = FXCollections.observableArrayList();
+    public TableColumn<TaskViewModel, String>  tableColTaskStatus;
+    private ObservableList<RobotViewModel>     taskObservableList = FXCollections.observableArrayList();
     /**
      * Scatter chart
      */
     public NumberAxis xAxis;
     public NumberAxis yAxis;
     public ScatterChart<Number, Number> scatterChart;
-
-
     /**
      * System
      * */
     public TextField txtRandomSeed;
-    public Button    btnSaveSystemConfig;
-
-    public Button    btnStartSimulation;
     public TextField txtTime;
     public TextField txtTimeMax;
+    public Button    btnStartSimulation;
+    public Button    btnSaveSystemConfig;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         xAxis.setAutoRanging(false);
         yAxis.setAutoRanging(false);
-
-
         initializeTextField();
         initializeTableView();
     }
-    public void btnSaveSimulationConfigClick(){
-        int randomSeed = Integer.parseInt(txtRandomSeed.getText());
-        int timeMax    = Integer.parseInt(txtTimeMax.getText());
 
-        random.setSeed(randomSeed);
-        Context.Time.timeMax = timeMax;
+    public void btnSaveSimulationConfigClick(){
+        try {
+            int randomSeed = Integer.parseInt(txtRandomSeed.getText());
+            int timeMax    = Integer.parseInt(txtTimeMax.getText());
+
+            random.setSeed(randomSeed);
+            Context.timeMax = timeMax;
+            MapData.Config.numberMapMax = timeMax;
+        }
+        catch (Exception e){
+            viewErrorNotification("Some properties of Config are wrong");
+        }
 
     }
 
     public void btnSaveShelfConfigClick(ActionEvent event) {
-        boolean isEmpty = txtShelfXLength.getText().isEmpty() | txtShelfYLength.getText().isEmpty()
-                | txtShelfEachRowNumber.getText().isEmpty()   | txtShelfEachColNumber.getText().isEmpty()
-                | txtDistanceShelfToShelf.getText().isEmpty() | txtDistanceBoundToShelf.getText().isEmpty();
-        if (isEmpty) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert shelf's properties!");
-            alert.showAndWait();
-        } else {
+        try {
             int shelfXLength         = Integer.parseInt(txtShelfXLength.getText());
             int shelfYLength         = Integer.parseInt(txtShelfYLength.getText());
             int shelfEachRowNumber   = Integer.parseInt(txtShelfEachRowNumber.getText());
@@ -151,22 +153,22 @@ public class Controller implements Initializable {
             mapCreator.getDistance().setBoundToVerticalShelf(distanceBoundToShelf);
             mapCreator.create();
 
-            mapManager   = new MapManager(mapCreator);
+            mapData      = new MapData(mapCreator);
             robotCreator = new RobotCreator(mapCreator, random);
             taskCreator  = new TaskCreator(mapCreator, random);
-            robotManager = new RobotManager(robotCreator, mapManager);
+            robotManager = new RobotManager(robotCreator, mapData);
             taskManager  = new TaskManager(taskCreator);
 
-            updateAndView(0);
+            initializeTimeline();
+
+            updateAndViewAtTime(0);
+        }
+        catch (Exception e){
+            viewErrorNotification("Some properties of Map are wrong");
         }
     }
     public void btnCreateRobotClick(ActionEvent event) {
-        boolean isEmpty = txtRobotType.getText().isEmpty()   | txtRobotHeading.getText().isEmpty()
-                        | txtRobotStartX.getText().isEmpty() | txtRobotStartY.getText().isEmpty();
-        if (isEmpty) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert robot's properties!");
-            alert.showAndWait();
-        } else {
+        try {
             int robotType                      = Integer.parseInt(txtRobotType.getText());
             int robotStartX                    = Integer.parseInt(txtRobotStartX.getText());
             int robotStartY                    = Integer.parseInt(txtRobotStartY.getText());
@@ -174,32 +176,27 @@ public class Controller implements Initializable {
 
             Point robotStartPoint = new Point(robotStartX, robotStartY, robotStartHeading);
             if (robotCreator.create(new Robot(robotType, robotStartPoint))) {
-                updateAndView(0);
+                updateAndViewAtTime(0);
             }
+        }
+        catch (Exception e){
+            viewErrorNotification("Some properties of Robot are wrong");
         }
     }
     public void btnCreateRobotRandomClick(ActionEvent event) {
-        boolean isEmpty = txtNumOfRandRobot.getText().isEmpty() | txtTypeOfRandRobot.getText().isEmpty();
-        if (isEmpty) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert input values of robot randoming!");
-            alert.showAndWait();
-        } else {
+        try {
             int robotNumOfRand  = Integer.parseInt(txtNumOfRandRobot.getText());
             int robotTypeOfRand = Integer.parseInt(txtTypeOfRandRobot.getText());
-
             robotCreator.createRandom(robotNumOfRand, robotTypeOfRand);
-            updateAndView(0);
+            updateAndViewAtTime(0);
         }
+        catch (Exception e){
+            viewErrorNotification("Some properties of Robot are wrong");
+        }
+
     }
     public void btnCreateTaskClick(ActionEvent event) {
-        boolean isEmpty = txtTaskType.getText().isEmpty()       | txtTaskGoalX.getText().isEmpty() |
-                          txtTaskGoalY.getText().isEmpty()      | txtTaskTimeAppear.getText().isEmpty() |
-                          txtTaskTimeExecute.getText().isEmpty();
-
-        if (isEmpty) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert task's properties!");
-            alert.showAndWait();
-        } else {
+        try {
             int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
             int taskTimeAppear  = Integer.parseInt(txtTaskTimeAppear.getText());
             int taskType        = Integer.parseInt(txtTaskType.getText());
@@ -208,59 +205,73 @@ public class Controller implements Initializable {
             Point taskGoalPoint = new Point(taskGoalX,taskGoalY);
 
             if (taskCreator.create(new Task(taskType, taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
-                updateAndView(0);
+                updateAndViewAtTime(0);
             }
+        }
+        catch (Exception e){
+            viewErrorNotification("Some properties of Task are wrong");
         }
     }
     public void btnCreateTaskRandomClick(ActionEvent event){
-        boolean isEmpty = txtNumOfRandTask.getText().isEmpty() | txtTypeOfRandTask.getText().isEmpty();
-        if (isEmpty) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Please insert input values of task randoming!");
-            alert.showAndWait();
-        } else {
+        try {
             int taskNumOfRand  = Integer.parseInt(txtNumOfRandTask.getText());
             int taskTypeOfRand = Integer.parseInt(txtTypeOfRandTask.getText());
 
             taskCreator.createRandom(taskNumOfRand, taskTypeOfRand);
-            updateAndView(0);
+            updateAndViewAtTime(0);
+        }
+        catch (Exception e){
+            viewErrorNotification("Some properties of Task are wrong");
         }
     }
 
-
-
-
     public void btnStartSimulationClick(){
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
-            Context.Time.time++;
-            updateAndView(Context.Time.time);
-
-            if(Context.Time.time == 2){
-                Assignment assignment = new Assignment(robotManager, taskManager);
-                assignment.calculation(2);
-                assignment.printResult();
-            }
-            txtTime.setText(Integer.toString(Context.Time.time));
-
-            if (taskManager.isAssignable()){
-                /**Create Thread*/
-            }
-
-            }));
-        timeline.setCycleCount(Context.Time.timeMax);
-        timeline.play();
+        Context.simulating = !Context.simulating;
+        if(Context.simulating){
+            timeline.play();
+            btnStartSimulation.setText("Stop simulation");
+        }
+        else{
+            timeline.stop();
+            btnStartSimulation.setText("Resume simalation");
+        }
     }
 
     public void btnTestClick(ActionEvent event) {
-        List<Robot> robotList = robotManager.getRobotList();
-        robotList.get(2).addPointToPointList(new Point(3,0,PointInfo.Status.ROBOT_RIGHT));
-        robotList.get(2).addPointToPointList(new Point(4,0,PointInfo.Status.ROBOT_RIGHT));
-        robotList.get(2).addPointToPointList(new Point(5,0,PointInfo.Status.ROBOT_DOWN));
-        robotList.get(2).addPointToPointList(new Point(6,0,PointInfo.Status.ROBOT_RIGHT));
-        robotList.get(2).addPointToPointList(new Point(7,0,PointInfo.Status.ROBOT_UP));
+
     }
 
 
+    private void initializeTimeline(){
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
+            int time = Context.increaseTime();
 
+            updateAndViewTaskAtTime(time);
+            /*
+            if(!Context.solvingMultiPath) {
+                if (taskManager.isAssignable(time)) {
+                    Context.solvingMultiPath = true;
+                    robotManager.updateByTime(time + MultiPathPlanning.Config.timeSolve);
+
+                    thread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolve), ev1 -> {
+                        MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager, robotManager, mapData, 2);
+                        multiPathPlanning.calculateOptimalAssignment();
+                        multiPathPlanning.singlePathPlanningForAll();
+                        multiPathPlanning.assignPathToRobot();
+                    }));
+                    thread.setCycleCount(1);
+                    thread.play();
+                }
+            }
+
+            viewRobotListToTableViewAtTime(time);
+            viewMapToScatterAtTime(time);
+            */
+            txtTime.setText(Integer.toString(Context.time));
+
+        }));
+        timeline.setCycleCount(Context.timeMax);
+    }
     private void initializeTextField(){
         txtShelfXLength.setText("2");
         txtShelfYLength.setText("3");
@@ -318,21 +329,21 @@ public class Controller implements Initializable {
             }
 
             TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskTypeView, taskXView, taskYView,
-                    taskAppearTimeView, taskExecuteTimeView, taskStatusView);
+                                                            taskAppearTimeView, taskExecuteTimeView, taskStatusView);
             taskViewModelList.add(taskViewModel);
         }
         tableViewTaskList.getItems().clear();
         tableViewTaskList.getItems().addAll(taskViewModelList);
     }
-    private void viewRobotListToTableView(int timeUpdate) {
+    private void viewRobotListToTableViewAtTime(int time) {
         List<RobotViewModel> robotViewModelList = new ArrayList<>();
-        for (int idx = 0; idx < robotCreator.getRobotList().size(); idx++) {
-            Robot robot       = robotCreator.getRobotList().get(idx);
+        for (int robotId = 0; robotId < robotManager.getRobotList().size(); robotId++) {
+            Robot robot       = robotManager.getRobotById(robotId);
             int robotIDView   = robot.getId();
             int robotTypeView = robot.getType();
-            int robotXView    = robot.getPoint(timeUpdate).getX();
-            int robotYView    = robot.getPoint(timeUpdate).getY();
-            PointInfo.Status robotHeading  = robot.getHeading(timeUpdate);
+            int robotXView    = robot.getPointByTime(time).getX();
+            int robotYView    = robot.getPointByTime(time).getY();
+            PointInfo.Status robotHeading  = robot.getHeadingByTime(time);
             String robotHeadingView;
             switch (robotHeading){
                 case ROBOT_UP:
@@ -354,18 +365,23 @@ public class Controller implements Initializable {
         tableViewRobotList.getItems().clear();
         tableViewRobotList.getItems().addAll(robotViewModelList);
     }
-    private void viewMapToScatter(int timeUpdate) {
-        ScatterView scatterView = new ScatterView(mapManager, taskManager, scatterChart);
-        scatterView.prepareDataToDisplay(timeUpdate);
-        scatterView.display();
+    private void viewMapToScatterAtTime(int time) {
+        ScatterView scatterView = new ScatterView(mapData, taskManager, scatterChart);
+        scatterView.display(time);
     }
-    private void updateAndView(int timeUpdate) {
-        robotManager.update(timeUpdate);
-        taskManager.update(timeUpdate);
-        viewRobotListToTableView(timeUpdate);
+    private void updateAndViewAtTime(int time) {
+        robotManager.updateByTime(time);
+        taskManager.updateByTime(time);
+        viewRobotListToTableViewAtTime(time);
         viewTaskListToTableView();
-        viewMapToScatter(timeUpdate);
+        viewMapToScatterAtTime(time);
     }
-
-
+    private void viewErrorNotification(String content){
+        Alert alert = new Alert(Alert.AlertType.WARNING, content);
+        alert.showAndWait();
+    }
+    private void updateAndViewTaskAtTime(int time){
+        taskManager.updateByTime(time);
+        viewTaskListToTableView();
+    }
 }

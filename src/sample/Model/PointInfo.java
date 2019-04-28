@@ -23,7 +23,7 @@ public class PointInfo {
     }
 
     private Status status  = Status.NONE;
-
+    private Robot  robot   = null;
     public PointInfo() {
     }
 
@@ -33,8 +33,8 @@ public class PointInfo {
 
     public PointInfo(PointInfo pointInfo){
         this.status  = pointInfo.getStatus();
+        this.robot   = pointInfo.getRobot();
     }
-
 
     public Status getStatus() {
         return status;
@@ -43,4 +43,12 @@ public class PointInfo {
         this.status = status;
     }
 
+    public Robot getRobot() {
+        return robot;
+    }
+    public void setRobot(Robot robot) {
+        this.robot = robot;
+    }
+
+    public boolean isEmpty(){ return (status == Status.NONE);}
 }

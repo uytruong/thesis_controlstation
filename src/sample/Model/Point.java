@@ -4,7 +4,9 @@ package sample.Model;
 public class Point extends PointInfo {
     private int x;
     private int y;
-
+    /**
+     * CONSTRUCTOR
+     * */
     public Point() {
     }
 
@@ -17,6 +19,7 @@ public class Point extends PointInfo {
         this.x = point.getX();
         this.y = point.getY();
         this.setStatus(point.getStatus());
+        this.setRobot(point.getRobot());
     }
 
     public Point(int x, int y, Status status) {
@@ -25,8 +28,9 @@ public class Point extends PointInfo {
         this.y = y;
     }
 
-
-
+    /**
+     * GETTER AND SETTER
+     * */
     public int getX() {
         return x;
     }
@@ -40,8 +44,15 @@ public class Point extends PointInfo {
         this.y = y;
     }
 
+    /**
+     * USER DEFINE
+     * */
+    public Point getClone(){
+        return new Point(this);
+    }
 
-    public void printInfo(){
+
+    public void print(){
         String info = "x=" + x + ", y=" + y + ", status=" + getStatus();
         System.out.println(info);
     }

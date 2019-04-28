@@ -1,6 +1,5 @@
 package sample.Creator;
 
-import sample.Manager.Context;
 import sample.Model.*;
 
 import java.util.ArrayList;
@@ -9,29 +8,29 @@ import java.util.Random;
 
 public class RobotCreator {
     private Random      random;
-    private MapBase     mapBase;
+    private final Map   map;
     private List<Robot> robotList = new ArrayList<>();
 
 
     public RobotCreator(MapCreator mapCreator, Random random) {
-         this.mapBase = mapCreator.getMapBase();
+         this.map     = mapCreator.getMap();
          this.random  = random;
     }
 
     public boolean create(Robot robot){
-        if ((robot.getPoint(0).getStatus() != PointInfo.Status.ROBOT_DOWN) &
-            (robot.getPoint(0).getStatus() != PointInfo.Status.ROBOT_UP)   &
-            (robot.getPoint(0).getStatus() != PointInfo.Status.ROBOT_LEFT) &
-            (robot.getPoint(0).getStatus() != PointInfo.Status.ROBOT_RIGHT)){
+        if ((robot.getPointByTime(0).getStatus() != PointInfo.Status.ROBOT_DOWN) &
+            (robot.getPointByTime(0).getStatus() != PointInfo.Status.ROBOT_UP)   &
+            (robot.getPointByTime(0).getStatus() != PointInfo.Status.ROBOT_LEFT) &
+            (robot.getPointByTime(0).getStatus() != PointInfo.Status.ROBOT_RIGHT)){
             return false;
         }
 
         for (Robot otherRobot: robotList) {
-            if (Point.isCoincident(robot.getPoint(0), otherRobot.getPoint(0)))
+            if (Point.isCoincident(robot.getPointByTime(0), otherRobot.getPointByTime(0)))
                 return false;
         }
 
-        if (mapBase.getStatus(robot.getPoint(0).getX(), robot.getPoint(0).getY()) == PointInfo.Status.NONE){
+        if (map.getPointInfoByXY(robot.getPointByTime(0).getX(), robot.getPointByTime(0).getY()).isEmpty()){
             robot.setId(robotList.size());
             robotList.add(robot);
             return true;
@@ -40,8 +39,8 @@ public class RobotCreator {
     }
 
     public void createRandom(int numberOfRobots, int typeOfRobots){
-        if ((robotList.size() + numberOfRobots) >= Context.RobotCreator.numberRobotMax){
-            numberOfRobots = Context.RobotCreator.numberRobotMax-robotList.size();
+        if ((robotList.size() + numberOfRobots) >= Config.numberRobotMax){
+            numberOfRobots = Config.numberRobotMax-robotList.size();
         }
         for (int i = 0; i < numberOfRobots; i++) {
             while (true){
@@ -61,10 +60,10 @@ public class RobotCreator {
         return PointInfo.Status.getEnum(status);
     }
     private int getRandomX(){
-        return random.nextInt(MapBase.xLength);
+        return random.nextInt(Map.xLength);
     }
     private int getRandomY(){
-        return random.nextInt(MapBase.yLength);
+        return random.nextInt(Map.yLength);
     }
 
 
@@ -72,4 +71,9 @@ public class RobotCreator {
         return robotList;
     }
 
+
+
+    public static class Config{
+        public static int numberRobotMax = 100;
+    }
 }

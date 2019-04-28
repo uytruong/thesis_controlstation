@@ -6,35 +6,47 @@ import sample.Model.Robot;
 import java.util.List;
 
 public class RobotManager {
-    private MapManager  mapManager;
+    private MapData     mapData;
     private List<Robot> robotList;
 
-    public RobotManager(RobotCreator robotCreator, MapManager mapManager) {
-        this.mapManager = mapManager;
+    public RobotManager(RobotCreator robotCreator, MapData mapData) {
+        this.mapData    = mapData;
         this.robotList  = robotCreator.getRobotList();
     }
 
-    public void update(int timeUpdate){
+    public void updateByTime(int time){
         for (Robot robot: robotList) {
-            if (robot.getLastTimeBusy() <= timeUpdate) {
-                robot.update(timeUpdate);
-                for (int i = robot.getLastTimeUpdateToMap()+1; i <= timeUpdate; i++) {
-                    mapManager.getMap(i).setStatus(robot.getPoint(i).getX(),robot.getPoint(i).getY(), robot.getPoint(i).getStatus());
+            /*update in case robot is not assigned new path */
+            if (robot.getLastTimeBusy() <= time) {
+                robot.updateByTime(time);
+                for (int i = robot.getLastTimeUpdateToMap()+1; i <= time; i++) {
+                    mapData.getMapByTime(i).setPointInfoByPoint(robot.getPointByTime(i));
                 }
-                robot.setLastTimeUpdateToMap(timeUpdate);
+                robot.setLastTimeUpdateToMap(time);
             }
+            /*update in case robot is assigned new path */
             else{
                 for (int i = robot.getLastTimeUpdateToMap()+1; i <= robot.getLastTimeBusy(); i++) {
-                    mapManager.getMap(i).setStatus(robot.getPoint(i).getX(),robot.getPoint(i).getY(),robot.getPoint(i).getStatus());
+                    mapData.getMapByTime(i).setPointInfoByPoint(robot.getPointByTime(i));
                 }
                 robot.setLastTimeUpdateToMap(robot.getLastTimeBusy());
             }
         }
     }
 
-
+    public void setVirtualPointsToReal(){
+        for (Robot robot: robotList) {
+            robot.setVirtualPointsToReal();
+            for (int time = robot.getLastTimeUpdateToMap()+1; time <= robot.getLastTimeBusy(); time++) {
+                mapData.getMapByTime(time).setPointInfoByPoint(robot.getPointByTime(time));
+            }
+            robot.setLastTimeUpdateToMap(robot.getLastTimeBusy());
+        }
+    }
 
     public List<Robot> getRobotList() {
         return robotList;
     }
+    public Robot       getRobotById(int id){ return robotList.get(id);}
+
 }

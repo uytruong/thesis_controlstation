@@ -6,134 +6,114 @@ import java.util.List;
 public class Node extends Point {
     private Motion.Action actionToGetThis;
 
-    private int gScore, hScore;
+    /**
+     * gScore: cost from startNode to this node;
+     * hScore: cost estimate from this node to Goal;
+     * pScore: penalty cost for continous actions which are unusual;
+     * */
+    private int gScore, hScore, pScore;
 
-    private Node previousNode;
-
+    private Node  previousNode;
     private Point goal;
-    private int timeArrived;
+    private int   timeArrived;
 
     private Node(){
     }
 
     /**init start Node for path planning*/
     public Node(Point start, Point goal, int timeArrived) {
-        super(start); /**copy x,y,status*/
+        super(start); /**copy x,y,status & robotId */
         this.goal        = goal;
         this.gScore      = 0;
         updatehScore();
         this.timeArrived = timeArrived;
+        this.actionToGetThis = Motion.Action.NONE;
     }
 
-    public Node getNeighborNode(Motion.Action action){
-        Node node = new Node();
+    public Node getNextNodeByAction(Motion.Action action){
+        Node nNode = new Node();
 
-        node.setX(getNeighborNodeX(action));
-        node.setY(getNeighborNodeY(action));
-        node.setStatus(getNeighborNodeStatus(action));
-        node.setGoal(goal);
+        nNode.setActionToGetThis(action);
+        nNode.setTimeArrived(timeArrived+Motion.getActionTimeCost(action));
+        nNode.setPreviousNode(this);
 
-        node.setActionToGetThis(action);
-        node.setTimeArrived(timeArrived+Motion.getActionTimeCost(action));
-        node.setPreviousNode(this);
+        nNode.setX(getNextNodeXByAction(action));
+        nNode.setY(getNextNodeYByAction(action));
+        nNode.setStatus(getNextNodeStatusByAction(action));
+        nNode.setGoal(goal);
 
-        node.updatehScore();
-        node.updategScore(action);
+        nNode.updatehScore();
+        nNode.updategScore();
+        nNode.updatepScore();
 
-        return node;
+        return nNode;
     }
-    private Status getNeighborNodeStatus(Motion.Action action){
+    public Status getNextNodeStatusByAction(Motion.Action action){
         switch (action){
             case ROTATE_LEFT:
                 switch (getStatus()){
-                    case ROBOT_LEFT:
-                        return Status.ROBOT_DOWN;
-                    case ROBOT_RIGHT:
-                        return Status.ROBOT_UP;
-                    case ROBOT_UP:
-                        return Status.ROBOT_LEFT;
-                    default:
-                        return Status.ROBOT_RIGHT;
+                    case ROBOT_LEFT: return Status.ROBOT_DOWN;
+                    case ROBOT_RIGHT:return Status.ROBOT_UP;
+                    case ROBOT_UP:   return Status.ROBOT_LEFT;
+                    default:         return Status.ROBOT_RIGHT;
                 }
             case ROTATE_RIGHT:
                 switch (getStatus()){
-                    case ROBOT_LEFT:
-                        return Status.ROBOT_UP;
-                    case ROBOT_RIGHT:
-                        return Status.ROBOT_DOWN;
-                    case ROBOT_UP:
-                        return Status.ROBOT_RIGHT;
-                    default:
-                        return Status.ROBOT_LEFT;
+                    case ROBOT_LEFT: return Status.ROBOT_UP;
+                    case ROBOT_RIGHT:return Status.ROBOT_DOWN;
+                    case ROBOT_UP:   return Status.ROBOT_RIGHT;
+                    default:         return Status.ROBOT_LEFT;
                 }
             case ROTATE_BACK:
                 switch (getStatus()){
-                    case ROBOT_LEFT:
-                        return Status.ROBOT_RIGHT;
-                    case ROBOT_RIGHT:
-                        return Status.ROBOT_LEFT;
-                    case ROBOT_UP:
-                        return Status.ROBOT_DOWN;
-                    default:
-                        return Status.ROBOT_UP;
+                    case ROBOT_LEFT: return Status.ROBOT_RIGHT;
+                    case ROBOT_RIGHT:return Status.ROBOT_LEFT;
+                    case ROBOT_UP:   return Status.ROBOT_DOWN;
+                    default:         return Status.ROBOT_UP;
                 }
-            default:
-                return getStatus();
+            default: return getStatus();
         }
-
-
-
     }
-    private int getNeighborNodeX(Motion.Action action){
+    public int getNextNodeXByAction(Motion.Action action){
         switch (action){
-            case ROTATE_LEFT:
-                return getX();
-            case ROTATE_RIGHT:
-                return getX();
-            case ROTATE_BACK:
-                return getX();
+            case ROTATE_LEFT: return getX();
+            case ROTATE_RIGHT:return getX();
+            case ROTATE_BACK: return getX();
+            case NONE:        return getX();
         }
         switch (getStatus()){
-            case ROBOT_LEFT:
-                return getX()-1;
-            case ROBOT_RIGHT:
-                return getX()+1;
-            default:
-                return getX();
+            case ROBOT_LEFT: return getX()-1;
+            case ROBOT_RIGHT:return getX()+1;
+            default:         return getX();
         }
     }
-    private int getNeighborNodeY(Motion.Action action){
+    public int getNextNodeYByAction(Motion.Action action){
         switch (action){
-            case ROTATE_LEFT:
-                return getY();
-            case ROTATE_RIGHT:
-                return getY();
-            case ROTATE_BACK:
-                return getY();
+            case ROTATE_LEFT: return getY();
+            case ROTATE_RIGHT:return getY();
+            case ROTATE_BACK: return getY();
+            case NONE:        return getY();
         }
         switch (getStatus()){
-            case ROBOT_UP:
-                return getY()+1;
-            case ROBOT_DOWN:
-                return getY()-1;
-            default:
-                return getY();
+            case ROBOT_UP:  return getY()+1;
+            case ROBOT_DOWN:return getY()-1;
+            default:        return getY();
         }
     }
+
     private void updatehScore(){
-        hScore = MapBase.getEstimatePathCost(this,goal);
+        hScore = Map.getEstimatePathCost(this,goal);
     }
-    private void updategScore(Motion.Action action){
-        gScore = getPreviousNode().getgScore() + Motion.getActionPathCost(action);
+    private void updategScore(){
+        gScore = getPreviousNode().getgScore() + Motion.getActionPathCost(actionToGetThis);
     }
-
-
-
+    private void updatepScore(){
+        pScore = getPreviousNode().getpScore() + Motion.getPenaltyCost(previousNode.getActionToGetThis(), actionToGetThis);
+    }
 
 
     public boolean isGoal(){
-        if ((actionToGetThis== Motion.Action.SPEED_UP) | (actionToGetThis == Motion.Action.SPEED_DOWN) |
-            (actionToGetThis== Motion.Action.MOVE_CONSTANT))
+        if ((actionToGetThis == Motion.Action.SPEED_UP) | (actionToGetThis == Motion.Action.MOVE_CONSTANT))
             return false;
         else
             return ((isCoincident(this,goal)));
@@ -142,23 +122,23 @@ public class Node extends Point {
 
 
 
-    public List<Point> getCorrespondPointList(){
-        List<Point> correspondPointList = new ArrayList<>();
+    public List<Point> getPointsFromNode(){
+        List<Point> pointList = new ArrayList<>();
         switch (actionToGetThis){
             case ROTATE_BACK:
-                correspondPointList.add(new Point(getX(),getY(),getNeighborNodeStatus(Motion.Action.ROTATE_RIGHT)));
+                pointList.add(new Point(getX(),getY(), getNextNodeStatusByAction(Motion.Action.ROTATE_LEFT)));
                 break;
             case SPEED_DOWN:
-                correspondPointList.add(new Point(this));
+                pointList.add(new Point(this));
                 break;
             case SPEED_UP:
-                correspondPointList.add(new Point(previousNode));
+                pointList.add(new Point(previousNode));
                 break;
             case STEP:
-                correspondPointList.add(new Point(this));
+                pointList.add(new Point(this));
         }
-        correspondPointList.add(new Point(getX(),getY(),getStatus()));
-        return correspondPointList;
+        pointList.add(new Point(getX(),getY(),getStatus()));
+        return pointList;
     }
 
 
@@ -205,5 +185,21 @@ public class Node extends Point {
     }
     public void setTimeArrived(int timeArrived) {
         this.timeArrived = timeArrived;
+    }
+
+    public int getpScore() {
+        return pScore;
+    }
+
+    public void setpScore(int pScore) {
+        this.pScore = pScore;
+    }
+
+    public int getfScore(){return gScore+hScore+pScore;}
+
+    public void print(){
+        String info = "x=" + getX() + ", y=" + getY() + ", status=" + getStatus() + ", timeArrived=" + getTimeArrived() +"***" + getActionToGetThis()
+                    + "***" + getfScore() +"=" + getgScore() + "+"+ gethScore();
+        System.out.println(info);
     }
 }

@@ -13,20 +13,15 @@ public class TaskManager {
     private List<Task>  runningTaskList = new ArrayList<>();
     private int         doneTaskNumber  = 0;
 
-    private boolean     assignable      = true;
+    private int         lastTimeAssign  = 0;
 
     public TaskManager(TaskCreator taskCreator) {
         this.taskList = taskCreator.getTaskList();
     }
 
-
-    public void update(int timeUpdate){
-         /* find new TaskCreator from taskCreator.taskList and add to readyTaskList if:
-            - its Goal position is not assinged to other running TaskCreator.
-            - there is no task in readyTaskList having same Goal
-         */
+    public void updateByTime(int time){
         for (Task task: taskList) {
-            if ((task.getStatus() == Task.Status.NEW) & (task.getTimeAppear() <= timeUpdate)){
+            if ((task.getStatus() == Task.Status.NEW) & (task.getTimeAppear() <= time)){
                 boolean valid = true;
                 for (Task runningTask: runningTaskList) {
                     if(Point.isCoincident(task.getGoal(), runningTask.getGoal()) ){
@@ -34,10 +29,12 @@ public class TaskManager {
                         break;
                     }
                 }
-                for (Task readyTask: readyTaskList) {
-                    if(Point.isCoincident(task.getGoal(), readyTask.getGoal()) ){
-                        valid = false;
-                        break;
+                if(valid){
+                    for (Task readyTask: readyTaskList) {
+                        if(Point.isCoincident(task.getGoal(), readyTask.getGoal()) ){
+                            valid = false;
+                            break;
+                       }
                     }
                 }
                 if(valid){
@@ -45,13 +42,14 @@ public class TaskManager {
                     readyTaskList.add(task);
                 }
             }
+            else if(task.getTimeFinish() == time){
+                changeTaskStatus(task, Task.Status.DONE);
+            }
         }
     }
 
-    public void changeTaskStatus(int id, Task.Status status){
-        Task task = taskList.get(id);
-
-        if ((status == Task.Status.RUNNING) & (task.getStatus() == Task.Status.READY)){
+    public void changeTaskStatus(Task task,Task.Status status){
+        if (status == Task.Status.RUNNING){
             /* Convert task <status> from READY to RUNNING then add task to <runningTaskList>
              * then remove task from <readyTaskList>*/
             task.setStatus(status);
@@ -65,7 +63,6 @@ public class TaskManager {
             }
 
         }
-        //& (task.getStatus() == Task.Status_.RUNNING)
         else if ((status == Task.Status.DONE)  ){
             /* Convert task <status> from RUNNING to DONE, and also counting number of tasks wereDone;
              * then remove task from <runningTaskList> */
@@ -73,7 +70,7 @@ public class TaskManager {
             doneTaskNumber++;
 
             for (int i = 0; i < runningTaskList.size(); i++) {
-                if (id == runningTaskList.get(i).getId()){
+                if (task == runningTaskList.get(i)){
                     runningTaskList.remove(i);
                     break;
                 }
@@ -96,10 +93,17 @@ public class TaskManager {
         return doneTaskNumber;
     }
 
-    public boolean isAssignable() {
-        return assignable;
+
+    public Task getTaskById(int id){ return taskList.get(id);}
+
+    public boolean isAssignable(int time){
+        boolean condition1 = ((time-lastTimeAssign)>=Config.timeAssignDelayMax) & (readyTaskList.size()>0);
+        boolean condition2 = (readyTaskList.size()>=Config.taskAssignNumberMin);
+        return (condition1 | condition2);
     }
-    public void setAssignable(boolean assignable) {
-        this.assignable = assignable;
+
+    public static class Config{
+        public static int timeAssignDelayMax = 3;
+        public static int taskAssignNumberMin = 3;
     }
 }

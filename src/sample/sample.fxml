@@ -127,7 +127,7 @@
                                     <Font size="10.0" />
                                  </font></Label>
                               <TextField fx:id="txtTypeOfRandRobot" layoutX="211.0" layoutY="26.0" prefHeight="25.0" prefWidth="30.0" />
-                              <Button fx:id="btnRandomRobot" layoutX="164.0" layoutY="79.0" mnemonicParsing="false" onAction="#btnCreateRobotRandomClick" prefHeight="25.0" prefWidth="83.0" text="Create Random">
+                              <Button fx:id="btnCreateRobotRandom" layoutX="164.0" layoutY="79.0" mnemonicParsing="false" onAction="#btnCreateRobotRandomClick" prefHeight="25.0" prefWidth="83.0" text="Create Random">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
@@ -195,7 +195,7 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                              <Button fx:id="btnRandomTask" layoutX="163.0" layoutY="58.0" mnemonicParsing="false" onAction="#btnCreateTaskRandomClick" prefHeight="25.0" prefWidth="64.0" text="Random">
+                              <Button fx:id="btnCreateTaskRandom" layoutX="163.0" layoutY="58.0" mnemonicParsing="false" onAction="#btnCreateTaskRandomClick" prefHeight="25.0" prefWidth="64.0" text="Random">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
@@ -254,13 +254,13 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TableView fx:id="tableViewRobotList" prefHeight="181.0" prefWidth="761.0">
+                                <TableView fx:id="tableViewRobotList" prefHeight="181.0" prefWidth="254.0">
                                     <columns>
-                                        <TableColumn fx:id="tableColRobotID" prefWidth="101.0" text="ID" />
-                                        <TableColumn fx:id="tableColRobotType" prefWidth="107.0" text="Type" />
-                                        <TableColumn fx:id="tableColRobotX" prefWidth="95.0" text="x" />
-                                        <TableColumn fx:id="tableColRobotY" prefWidth="108.0" text="y" />
-                                        <TableColumn fx:id="tableColRobotHeading" prefWidth="150.0" text="Heading" />
+                                        <TableColumn fx:id="tableColRobotID" prefWidth="42.0" text="ID" />
+                                        <TableColumn fx:id="tableColRobotType" prefWidth="42.0" text="Type" />
+                                        <TableColumn fx:id="tableColRobotX" prefWidth="44.0" text="x" />
+                                        <TableColumn fx:id="tableColRobotY" prefWidth="51.0" text="y" />
+                                        <TableColumn fx:id="tableColRobotHeading" prefWidth="72.0" text="Heading" />
                                     </columns>
                                 </TableView>
                             </children></AnchorPane>
@@ -270,15 +270,15 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TableView fx:id="tableViewTaskList" prefHeight="181.0" prefWidth="469.0">
+                                <TableView fx:id="tableViewTaskList" prefHeight="181.0" prefWidth="574.0">
                                     <columns>
-                                        <TableColumn fx:id="tableColTaskID" prefWidth="49.0" text="ID" />
-                                        <TableColumn fx:id="tableColTaskType" prefWidth="66.99996948242188" text="Type" />
-                                        <TableColumn fx:id="tableColTaskAppearTime" prefWidth="102.0" text="Appear Time" />
-                                        <TableColumn fx:id="tableColTaskExecuteTime" prefWidth="114.0" text="Execute Time" />
-                                        <TableColumn fx:id="tableColTaskX" prefWidth="57.0" text="x" />
-                                        <TableColumn fx:id="tableColTaskY" prefWidth="58.0" text="y" />
-                                        <TableColumn fx:id="tableColTaskStatus" prefWidth="124.0" text="Status" />
+                                        <TableColumn fx:id="tableColTaskID" prefWidth="38.0" text="ID" />
+                                        <TableColumn fx:id="tableColTaskType" prefWidth="49.0" text="Type" />
+                                        <TableColumn fx:id="tableColTaskAppearTime" prefWidth="89.0" text="Appear Time" />
+                                        <TableColumn fx:id="tableColTaskExecuteTime" prefWidth="89.0" text="Execute Time" />
+                                        <TableColumn fx:id="tableColTaskX" prefWidth="44.0" text="x" />
+                                        <TableColumn fx:id="tableColTaskY" prefWidth="47.0" text="y" />
+                                        <TableColumn fx:id="tableColTaskStatus" prefWidth="84.0" text="Status" />
                                     </columns>
                                 </TableView>
                             </children></AnchorPane>

@@ -5,44 +5,19 @@ import java.util.List;
 
 public class Robot {
     private int id, type;
-    private List<Point> pointList = new ArrayList<>();
-    private int lastTimeUpdateToMap = -1;
+    private List<Point> pointList        = new ArrayList<>();
+    private List<Point> virtualPointList = new ArrayList<>();
 
-    private Task task;
+    private int lastTimeUpdateToMap = -1;
 
     public Robot(int type, Point start) {
         this.type = type;
         this.pointList.add(start);
     }
 
-    /*this create is for robot doesn't have any task so it does not move*/
-    public void update(int timeUpdate){
-        Point lastPoint = new Point(pointList.get(getLastTimeBusy()));
-        for (int i = 0; i < timeUpdate - getLastTimeBusy(); i++) {
-            pointList.add(new Point(lastPoint));
-        }
-    }
-
-    public void addPointToPointList(Point point){
-        pointList.add(new Point(point));
-    }
-    public void addPointListToPointList(List<Point> pointList){
-        this.pointList.addAll(pointList);
-    }
-
-
-
-    public int getLastTimeBusy() {
-        return pointList.size()-1;
-    }
-    public PointInfo.Status getHeading(int time) {
-        return pointList.get(time).getStatus();
-    }
-    public Point getPoint(int time){
-        return pointList.get(time);
-    }
-
-
+    /**
+     * GETTER AND SETTER
+     * */
     public int getId() {
         return id;
     }
@@ -52,25 +27,45 @@ public class Robot {
     public int getType() {
         return type;
     }
-    public void setType(int type) {
-        this.type = type;
-    }
-    public Task getTask() {
-        return task;
-    }
-    public void setTask(Task task) {
-        this.task = task;
-    }
     public int getLastTimeUpdateToMap() {
         return lastTimeUpdateToMap;
     }
     public void setLastTimeUpdateToMap(int lastTimeUpdateToMap) {
         this.lastTimeUpdateToMap = lastTimeUpdateToMap;
     }
-    public List<Point> getPointList() {
-        return pointList;
+    public List<Point> getVirtualPointList() {
+        return virtualPointList;
+    }
+    public void setVirtualPointList(List<Point> virtualPointList) {
+        this.virtualPointList = virtualPointList;
     }
 
+    public int getLastTimeBusy() {
+        return pointList.size()-1;
+    }
+    public PointInfo.Status getHeadingByTime(int time) {
+        return getPointByTime(time).getStatus();
+    }
+    public Point getPointByTime(int time){
+        return pointList.get(time);
+    }
+    /**
+     * USER DEFINE
+     * */
+    /*this create is for robot doesn't have any task so it does not move*/
+    public void updateByTime(int time){
+        Point lastPoint = pointList.get(getLastTimeBusy()).getClone();
+        int timeStart = getLastTimeBusy();
+        for (int i = 0; i < time - timeStart; i++) {
+            pointList.add(lastPoint.getClone());
+        }
+    }
 
+    public void setVirtualPointsToReal() {
+        pointList.addAll(virtualPointList);
+        virtualPointList.clear();
+    }
+
+    public Point getLastPoint(){ return getPointByTime(getLastTimeBusy());}
 
 }
