@@ -32,6 +32,7 @@ public class RobotCreator {
 
         if (map.getPointInfoByXY(robot.getPointByTime(0).getX(), robot.getPointByTime(0).getY()).isEmpty()){
             robot.setId(robotList.size());
+            robot.getPointByTime(0).setRobot(robot);
             robotList.add(robot);
             return true;
         }

@@ -34,15 +34,16 @@ public class RobotManager {
         }
     }
 
-    public void setVirtualPointsToReal(){
+    public void assignPlanPointListForAll(){
         for (Robot robot: robotList) {
-            robot.setVirtualPointsToReal();
+            robot.assignMainPlanPointList();
             for (int time = robot.getLastTimeUpdateToMap()+1; time <= robot.getLastTimeBusy(); time++) {
                 mapData.getMapByTime(time).setPointInfoByPoint(robot.getPointByTime(time));
             }
             robot.setLastTimeUpdateToMap(robot.getLastTimeBusy());
         }
     }
+
 
     public List<Robot> getRobotList() {
         return robotList;

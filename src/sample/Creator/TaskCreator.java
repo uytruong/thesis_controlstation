@@ -1,9 +1,9 @@
 package sample.Creator;
 
-import sample.Manager.Context;
 import sample.Model.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -24,6 +24,7 @@ public class TaskCreator {
         else {
             task.setId(taskList.size());
             taskList.add(task);
+            sortTaskList();
             return true;
         }
     }
@@ -43,10 +44,10 @@ public class TaskCreator {
         }
     }
     private int getRandomTimeAppear(){
-        return random.nextInt(Config.timeAppearMax);
+        return random.nextInt(Config.timeAppearMax-Config.timeAppearMin)+Config.timeAppearMin;
     }
     private int getRandomTimeExecute(){
-        return random.nextInt(Config.timeExecuteMax);
+        return random.nextInt(Config.timeExecuteMax-1)+1;
     }
     private int getRandomTaskPointX(){
         return random.nextInt(Map.xLength);
@@ -55,14 +56,18 @@ public class TaskCreator {
         return random.nextInt(Map.yLength);
     }
 
+
     public List<Task> getTaskList() {
         return taskList;
     }
-
+    private void sortTaskList(){
+        taskList.sort(Comparator.comparing(Task::getTimeAppear));
+    }
 
     public static class Config {
         public static int numberTaskMax  = 100;
-        public static int timeAppearMax  = 3;
-        public static int timeExecuteMax = 4;
+        public static int timeAppearMax  = 10;
+        public static int timeAppearMin  = 1;
+        public static int timeExecuteMax = 2;
     }
 }

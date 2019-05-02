@@ -1,6 +1,6 @@
 package sample.Model;
 
-public class Task {
+public class Task{
     public enum Status{
         NEW,
         READY,
@@ -9,16 +9,16 @@ public class Task {
     }
 
     private int id, type;
-    private int timeExecute, timeAppear;
+    private int timeExecute, timeAppear, timeFinish = Integer.MAX_VALUE;
     private Point  goal;
     private Status status = Status.NEW;
-    private int    timeFinish = Integer.MAX_VALUE;
+    private int costOfRobotPath = Integer.MAX_VALUE;
 
     public Task(int type, int timeExecute, int timeAppear, Point goal) {
         this.type        = type;
         this.timeExecute = timeExecute;
         this.timeAppear  = timeAppear;
-        this.goal        = goal;
+        this.goal        = goal.getPointClone();
     }
 
     /**
@@ -53,5 +53,11 @@ public class Task {
     }
     public void setTimeFinish(int timeFinish) {
         this.timeFinish = timeFinish;
+    }
+    public int getCostOfRobotPath() {
+        return costOfRobotPath;
+    }
+    public void setCostOfRobotPath(int costOfRobotPath) {
+        this.costOfRobotPath = costOfRobotPath;
     }
 }

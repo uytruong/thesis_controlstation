@@ -5,7 +5,6 @@ import sample.Manager.TaskManager;
 import sample.Model.Map;
 import sample.Model.Robot;
 import sample.Model.Task;
-import sun.rmi.runtime.Log;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class Assignment {
     private int         timeAssignment;
 
     private double[][] costMatrix;
-    private int[]      optimalAssignment;
+    private int[]      assignment;
 
     public Assignment(RobotManager robotManager, TaskManager taskManager, int timeAssignment) {
         this.robotList      = robotManager.getRobotList();
@@ -47,28 +46,35 @@ public class Assignment {
         }
     }
 
-    private void calculateOptimalAssignment(){
+    private void assignment(){
         Hungarian hungarian = new Hungarian(costMatrix);
-        optimalAssignment   = hungarian.execute();
+        assignment          = hungarian.execute();
 
         /* convert index of readyTaskList into taskId */
-        for (int robotId = 0; robotId < optimalAssignment.length; robotId++) {
-            int taskId = optimalAssignment[robotId];
-            if (taskId>=0)
-                optimalAssignment[robotId] = readyTaskList.get(taskId).getId();
+        for (int robotId = 0; robotId < assignment.length; robotId++) {
+            Robot robot = robotList.get(robotId);
+            int taskIdx = assignment[robotId];
+            if (taskIdx>=0){
+                Task task = readyTaskList.get(taskIdx);
+                robot.setTask(task);
+            }
+            else{
+                robot.setTask(null);
+            }
         }
     }
 
-    public int[] calculate(){
+    public void execute(){
         calculateCostMatrix();
-        calculateOptimalAssignment();
+        assignment();
         printResult();
-        return optimalAssignment;
     }
 
     private void printResult(){
-        for (int a: optimalAssignment) {
-            System.out.print(a + " ");
+        System.out.print("Optimal Assginment:");
+        for (Robot robot: robotList) {
+            if(robot.getTask() != null)
+                System.out.println("robotId = "+robot.getId() + " come with task id =" + robot.getTask().getId());
         }
         System.out.println();
     }

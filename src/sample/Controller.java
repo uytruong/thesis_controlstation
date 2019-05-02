@@ -20,7 +20,6 @@ import sample.Manager.MapData;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
 import sample.Model.*;
-import sample.Model.Map;
 import sample.UI.ScatterView;
 import sample.UI.ViewModel.RobotViewModel;
 import sample.UI.ViewModel.TaskViewModel;
@@ -39,7 +38,7 @@ public class Controller implements Initializable {
     private TaskManager    taskManager;
 
     private Timeline       timeline;
-    private Timeline       thread;
+    private Timeline solvingThread;
 
     /**
      * Shelf
@@ -125,7 +124,7 @@ public class Controller implements Initializable {
             int timeMax    = Integer.parseInt(txtTimeMax.getText());
 
             random.setSeed(randomSeed);
-            Context.timeMax = timeMax;
+            Context.timeMax             = timeMax;
             MapData.Config.numberMapMax = timeMax;
         }
         catch (Exception e){
@@ -232,13 +231,14 @@ public class Controller implements Initializable {
             btnStartSimulation.setText("Stop simulation");
         }
         else{
-            timeline.stop();
+            timeline.pause();
             btnStartSimulation.setText("Resume simalation");
         }
     }
 
     public void btnTestClick(ActionEvent event) {
-
+        Context.time = 0;
+        initializeTimeline();
     }
 
 
@@ -246,43 +246,62 @@ public class Controller implements Initializable {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
             int time = Context.increaseTime();
 
-            updateAndViewTaskAtTime(time);
-            /*
-            if(!Context.solvingMultiPath) {
-                if (taskManager.isAssignable(time)) {
-                    Context.solvingMultiPath = true;
-                    robotManager.updateByTime(time + MultiPathPlanning.Config.timeSolve);
+            updateTaskAtTime(time);
+            viewTaskListToTableView();
+            updateRobotAtTime(time);
+            viewRobotListToTableViewAtTime(time);
 
-                    thread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolve), ev1 -> {
-                        MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager, robotManager, mapData, 2);
-                        multiPathPlanning.calculateOptimalAssignment();
-                        multiPathPlanning.singlePathPlanningForAll();
-                        multiPathPlanning.assignPathToRobot();
+            if((!Context.solvingMultiPath) & (taskManager.isAssignable(time))){
+                    Context.solvingMultiPath = true;
+                    taskManager.setLastTimeAssign(time);
+                    int timeAssign = time + MultiPathPlanning.Config.timeSolveMax;
+
+                    solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolveMax), ev1 -> {
+                        long t1 = System.currentTimeMillis();
+                        System.out.println("@@@@@START_THREAD");
+
+
+                        MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager,robotManager,mapData,timeAssign,random);
+                        multiPathPlanning.execute();
+                        Context.solvingMultiPath = false;
+
+
+
+                        long t2 = System.currentTimeMillis();
+                        System.out.println("timeSolving in milisecond: "+(t2-t1));
+                        System.out.println("@@@@@END_THREAD");
+
                     }));
-                    thread.setCycleCount(1);
-                    thread.play();
-                }
+                    solvingThread.setCycleCount(1);
+                    solvingThread.playFrom(Duration.millis(MultiPathPlanning.Config.getTimeSolveMaxMillis()-1)); /*prevent Delay*/
+                    System.out.println("@@@@@END");
+
             }
 
-            viewRobotListToTableViewAtTime(time);
+
             viewMapToScatterAtTime(time);
-            */
             txtTime.setText(Integer.toString(Context.time));
 
         }));
-        timeline.setCycleCount(Context.timeMax);
+        timeline.setCycleCount(Context.timeMax-1);
     }
     private void initializeTextField(){
         txtShelfXLength.setText("2");
-        txtShelfYLength.setText("3");
-        txtShelfEachRowNumber.setText("2");
-        txtShelfEachColNumber.setText("2");
+        txtShelfYLength.setText("5");
+        txtShelfEachRowNumber.setText("3");
+        txtShelfEachColNumber.setText("3");
         txtDistanceShelfToShelf.setText("2");
         txtDistanceBoundToShelf.setText("1");
-        txtNumOfRandRobot.setText("3");
+        txtNumOfRandRobot.setText("30");
         txtTypeOfRandRobot.setText("0");
-        txtNumOfRandTask.setText("3");
+        txtNumOfRandTask.setText("100");
         txtTypeOfRandTask.setText("0");
+
+        txtRobotType.setText("0");
+        txtTaskType.setText("0");
+
+        txtRandomSeed.setText("0");
+        txtTimeMax.setText("300");
     }
     private void initializeTableView(){
         tableColRobotID.setCellValueFactory(new PropertyValueFactory<>("RobotID"));
@@ -370,18 +389,21 @@ public class Controller implements Initializable {
         scatterView.display(time);
     }
     private void updateAndViewAtTime(int time) {
-        robotManager.updateByTime(time);
-        taskManager.updateByTime(time);
-        viewRobotListToTableViewAtTime(time);
+        updateTaskAtTime(time);
         viewTaskListToTableView();
+
+        updateRobotAtTime(time);
+        viewRobotListToTableViewAtTime(time);
+
         viewMapToScatterAtTime(time);
     }
     private void viewErrorNotification(String content){
         Alert alert = new Alert(Alert.AlertType.WARNING, content);
         alert.showAndWait();
     }
-    private void updateAndViewTaskAtTime(int time){
-        taskManager.updateByTime(time);
-        viewTaskListToTableView();
-    }
+
+
+
+    private void updateRobotAtTime(int time){robotManager.updateByTime(time);}
+    private void updateTaskAtTime(int time){taskManager.updateByTime(time);}
 }

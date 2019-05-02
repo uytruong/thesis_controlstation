@@ -5,50 +5,56 @@ import java.util.List;
 
 public class Node extends Point {
     private Motion.Action actionToGetThis;
+    private int           gScore, hScore, pScore;
 
-    /**
-     * gScore: cost from startNode to this node;
-     * hScore: cost estimate from this node to Goal;
-     * pScore: penalty cost for continous actions which are unusual;
-     * */
-    private int gScore, hScore, pScore;
-
-    private Node  previousNode;
-    private Point goal;
-    private int   timeArrived;
+    private Node          previousNode;
+    private Point         goal;
+    private int           timeArrived;
 
     private Node(){
     }
 
-    /**init start Node for path planning*/
-    public Node(Point start, Point goal, int timeArrived) {
-        super(start); /**copy x,y,status & robotId */
-        this.goal        = goal;
-        this.gScore      = 0;
-        updatehScore();
-        this.timeArrived = timeArrived;
-        this.actionToGetThis = Motion.Action.NONE;
+
+    public static Node getStartNode(Robot robot){
+        Node node   = new Node();
+
+        Point point = robot.getLastPoint();
+        node.setX(point.getX());
+        node.setY(point.getY());
+        node.setStatus(point.getStatus());
+        node.setRobot(robot);
+
+        node.setActionToGetThis(Motion.Action.NONE);
+        node.setTimeArrived(robot.getLastTimeBusy());
+
+        node.setGoal(robot.getTask().getGoal());
+        node.setgScore(0);
+        node.setpScore(0);
+        node.updateHScore();
+
+        return node;
     }
 
-    public Node getNextNodeByAction(Motion.Action action){
+    public Node getNeighborNodeByAction(Motion.Action action){
         Node nNode = new Node();
 
         nNode.setActionToGetThis(action);
+        nNode.setGoal(goal);
         nNode.setTimeArrived(timeArrived+Motion.getActionTimeCost(action));
         nNode.setPreviousNode(this);
 
-        nNode.setX(getNextNodeXByAction(action));
-        nNode.setY(getNextNodeYByAction(action));
-        nNode.setStatus(getNextNodeStatusByAction(action));
-        nNode.setGoal(goal);
+        nNode.setX(getNeighborNodeXByAction(action));
+        nNode.setY(getNeighborNodeYByAction(action));
+        nNode.setStatus(getNeighborNodeHeadingByAction(action));
+        nNode.setRobot(getRobot());
 
-        nNode.updatehScore();
-        nNode.updategScore();
-        nNode.updatepScore();
+        nNode.updateHScore();
+        nNode.updateGScore();
+        nNode.updatePScore();
 
         return nNode;
     }
-    public Status getNextNodeStatusByAction(Motion.Action action){
+    private Status getNeighborNodeHeadingByAction(Motion.Action action){
         switch (action){
             case ROTATE_LEFT:
                 switch (getStatus()){
@@ -74,7 +80,7 @@ public class Node extends Point {
             default: return getStatus();
         }
     }
-    public int getNextNodeXByAction(Motion.Action action){
+    private int getNeighborNodeXByAction(Motion.Action action){
         switch (action){
             case ROTATE_LEFT: return getX();
             case ROTATE_RIGHT:return getX();
@@ -87,7 +93,7 @@ public class Node extends Point {
             default:         return getX();
         }
     }
-    public int getNextNodeYByAction(Motion.Action action){
+    private int getNeighborNodeYByAction(Motion.Action action){
         switch (action){
             case ROTATE_LEFT: return getY();
             case ROTATE_RIGHT:return getY();
@@ -101,16 +107,15 @@ public class Node extends Point {
         }
     }
 
-    private void updatehScore(){
+    private void updateHScore(){
         hScore = Map.getEstimatePathCost(this,goal);
     }
-    private void updategScore(){
+    private void updateGScore(){
         gScore = getPreviousNode().getgScore() + Motion.getActionPathCost(actionToGetThis);
     }
-    private void updatepScore(){
+    private void updatePScore(){
         pScore = getPreviousNode().getpScore() + Motion.getPenaltyCost(previousNode.getActionToGetThis(), actionToGetThis);
     }
-
 
     public boolean isGoal(){
         if ((actionToGetThis == Motion.Action.SPEED_UP) | (actionToGetThis == Motion.Action.MOVE_CONSTANT))
@@ -119,26 +124,25 @@ public class Node extends Point {
             return ((isCoincident(this,goal)));
     }
 
-
-
-
-    public List<Point> getPointsFromNode(){
-        List<Point> pointList = new ArrayList<>();
+    public List<Point> getCorrespondPoints(){
+        List<Point> correspondPoints = new ArrayList<>();
         switch (actionToGetThis){
             case ROTATE_BACK:
-                pointList.add(new Point(getX(),getY(), getNextNodeStatusByAction(Motion.Action.ROTATE_LEFT)));
+                Point middlePoint = new Point(this);
+                middlePoint.setStatus(getNeighborNodeHeadingByAction(Motion.Action.ROTATE_LEFT));
+                correspondPoints.add(middlePoint);
                 break;
             case SPEED_DOWN:
-                pointList.add(new Point(this));
+                correspondPoints.add(new Point(this));
                 break;
             case SPEED_UP:
-                pointList.add(new Point(previousNode));
+                correspondPoints.add(new Point(previousNode));
                 break;
             case STEP:
-                pointList.add(new Point(this));
+                correspondPoints.add(new Point(this));
         }
-        pointList.add(new Point(getX(),getY(),getStatus()));
-        return pointList;
+        correspondPoints.add(new Point(this));
+        return correspondPoints;
     }
 
 

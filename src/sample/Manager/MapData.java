@@ -4,7 +4,6 @@ import sample.Creator.MapCreator;
 import sample.Model.Map;
 import sample.Model.Point;
 import sample.Model.PointInfo;
-import sample.Model.Robot;
 
 import java.util.List;
 
@@ -19,11 +18,19 @@ public class MapData {
     }
 
 
-    public static void writePointsToMaps(Map[] maps,List<Point> pointList, int timeWrite){
+    public void writePointsToMaps(List<Point> pointList, int timeWrite){
         for (int time = 0; time < pointList.size(); time++) {
             Point point = pointList.get(time);
-            maps[time+timeWrite].setPointInfoByPoint(point);
+            getMapByTime(time+timeWrite).setPointInfoByPoint(point);
         }
+    }
+    public void clearPointsFromMaps(List<Point> pointList, int timeClear){
+        for (int time = 0; time < pointList.size(); time++) {
+            Point point = pointList.get(time);
+            getMapByTime(time+timeClear).getPointInfoByXY(point.getX(), point.getY()).setStatus(PointInfo.Status.NONE);
+            getMapByTime(time+timeClear).getPointInfoByXY(point.getX(), point.getY()).setRobot(null);
+        }
+
     }
 
 
@@ -33,9 +40,13 @@ public class MapData {
         return maps;
     }
     public Map[] getMapsClone(){
-        return maps.clone();
+        Map[] clone = new Map[maps.length];
+        for (int i = 0; i < maps.length; i++) {
+            clone[i] = maps[i].getMapClone();
+        }
+        return clone;
     }
-    public Map   getMapByTime(int time){
+    public Map getMapByTime(int time){
         return maps[time];
     }
 

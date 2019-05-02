@@ -47,13 +47,13 @@ public class Point extends PointInfo {
     /**
      * USER DEFINE
      * */
-    public Point getClone(){
+    public Point getPointClone(){
         return new Point(this);
     }
 
 
     public void print(){
-        String info = "x=" + x + ", y=" + y + ", status=" + getStatus();
+        String info = "x=" + x + ", y=" + y + ", status=" + getStatus() + "robotId="+getRobot();
         System.out.println(info);
     }
     /**

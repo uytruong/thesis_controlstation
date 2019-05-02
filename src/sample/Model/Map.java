@@ -47,6 +47,11 @@ public class Map {
         pointInfo.setRobot(point.getRobot());
     }
 
+    public Map getMapClone(){
+        Map clone = new Map();
+        clone.setPointInfos(getPointInfosClone());
+        return clone;
+    }
 
     public static int getEstimatePathCost(Point start, Point goal){
         int deltaX = start.getX() - goal.getX();
