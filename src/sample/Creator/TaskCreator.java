@@ -47,7 +47,7 @@ public class TaskCreator {
         return random.nextInt(Config.timeAppearMax-Config.timeAppearMin)+Config.timeAppearMin;
     }
     private int getRandomTimeExecute(){
-        return random.nextInt(Config.timeExecuteMax-1)+1;
+        return random.nextInt(Config.timeExecuteMax-Config.timeExecuteMin)+Config.timeExecuteMin;
     }
     private int getRandomTaskPointX(){
         return random.nextInt(Map.xLength);
@@ -66,8 +66,9 @@ public class TaskCreator {
 
     public static class Config {
         public static int numberTaskMax  = 100;
-        public static int timeAppearMax  = 10;
+        public static int timeAppearMax  = 30;
         public static int timeAppearMin  = 1;
-        public static int timeExecuteMax = 2;
+        public static int timeExecuteMax = 5;
+        public static int timeExecuteMin = 2;
     }
 }

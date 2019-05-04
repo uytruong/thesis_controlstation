@@ -255,6 +255,7 @@ public class Controller implements Initializable {
                     Context.solvingMultiPath = true;
                     taskManager.setLastTimeAssign(time);
                     int timeAssign = time + MultiPathPlanning.Config.timeSolveMax;
+                    updateRobotAtTime(timeAssign);
 
                     solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolveMax), ev1 -> {
                         long t1 = System.currentTimeMillis();
@@ -288,13 +289,13 @@ public class Controller implements Initializable {
     private void initializeTextField(){
         txtShelfXLength.setText("2");
         txtShelfYLength.setText("5");
-        txtShelfEachRowNumber.setText("3");
-        txtShelfEachColNumber.setText("3");
+        txtShelfEachRowNumber.setText("2");
+        txtShelfEachColNumber.setText("1");
         txtDistanceShelfToShelf.setText("2");
         txtDistanceBoundToShelf.setText("1");
-        txtNumOfRandRobot.setText("30");
+        txtNumOfRandRobot.setText("7");
         txtTypeOfRandRobot.setText("0");
-        txtNumOfRandTask.setText("100");
+        txtNumOfRandTask.setText("20");
         txtTypeOfRandTask.setText("0");
 
         txtRobotType.setText("0");

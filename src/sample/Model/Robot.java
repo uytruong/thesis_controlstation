@@ -10,6 +10,8 @@ public class Robot {
     private List<Point> mainPlanPointList = new ArrayList<>();
     private List<Point> subPlanPointList  = new ArrayList<>();
     private Task        task;
+    private List<Task>        additionalTasks = new ArrayList<>();
+    private List<List<Point>> additionalPaths = new ArrayList<>();
 
     private int lastTimeUpdateToMap = -1;
 
@@ -54,6 +56,30 @@ public class Robot {
     public void setTask(Task task) {
         this.task = task;
     }
+    public List<Task> getAdditionalTasks() {
+        return additionalTasks;
+    }
+        public List<List<Point>> getAdditionalPaths() {
+        return additionalPaths;
+    }
+
+    public Task getLastestTask(){
+        if(additionalTasks.size() == 0)
+            return task;
+        else
+            return additionalTasks.get(additionalTasks.size()-1);
+    }
+    public Point getLastPointByPlan(){
+        if(mainPlanPointList.size() == 0)
+            return getLastPoint();
+        else
+            return mainPlanPointList.get(mainPlanPointList.size()-1);
+    }
+    public int getTimeFreeByPlan(){
+        return getTimeFree()+mainPlanPointList.size();
+    }
+
+
 
     public int getLastTimeBusy() {
         return pointList.size()-1;
@@ -83,10 +109,33 @@ public class Robot {
     public void assignMainPlanPointList() {
         pointList.addAll(mainPlanPointList);
     }
+
+
     public void assignTask(){
-        task.setTimeFinish(getLastTimeBusy());
-        task.setStatus(Task.Status.RUNNING);
+        if (task!= null){
+            int timeFinish = pointList.size();
+            task.setTimeFinish(timeFinish);
+            task.setStatus(Task.Status.RUNNING);
+        }
     }
+
+    public void assignTaskByPlan(){
+        if(task != null){
+            task.setStatus(Task.Status.RUNNING);
+            task.setTimeFinish(getLastTimeBusy()+mainPlanPointList.size());
+        }
+    }
+
+
+
+    public void unassignTask(){
+        if(task != null){
+            task.setTimeFinish(Integer.MAX_VALUE);
+            task.setStatus(Task.Status.READY);
+            task = null;
+        }
+    }
+
 
 
 

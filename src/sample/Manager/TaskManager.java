@@ -36,7 +36,6 @@ public class TaskManager {
                 doneTaskNumber++;
             }
         }
-        //print();
     }
 
     public List<Task> getReadyTaskList(){
@@ -78,8 +77,8 @@ public class TaskManager {
     }
 
     public static class Config{
-        public static int timeAssignDelayMax = 7;
-        public static int taskAssignNumberMin = 7;
+        public static int timeAssignDelayMax = 0;
+        public static int taskAssignNumberMin = 3;
     }
 
 }
