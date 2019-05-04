@@ -10,8 +10,6 @@ public class Robot {
     private List<Point> mainPlanPointList = new ArrayList<>();
     private List<Point> subPlanPointList  = new ArrayList<>();
     private Task        task;
-    private List<Task>        additionalTasks = new ArrayList<>();
-    private List<List<Point>> additionalPaths = new ArrayList<>();
 
     private int lastTimeUpdateToMap = -1;
 
@@ -56,19 +54,7 @@ public class Robot {
     public void setTask(Task task) {
         this.task = task;
     }
-    public List<Task> getAdditionalTasks() {
-        return additionalTasks;
-    }
-        public List<List<Point>> getAdditionalPaths() {
-        return additionalPaths;
-    }
 
-    public Task getLastestTask(){
-        if(additionalTasks.size() == 0)
-            return task;
-        else
-            return additionalTasks.get(additionalTasks.size()-1);
-    }
     public Point getLastPointByPlan(){
         if(mainPlanPointList.size() == 0)
             return getLastPoint();
@@ -111,13 +97,6 @@ public class Robot {
     }
 
 
-    public void assignTask(){
-        if (task!= null){
-            int timeFinish = pointList.size();
-            task.setTimeFinish(timeFinish);
-            task.setStatus(Task.Status.RUNNING);
-        }
-    }
 
     public void assignTaskByPlan(){
         if(task != null){
@@ -125,7 +104,6 @@ public class Robot {
             task.setTimeFinish(getLastTimeBusy()+mainPlanPointList.size());
         }
     }
-
 
 
     public void unassignTask(){
@@ -136,21 +114,5 @@ public class Robot {
         }
     }
 
-
-
-
     public Point getLastPoint(){ return getPointByTime(getLastTimeBusy());}
-    public void printPointList(){
-        System.out.println("robot: id="+id);
-        System.out.println("realPointList");
-        for (int time = 0; time < getTimeFree(); time++) {
-            Point point = getPointByTime(time);
-            point.print();
-        }
-        System.out.println("mainPlanPointList");
-        for (int time = 0; time < mainPlanPointList.size(); time++) {
-            Point point = mainPlanPointList.get(time);
-            point.print();
-        }
-    }
 }

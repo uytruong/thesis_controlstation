@@ -33,19 +33,6 @@ public class MapData {
 
     }
 
-
-
-
-    public Map[] getMaps() {
-        return maps;
-    }
-    public Map[] getMapsClone(){
-        Map[] clone = new Map[maps.length];
-        for (int i = 0; i < maps.length; i++) {
-            clone[i] = maps[i].getMapClone();
-        }
-        return clone;
-    }
     public Map getMapByTime(int time){
         return maps[time];
     }

@@ -44,7 +44,7 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="103.0" prefWidth="377.0">
                                     <children>
-                                        <Label layoutX="2.0" layoutY="5.0" text="Length of shelf in X,Y's direction">
+                                        <Label layoutX="2.0" layoutY="5.0" text="Shelf's length in X,Y's direction">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Label>
@@ -88,8 +88,8 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></TextField>
-                              <Button fx:id="btnTest" layoutX="195.0" layoutY="44.0" mnemonicParsing="false" onAction="#btnTestClick" text="Test" />
-                              <Button fx:id="btnStartSimulation" layoutX="212.0" layoutY="28.0" mnemonicParsing="false" onAction="#btnStartSimulationClick" text="Start Simulation" />
+                              <Button fx:id="btnReset" layoutX="195.0" layoutY="44.0" mnemonicParsing="false" onAction="#btnResetClick" text="Reset" />
+                              <Button fx:id="btnStartSimulation" layoutX="195.0" layoutY="13.0" mnemonicParsing="false" onAction="#btnStartSimulationClick" text="Start Simulation" />
                                     </children></AnchorPane>
                             </content>
                         </TitledPane>
@@ -97,16 +97,6 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="103.0" prefWidth="374.0">
                                     <children>
-                                        <Label layoutX="1.0" layoutY="5.0" text="Type">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                                        <TextField fx:id="txtRobotType" layoutX="32.0" prefHeight="16.0" prefWidth="30.0" />
-                                        <Label layoutX="72.0" layoutY="4.0" text="Heading">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                                        <TextField fx:id="txtRobotHeading" layoutX="118.0" prefHeight="25.0" prefWidth="30.0" />
                                         <TextField fx:id="txtRobotStartX" layoutX="84.0" layoutY="29.0" prefHeight="25.0" prefWidth="30.0" />
                                         <TextField fx:id="txtRobotStartY" layoutX="118.0" layoutY="28.0" prefHeight="25.0" prefWidth="30.0" />
                                         <Label layoutX="1.0" layoutY="35.0" text="Start position X,Y:">
@@ -131,6 +121,7 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
+                              <ChoiceBox fx:id="cbRobotHeading" layoutX="67.0" layoutY="51.0" prefHeight="25.0" prefWidth="92.0" />
                                     </children></AnchorPane>
                             </content>
                         </TitledPane>
@@ -159,14 +150,6 @@
                                     <Font size="10.0" />
                                  </font>
                               </Button>
-                                        <Label layoutX="7.0" layoutY="4.0" text="Type">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></Label>
-                                        <TextField fx:id="txtTaskType" layoutX="123.0" layoutY="-1.0" prefHeight="25.0" prefWidth="25.0">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font></TextField>
                                         <TextField fx:id="txtTaskGoalX" layoutX="94.0" layoutY="25.0" prefHeight="25.0" prefWidth="24.0">
                                  <font>
                                     <Font size="10.0" />
@@ -275,8 +258,8 @@
                                         <TableColumn fx:id="tableColTaskID" prefWidth="38.0" text="ID" />
                                         <TableColumn fx:id="tableColTaskType" prefWidth="49.0" text="Type" />
                                         <TableColumn fx:id="tableColTaskAppearTime" prefWidth="89.0" text="Appear Time" />
-                                        <TableColumn fx:id="tableColTaskExecuteTime" prefWidth="89.0" text="Execute Time" />
-                                        <TableColumn fx:id="tableColTaskX" prefWidth="44.0" text="x" />
+                                        <TableColumn fx:id="tableColTaskExecuteTime" prefWidth="105.0" text="Execute Time" />
+                                        <TableColumn fx:id="tableColTaskX" minWidth="0.0" prefWidth="28.0" text="x" />
                                         <TableColumn fx:id="tableColTaskY" prefWidth="47.0" text="y" />
                                         <TableColumn fx:id="tableColTaskStatus" prefWidth="84.0" text="Status" />
                                     </columns>

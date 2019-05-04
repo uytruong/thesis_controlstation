@@ -53,18 +53,18 @@ public class Controller implements Initializable {
     /**
      * Robot
      */
-    public TextField txtRobotType;
-    public TextField txtRobotHeading;
     public TextField txtRobotStartX;
     public TextField txtRobotStartY;
+    public ChoiceBox cbRobotHeading;
     public Button    btnCreateRobot;
     public TextField txtNumOfRandRobot;
     public TextField txtTypeOfRandRobot;
     public Button    btnCreateRobotRandom;
+
+    public ObservableList<String> cbRobotHeadingList = FXCollections.observableArrayList(PointInfo.Status.getRobotHeadingStringList());
     /**
      * Task
      */
-    public TextField txtTaskType;
     public TextField txtTaskGoalX;
     public TextField txtTaskGoalY;
     public TextField txtTaskTimeAppear;
@@ -109,6 +109,7 @@ public class Controller implements Initializable {
     public TextField txtTimeMax;
     public Button    btnStartSimulation;
     public Button    btnSaveSystemConfig;
+    public Button    btnReset;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -116,6 +117,10 @@ public class Controller implements Initializable {
         yAxis.setAutoRanging(false);
         initializeTextField();
         initializeTableView();
+
+        cbRobotHeading.setValue(cbRobotHeadingList.get(0));
+        cbRobotHeading.setItems(cbRobotHeadingList);
+
     }
 
     public void btnSaveSimulationConfigClick(){
@@ -168,10 +173,23 @@ public class Controller implements Initializable {
     }
     public void btnCreateRobotClick(ActionEvent event) {
         try {
-            int robotType                      = Integer.parseInt(txtRobotType.getText());
-            int robotStartX                    = Integer.parseInt(txtRobotStartX.getText());
-            int robotStartY                    = Integer.parseInt(txtRobotStartY.getText());
-            PointInfo.Status robotStartHeading = PointInfo.Status.getEnum(Integer.parseInt(txtRobotHeading.getText()));
+            int robotType   = 0;
+            int robotStartX = Integer.parseInt(txtRobotStartX.getText());
+            int robotStartY = Integer.parseInt(txtRobotStartY.getText());
+            PointInfo.Status robotStartHeading;
+
+            if(cbRobotHeading.getValue().equals(cbRobotHeadingList.get(0))){
+                robotStartHeading = PointInfo.Status.ROBOT_UP;
+            }
+            else if(cbRobotHeading.getValue().equals(cbRobotHeadingList.get(1))){
+                robotStartHeading = PointInfo.Status.ROBOT_DOWN;
+            }
+            else if(cbRobotHeading.getValue().equals(cbRobotHeadingList.get(2))){
+                robotStartHeading = PointInfo.Status.ROBOT_LEFT;
+            }
+            else {
+                robotStartHeading = PointInfo.Status.ROBOT_RIGHT;
+            }
 
             Point robotStartPoint = new Point(robotStartX, robotStartY, robotStartHeading);
             if (robotCreator.create(new Robot(robotType, robotStartPoint))) {
@@ -198,7 +216,7 @@ public class Controller implements Initializable {
         try {
             int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
             int taskTimeAppear  = Integer.parseInt(txtTaskTimeAppear.getText());
-            int taskType        = Integer.parseInt(txtTaskType.getText());
+            int taskType        = 0;
             int taskGoalX       = Integer.parseInt(txtTaskGoalX.getText());
             int taskGoalY       = Integer.parseInt(txtTaskGoalY.getText());
             Point taskGoalPoint = new Point(taskGoalX,taskGoalY);
@@ -236,7 +254,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void btnTestClick(ActionEvent event) {
+    public void btnResetClick(ActionEvent event) {
         Context.time = 0;
         initializeTimeline();
     }
@@ -298,8 +316,6 @@ public class Controller implements Initializable {
         txtNumOfRandTask.setText("20");
         txtTypeOfRandTask.setText("0");
 
-        txtRobotType.setText("0");
-        txtTaskType.setText("0");
 
         txtRandomSeed.setText("0");
         txtTimeMax.setText("300");

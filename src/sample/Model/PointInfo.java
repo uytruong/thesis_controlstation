@@ -1,5 +1,8 @@
 package sample.Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PointInfo {
     public enum Status{
         NONE(0),
@@ -19,7 +22,27 @@ public class PointInfo {
             return this.value;
         }
 
+        public String getString(){
+            switch (value){
+                case 0:  return "NONE";
+                case 1:  return "SHELF";
+                case 2:  return "ROBOT_UP";
+                case 3:  return "ROBOT_DOWN";
+                case 4:  return "ROBOT_LEFT";
+                default: return "ROBOT_RIGHT";
+            }
+        }
+
+        public static List<String> getRobotHeadingStringList(){
+            List<String> list = new ArrayList<>();
+            for (int i = 2; i < 6; i++) {
+                list.add(getEnum(i).getString());
+            }
+            return list;
+        }
+
         public static Status getEnum(int value){ return Status.values()[value];}
+
     }
 
     private Status status  = Status.NONE;

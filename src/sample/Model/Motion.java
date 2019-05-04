@@ -41,6 +41,8 @@ public class Motion {
     public static int getActionPathCost(Action action){
         if(action == Action.NONE)
             return 0;
+        else if(action == Action.ROTATE_BACK)
+            return 2;
         else
             return 1;
     }

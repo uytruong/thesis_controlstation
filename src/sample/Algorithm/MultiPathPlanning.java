@@ -66,28 +66,32 @@ public class MultiPathPlanning {
          * then erase the plan paths which are conflicted
          * */
         for (Robot robot: robotList) {
-            List<Point> mainPlanPointList = robot.getMainPlanPointList();
-            int         timeOffset        = robot.getTimeFree();
-            for (int idx = 0; idx < mainPlanPointList.size(); idx++) {
-                Point point = mainPlanPointList.get(idx);
-                int   x     = point.getX();
-                int   y     = point.getY();
-                Map   map   = mapData.getMapByTime(idx+timeOffset);
-                if(map.getPointInfoByXY(x,y).getStatus()== PointInfo.Status.NONE) {
-                    map.setPointInfoByPoint(point);
-                }
-                else{
-                    Robot sRobot = map.getPointInfoByXY(x,y).getRobot();
-                    conflict.add(sRobot);
-                    conflict.add(robot);
+            if(robot.getTask() != null){
+                List<Point> mainPlanPointList = robot.getMainPlanPointList();
+                int         timeOffset        = robot.getTimeFree();
+                for (int idx = 0; idx < mainPlanPointList.size(); idx++) {
+                    Point point = mainPlanPointList.get(idx);
+                    int   x     = point.getX();
+                    int   y     = point.getY();
+                    Map   map   = mapData.getMapByTime(idx+timeOffset);
+                    if(map.getPointInfoByXY(x,y).isEmpty()) {
+                        map.setPointInfoByPoint(point);
+                    }
+                    else{
+                        Robot sRobot = map.getPointInfoByXY(x,y).getRobot();
+                        conflict.add(sRobot);
+                        conflict.add(robot);
+                    }
                 }
             }
         }
 
-        for (Robot robot: robotManager.getRobotList()){
-            if(conflict.exist(robot) & (robot.getTask() != null)){
-                mapData.clearPointsFromMaps(robot.getMainPlanPointList(),robot.getTimeFree());
-                robot.getMainPlanPointList().clear();
+        for (Robot robot: robotList){
+            if(conflict.exist(robot)){
+                if(robot.getTask() != null) {
+                    mapData.clearPointsFromMaps(robot.getMainPlanPointList(), robot.getTimeFree());
+                    robot.getMainPlanPointList().clear();
+                }
             }
             else {
                 robot.assignTaskByPlan();
@@ -147,7 +151,8 @@ public class MultiPathPlanning {
                 }
             }
             for (Robot robot: conflictRobots) {
-                mapData.clearPointsFromMaps(robot.getSubPlanPointList(),robot.getTimeFree());
+                if (robot.getTask() != null)
+                    mapData.clearPointsFromMaps(robot.getSubPlanPointList(),robot.getTimeFree());
             }
 
             if((totalCost<=totalCostMin) & (taskCpltNum>=taskCpltNumMax)){
@@ -175,10 +180,18 @@ public class MultiPathPlanning {
 
         while (loop){
             for (Robot robot: robotList) {
-                System.out.println("RobotId = " + robot.getId());
-                Point lastPoint = robot.getLastPointByPlan();
-                int   lastX     = lastPoint.getX();
-                int   lastY     = lastPoint.getY();
+                Point lastPoint;
+                int   lastX,lastY;
+                if(robot.getTask() != null) {
+                    lastPoint = robot.getLastPointByPlan();
+                    lastX     = lastPoint.getX();
+                    lastY     = lastPoint.getY();
+                }
+                else{
+                    lastPoint = robot.getLastPoint();
+                    lastX     = lastPoint.getX();
+                    lastY     = lastPoint.getY();
+                }
 
                 Robot fRobot    = null;
                 for (int time = robot.getTimeFreeByPlan(); time < Context.timeMax; time++) {
@@ -190,7 +203,7 @@ public class MultiPathPlanning {
                 }
 
                 if(fRobot != null){
-                    System.out.println("fRobotId=" + fRobot.getId());
+                    System.out.println("RobotId = " + robot.getId() + " crash fRobotId=" + fRobot.getId());
                     mapData.clearPointsFromMaps(fRobot.getMainPlanPointList(),fRobot.getTimeFree());
                     fRobot.setMainPlanPointList(new ArrayList<>());
                     fRobot.unassignTask();
