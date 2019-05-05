@@ -28,17 +28,17 @@ import java.net.URL;
 import java.util.*;
 
 public class Controller implements Initializable {
-    private Random         random     = new Random();
-    private MapCreator     mapCreator = new MapCreator();
-    private RobotCreator   robotCreator;
-    private TaskCreator    taskCreator;
+    private Random       random     = new Random();
+    private MapCreator   mapCreator = new MapCreator();
+    private RobotCreator robotCreator;
+    private TaskCreator  taskCreator;
 
-    private MapData        mapData;
-    private RobotManager   robotManager;
-    private TaskManager    taskManager;
+    private MapData      mapData;
+    private RobotManager robotManager;
+    private TaskManager  taskManager;
 
-    private Timeline       timeline;
-    private Timeline solvingThread;
+    private Timeline     timeline;
+    private Timeline     solvingThread;
 
     /**
      * Shelf
@@ -58,7 +58,6 @@ public class Controller implements Initializable {
     public ChoiceBox cbRobotHeading;
     public Button    btnCreateRobot;
     public TextField txtNumOfRandRobot;
-    public TextField txtTypeOfRandRobot;
     public Button    btnCreateRobotRandom;
 
     public ObservableList<String> cbRobotHeadingList = FXCollections.observableArrayList(PointInfo.Status.getRobotHeadingStringList());
@@ -71,14 +70,12 @@ public class Controller implements Initializable {
     public TextField txtTaskTimeExecute;
     public Button    btnCreateTask;
     public TextField txtNumOfRandTask;
-    public TextField txtTypeOfRandTask;
     public Button    btnCreateTaskRandom;
     /**
      * Robot TableView
      */
     public TableView tableViewRobotList;
     public TableColumn<RobotViewModel, Integer> tableColRobotID;
-    public TableColumn<RobotViewModel, Integer> tableColRobotType;
     public TableColumn<RobotViewModel, Integer> tableColRobotX;
     public TableColumn<RobotViewModel, Integer> tableColRobotY;
     public TableColumn<RobotViewModel, String>  tableColRobotHeading;
@@ -88,7 +85,6 @@ public class Controller implements Initializable {
      */
     public TableView tableViewTaskList;
     public TableColumn<TaskViewModel, Integer> tableColTaskID;
-    public TableColumn<TaskViewModel, Integer> tableColTaskType;
     public TableColumn<TaskViewModel, Integer> tableColTaskAppearTime;
     public TableColumn<TaskViewModel, Integer> tableColTaskExecuteTime;
     public TableColumn<TaskViewModel, Integer> tableColTaskX;
@@ -173,7 +169,6 @@ public class Controller implements Initializable {
     }
     public void btnCreateRobotClick(ActionEvent event) {
         try {
-            int robotType   = 0;
             int robotStartX = Integer.parseInt(txtRobotStartX.getText());
             int robotStartY = Integer.parseInt(txtRobotStartY.getText());
             PointInfo.Status robotStartHeading;
@@ -192,7 +187,7 @@ public class Controller implements Initializable {
             }
 
             Point robotStartPoint = new Point(robotStartX, robotStartY, robotStartHeading);
-            if (robotCreator.create(new Robot(robotType, robotStartPoint))) {
+            if (robotCreator.create(new Robot(robotStartPoint))) {
                 updateAndViewAtTime(0);
             }
         }
@@ -203,8 +198,7 @@ public class Controller implements Initializable {
     public void btnCreateRobotRandomClick(ActionEvent event) {
         try {
             int robotNumOfRand  = Integer.parseInt(txtNumOfRandRobot.getText());
-            int robotTypeOfRand = Integer.parseInt(txtTypeOfRandRobot.getText());
-            robotCreator.createRandom(robotNumOfRand, robotTypeOfRand);
+            robotCreator.createRandom(robotNumOfRand);
             updateAndViewAtTime(0);
         }
         catch (Exception e){
@@ -216,12 +210,11 @@ public class Controller implements Initializable {
         try {
             int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
             int taskTimeAppear  = Integer.parseInt(txtTaskTimeAppear.getText());
-            int taskType        = 0;
             int taskGoalX       = Integer.parseInt(txtTaskGoalX.getText());
             int taskGoalY       = Integer.parseInt(txtTaskGoalY.getText());
             Point taskGoalPoint = new Point(taskGoalX,taskGoalY);
 
-            if (taskCreator.create(new Task(taskType, taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
+            if (taskCreator.create(new Task(taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
                 updateAndViewAtTime(0);
             }
         }
@@ -232,9 +225,8 @@ public class Controller implements Initializable {
     public void btnCreateTaskRandomClick(ActionEvent event){
         try {
             int taskNumOfRand  = Integer.parseInt(txtNumOfRandTask.getText());
-            int taskTypeOfRand = Integer.parseInt(txtTypeOfRandTask.getText());
 
-            taskCreator.createRandom(taskNumOfRand, taskTypeOfRand);
+            taskCreator.createRandom(taskNumOfRand);
             updateAndViewAtTime(0);
         }
         catch (Exception e){
@@ -311,25 +303,21 @@ public class Controller implements Initializable {
         txtShelfEachColNumber.setText("1");
         txtDistanceShelfToShelf.setText("2");
         txtDistanceBoundToShelf.setText("1");
-        txtNumOfRandRobot.setText("7");
-        txtTypeOfRandRobot.setText("0");
-        txtNumOfRandTask.setText("20");
-        txtTypeOfRandTask.setText("0");
 
+        txtNumOfRandRobot.setText("7");
+        txtNumOfRandTask.setText("20");
 
         txtRandomSeed.setText("0");
         txtTimeMax.setText("300");
     }
     private void initializeTableView(){
         tableColRobotID.setCellValueFactory(new PropertyValueFactory<>("RobotID"));
-        tableColRobotType.setCellValueFactory(new PropertyValueFactory<>("RobotType"));
         tableColRobotX.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointX"));
         tableColRobotY.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointY"));
         tableColRobotHeading.setCellValueFactory(new PropertyValueFactory<>("RobotHeading"));
         tableViewRobotList.setItems(robotObservableList);
 
         tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("TaskID"));
-        tableColTaskType.setCellValueFactory(new PropertyValueFactory<>("TaskType"));
         tableColTaskX.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointX"));
         tableColTaskY.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointY"));
         tableColTaskAppearTime.setCellValueFactory(new PropertyValueFactory<>("TaskAppearTime"));
@@ -342,7 +330,6 @@ public class Controller implements Initializable {
         for (int idx = 0; idx < taskCreator.getTaskList().size(); idx++) {
             Task task = taskCreator.getTaskList().get(idx);
             int taskIDView          = task.getId();
-            int taskTypeView        = task.getType();
             int taskXView           = task.getGoal().getX();
             int taskYView           = task.getGoal().getY();
             int taskAppearTimeView  = task.getTimeAppear();
@@ -364,7 +351,7 @@ public class Controller implements Initializable {
                     break;
             }
 
-            TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskTypeView, taskXView, taskYView,
+            TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskXView, taskYView,
                                                             taskAppearTimeView, taskExecuteTimeView, taskStatusView);
             taskViewModelList.add(taskViewModel);
         }
@@ -376,7 +363,6 @@ public class Controller implements Initializable {
         for (int robotId = 0; robotId < robotManager.getRobotList().size(); robotId++) {
             Robot robot       = robotManager.getRobotById(robotId);
             int robotIDView   = robot.getId();
-            int robotTypeView = robot.getType();
             int robotXView    = robot.getPointByTime(time).getX();
             int robotYView    = robot.getPointByTime(time).getY();
             PointInfo.Status robotHeading  = robot.getHeadingByTime(time);
@@ -395,7 +381,7 @@ public class Controller implements Initializable {
                     robotHeadingView = "RIGHT";
             }
 
-            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotTypeView, robotXView, robotYView, robotHeadingView);
+            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView);
             robotViewModelList.add(robotViewModel);
         }
         tableViewRobotList.getItems().clear();

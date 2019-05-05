@@ -5,16 +5,14 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class TaskViewModel {
     private SimpleIntegerProperty taskID;
-    private SimpleIntegerProperty taskType;
     private SimpleIntegerProperty taskGoalPointX;
     private SimpleIntegerProperty taskGoalPointY;
     private SimpleIntegerProperty taskAppearTime;
     private SimpleIntegerProperty taskExecuteTime;
     private SimpleStringProperty taskStatus;
 
-    public TaskViewModel(int taskID, int taskType, int taskGoalPointX, int taskGoalPointY, int taskAppearTime, int taskExecuteTime, String taskStatus) {
+    public TaskViewModel(int taskID, int taskGoalPointX, int taskGoalPointY, int taskAppearTime, int taskExecuteTime, String taskStatus) {
         this.taskID = new SimpleIntegerProperty(taskID);
-        this.taskType = new SimpleIntegerProperty(taskType);
         this.taskGoalPointX = new SimpleIntegerProperty(taskGoalPointX);
         this.taskGoalPointY = new SimpleIntegerProperty(taskGoalPointY);
         this.taskAppearTime = new SimpleIntegerProperty(taskAppearTime);
@@ -28,14 +26,6 @@ public class TaskViewModel {
 
     public void setTaskID(int taskID) {
         this.taskID = new SimpleIntegerProperty(taskID);
-    }
-
-    public int getTaskType() {
-        return taskType.get();
-    }
-
-    public void setTaskType(int taskType) {
-        this.taskType = new SimpleIntegerProperty(taskType);
     }
 
     public int getTaskGoalPointX() {

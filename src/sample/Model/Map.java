@@ -58,4 +58,11 @@ public class Map {
         int deltaY = start.getY() - goal.getY();
         return (Math.abs(deltaX)+Math.abs(deltaY));
     }
+
+    public static int getEstimatePathCost2(Point start, Point goal, Map map){
+        int deltaX = start.getX() - goal.getX();
+        int deltaY = start.getY() - goal.getY();
+        map.getPointInfoByXY(x,y).getStatus()
+        return (Math.abs(deltaX)+Math.abs(deltaY));
+    }
 }

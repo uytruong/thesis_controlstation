@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Robot {
-    private int id, type;
+    private int id;
     private List<Point> pointList         = new ArrayList<>();
 
     private List<Point> mainPlanPointList = new ArrayList<>();
@@ -13,8 +13,7 @@ public class Robot {
 
     private int lastTimeUpdateToMap = -1;
 
-    public Robot(int type, Point start) {
-        this.type = type;
+    public Robot(Point start) {
         this.pointList.add(start.getPointClone());
     }
 
@@ -26,9 +25,6 @@ public class Robot {
     }
     public void setId(int id) {
         this.id = id;
-    }
-    public int getType() {
-        return type;
     }
     public int getLastTimeUpdateToMap() {
         return lastTimeUpdateToMap;

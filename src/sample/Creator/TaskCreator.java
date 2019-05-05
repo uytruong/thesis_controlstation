@@ -29,14 +29,14 @@ public class TaskCreator {
         }
     }
 
-    public void createRandom(int numberOfTasks, int typeOfTasks){
+    public void createRandom(int numberOfTasks){
         if ((taskList.size() + numberOfTasks) >= Config.numberTaskMax){
             numberOfTasks = Config.numberTaskMax - taskList.size();
         }
         for (int i = 0; i < numberOfTasks; i++) {
             while (true){
                 Point goal = new Point(getRandomTaskPointX(),getRandomTaskPointY());
-                Task  task = new Task(typeOfTasks,getRandomTimeExecute(),getRandomTimeAppear(),goal);
+                Task  task = new Task(getRandomTimeExecute(),getRandomTimeAppear(),goal);
                 if (create(task)) {
                     break;
                 }

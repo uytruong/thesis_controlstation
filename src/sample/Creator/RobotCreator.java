@@ -39,14 +39,14 @@ public class RobotCreator {
         return false;
     }
 
-    public void createRandom(int numberOfRobots, int typeOfRobots){
+    public void createRandom(int numberOfRobots){
         if ((robotList.size() + numberOfRobots) >= Config.numberRobotMax){
             numberOfRobots = Config.numberRobotMax-robotList.size();
         }
         for (int i = 0; i < numberOfRobots; i++) {
             while (true){
                 Point start = new Point(getRandomX(), getRandomY(), getRandomHeading());
-                if (create(new Robot(typeOfRobots, start))) {
+                if (create(new Robot(start))) {
                     break;
                 }
             }

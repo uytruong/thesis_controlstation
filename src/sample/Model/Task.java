@@ -8,14 +8,13 @@ public class Task{
         DONE
     }
 
-    private int id, type;
+    private int id;
     private int timeExecute, timeAppear, timeFinish = Integer.MAX_VALUE;
     private Point  goal;
     private Status status = Status.NEW;
     private int costOfRobotPath = Integer.MAX_VALUE;
 
-    public Task(int type, int timeExecute, int timeAppear, Point goal) {
-        this.type        = type;
+    public Task(int timeExecute, int timeAppear, Point goal) {
         this.timeExecute = timeExecute;
         this.timeAppear  = timeAppear;
         this.goal        = goal.getPointClone();
@@ -29,9 +28,6 @@ public class Task{
     }
     public void setId(int id) {
         this.id = id;
-    }
-    public int getType() {
-        return type;
     }
     public int getTimeExecute() {
         return timeExecute;

@@ -7,14 +7,12 @@ import java.util.List;
 
 public class RobotViewModel {
     private SimpleIntegerProperty robotID;
-    private SimpleIntegerProperty robotType;
     private SimpleIntegerProperty robotStartPointX;
     private SimpleIntegerProperty robotStartPointY;
-    private SimpleStringProperty robotHeading;
+    private SimpleStringProperty  robotHeading;
 
-    public RobotViewModel(int robotID, int robotType, int robotX, int robotY, String robotHeading) {
+    public RobotViewModel(int robotID, int robotX, int robotY, String robotHeading) {
         this.robotID = new SimpleIntegerProperty(robotID);
-        this.robotType = new SimpleIntegerProperty(robotType);
         this.robotStartPointX = new SimpleIntegerProperty(robotX);
         this.robotStartPointY = new SimpleIntegerProperty(robotY);
         this.robotHeading = new SimpleStringProperty(robotHeading);
@@ -26,14 +24,6 @@ public class RobotViewModel {
 
     public void setRobotID(int robotID) {
         this.robotID = new SimpleIntegerProperty(robotID);
-    }
-
-    public int getRobotType() {
-        return robotType.get();
-    }
-
-    public void setRobotType(int robotType) {
-        this.robotType = new SimpleIntegerProperty(robotType);
     }
 
     public int getRobotStartPointX() {
