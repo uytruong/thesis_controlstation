@@ -23,18 +23,34 @@ public class Main extends Application {
 
         mapCreator.getShelf().setxLength(2);
         mapCreator.getShelf().setyLength(3);
-        mapCreator.getShelf().setxNumber(2);
+        mapCreator.getShelf().setxNumber(3);
         mapCreator.getShelf().setyNumber(2);
         mapCreator.getDistance().setShelfToHorizontalShelf(2);
         mapCreator.getDistance().setShelfToVerticalShelf(2);
-        mapCreator.getDistance().setBoundToHorizontalShelf(1);
-        mapCreator.getDistance().setBoundToVerticalShelf(1);
+        mapCreator.getDistance().setBoundToHorizontalShelf(2);
+        mapCreator.getDistance().setBoundToVerticalShelf(2);
         mapCreator.create();
 
         final Map map = mapCreator.getMapBaseClone();
-        Point point1 = new Point(0,0, PointInfo.Status.ROBOT_LEFT);
-        Point point2 = new Point(2,0, PointInfo.Status.ROBOT_LEFT);
-        System.out.println(Map.getEstimatePathCost2(point1,point2,map));
+        Point robotA = new Point(2,0, PointInfo.Status.ROBOT_LEFT);
+        Point goal1 = new Point(6,1, PointInfo.Status.NONE); // area 2 same row
+        Point goal2 = new Point(3,5, PointInfo.Status.NONE); // area 2 same col
+        Point goal3 = new Point(6,5, PointInfo.Status.NONE); // area 2 else
+
+        Point robotB = new Point(0,2, PointInfo.Status.ROBOT_LEFT);
+        Point goal4 = new Point(4,3, PointInfo.Status.NONE); // area 3 same row
+        Point goal5 = new Point(1,7, PointInfo.Status.NONE); // area 3 same col
+        Point goal6 = new Point(4,7, PointInfo.Status.NONE); // area 3 else
+
+//        Map.getEstimatePathCost2(robotA,goal1,map);
+//        Map.getEstimatePathCost2(robotA,goal2,map);
+//        Map.getEstimatePathCost2(robotA,goal3,map);
+
+        Map.getEstimatePathCost2(robotB,goal4,map);
+        Map.getEstimatePathCost2(robotB,goal5,map);
+        Map.getEstimatePathCost2(robotB,goal6,map);
+
+
     }
     public static void main(String[] args) {
         launch(args);
