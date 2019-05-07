@@ -12,8 +12,8 @@ public class RobotCreator {
     private List<Robot> robotList = new ArrayList<>();
 
 
-    public RobotCreator(MapCreator mapCreator, Random random) {
-         this.map     = mapCreator.getMap();
+    public RobotCreator(Random random) {
+         this.map     = MapCreator.map;
          this.random  = random;
     }
 
@@ -74,7 +74,7 @@ public class RobotCreator {
 
 
 
-    public static class Config{
-        public static int numberRobotMax = 100;
+    private static class Config{
+        private static int numberRobotMax = 100;
     }
 }

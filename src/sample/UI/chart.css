@@ -1,21 +1,24 @@
-.series0.chart-symbol { /* solid square */
-    -fx-background-color: #339933;
+.series0.chart-symbol { /* solid square - shelf */
+    -fx-background-color: #339900;
     -fx-background-radius: 1;
     -fx-scale-x: 3;
     -fx-scale-y: 3;
 }
 .series1.chart-symbol { /* solid square ready task */
-    -fx-background-color: #237c17;
-    -fx-background-radius: 0;
+    -fx-background-color: #237057;
+    -fx-background-radius: 1;
     -fx-scale-x: 2;
     -fx-scale-y: 2;
 }
 
+
 .series2.chart-symbol { /* solid square running task */
-    -fx-background-color: #e50909;
-    -fx-background-radius: 0;
+    -fx-background-color: #ffcc00;
+    -fx-background-radius: 30px;
     -fx-scale-x: 2;
     -fx-scale-y: 2;
+    -fx-shape: "M 20.0 20.0  v24.0 h 10.0  v-24   Z";
+    -fx-padding: 5px 5px 5px 5px;
 }
 .series3.chart-symbol { /* solid triangle up arrow */
     -fx-background-color: #2f357f;

@@ -1,5 +1,6 @@
 package sample.Model;
 import sample.Creator.MapCreator;
+import sample.Manager.Context;
 
 import java.util.*;
 
@@ -7,11 +8,10 @@ public class Map {
     public static int     xLength, yLength;
     private PointInfo[][] pointInfos;
 
+
+
     /*** CONSTRUCTOR**/
     public Map() {}
-    public Map(MapCreator mapCreator){
-        pointInfos = mapCreator.getMap().getPointInfosClone();
-    }
 
     private PointInfo[][] getPointInfosClone(){
         PointInfo[][] clone = new PointInfo[pointInfos.length][pointInfos[0].length];
@@ -55,10 +55,17 @@ public class Map {
         return clone;
     }
 
-    public static int getEstimatePathCost(Point start, Point goal){
+    public static int getEstimatePathCost1(Point start, Point goal){
         int deltaX = start.getX() - goal.getX();
         int deltaY = start.getY() - goal.getY();
         return (Math.abs(deltaX) + Math.abs(deltaY));
+    }
+
+    public static int getEstimatePathCost(Point start, Point goal){
+        if(Context.heuristic == 1)
+            return getEstimatePathCost1(start,goal);
+        else
+            return getEstimatePathCost2(start,goal, MapCreator.map);
     }
 
     public static int getEstimatePathCost2(Point start, Point goal, Map map){
@@ -89,8 +96,8 @@ public class Map {
         shelfVerticalLineIndexList.addAll(verticalSet);
 
         // Assign area index for each points (0 - shelf, 1 - cross, 2 - horizontal, 3 - vertical)
-        Boolean isInHorizontalList = false;
-        Boolean isInVerticalList = false;
+        boolean isInHorizontalList = false;
+        boolean isInVerticalList = false;
         for (int rowIdx = 0; rowIdx < xLength; rowIdx++) {
             for (int colIdx = 0; colIdx < yLength; colIdx++) {
                 pointStatus = map.getPointInfoByXY(rowIdx, colIdx).getStatus().getString();
@@ -132,8 +139,8 @@ public class Map {
         int deltaY = yStart - yGoal;
         int areaIndex;
         int pathCost = 0;
-        Boolean isSameCol = false;
-        Boolean isSameRow = false;
+        boolean isSameCol = false;
+        boolean isSameRow = false;
         if (mapAreaIndex[xStart][yStart] == 2 && mapAreaIndex[xGoal][yGoal] == 2) {
             // Check if start and goal are in same row block or col block
             if (yStart <= yGoal) {
@@ -317,4 +324,22 @@ public class Map {
         System.out.println("Path cost: " + pathCost);
         return pathCost;
     }
+
+
+    public enum Area{
+        CROSS,
+        VERTICAL_LINE,
+        HORIZONTAL_LINE
+    }
+
+    public static int getEstimatePathCost3(Point start, Point goal) {
+        int xStart = start.getX();
+        int yStart = start.getY();
+        int xGoal  = goal.getX();
+        int yGoal  = goal.getY();
+
+
+        return 0;
+    }
+
 }

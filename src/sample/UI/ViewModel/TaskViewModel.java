@@ -10,14 +10,16 @@ public class TaskViewModel {
     private SimpleIntegerProperty taskAppearTime;
     private SimpleIntegerProperty taskExecuteTime;
     private SimpleStringProperty taskStatus;
+    private SimpleStringProperty taskGoalPointHeading;
 
-    public TaskViewModel(int taskID, int taskGoalPointX, int taskGoalPointY, int taskAppearTime, int taskExecuteTime, String taskStatus) {
+    public TaskViewModel(int taskID, int taskGoalPointX, int taskGoalPointY,String taskGoalPointHeading, int taskAppearTime, int taskExecuteTime, String taskStatus) {
         this.taskID = new SimpleIntegerProperty(taskID);
         this.taskGoalPointX = new SimpleIntegerProperty(taskGoalPointX);
         this.taskGoalPointY = new SimpleIntegerProperty(taskGoalPointY);
         this.taskAppearTime = new SimpleIntegerProperty(taskAppearTime);
         this.taskExecuteTime = new SimpleIntegerProperty(taskExecuteTime);
         this.taskStatus = new SimpleStringProperty(taskStatus);
+        this.taskGoalPointHeading = new SimpleStringProperty(taskGoalPointHeading);
     }
 
     public int getTaskID() {
@@ -66,5 +68,17 @@ public class TaskViewModel {
 
     public void setTaskStatus(String taskStatus) {
         this.taskStatus = new SimpleStringProperty(taskStatus);
+    }
+
+    public String getTaskGoalPointHeading() {
+        return taskGoalPointHeading.get();
+    }
+
+    public SimpleStringProperty taskGoalPointHeadingProperty() {
+        return taskGoalPointHeading;
+    }
+
+    public void setTaskGoalPointHeading(String taskGoalPointHeading) {
+        this.taskGoalPointHeading.set(taskGoalPointHeading);
     }
 }

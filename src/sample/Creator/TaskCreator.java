@@ -12,8 +12,8 @@ public class TaskCreator {
     private final Map  map;
     private List<Task> taskList = new ArrayList<>();
 
-    public TaskCreator(MapCreator mapCreator, Random random) {
-        this.map     = mapCreator.getMap();
+    public TaskCreator(Random random) {
+        this.map     = MapCreator.map;
         this.random  = random;
     }
 
@@ -35,7 +35,7 @@ public class TaskCreator {
         }
         for (int i = 0; i < numberOfTasks; i++) {
             while (true){
-                Point goal = new Point(getRandomTaskPointX(),getRandomTaskPointY());
+                Point goal = new Point(getRandomTaskPointX(),getRandomTaskPointY(),getRandomHeading());
                 Task  task = new Task(getRandomTimeExecute(),getRandomTimeAppear(),goal);
                 if (create(task)) {
                     break;
@@ -44,7 +44,7 @@ public class TaskCreator {
         }
     }
     private int getRandomTimeAppear(){
-        return random.nextInt(Config.timeAppearMax-Config.timeAppearMin)+Config.timeAppearMin;
+        return random.nextInt(Config.timeAppearMax-Config.timeAppearMin+1)+Config.timeAppearMin;
     }
     private int getRandomTimeExecute(){
         return random.nextInt(Config.timeExecuteMax-Config.timeExecuteMin)+Config.timeExecuteMin;
@@ -55,7 +55,10 @@ public class TaskCreator {
     private int getRandomTaskPointY(){
         return random.nextInt(Map.yLength);
     }
-
+    private PointInfo.Status getRandomHeading(){
+        int status = random.nextInt(PointInfo.Status.ROBOT_RIGHT.getValue()-PointInfo.Status.ROBOT_UP.getValue()+1)+PointInfo.Status.ROBOT_UP.getValue();
+        return PointInfo.Status.getEnum(status);
+    }
 
     public List<Task> getTaskList() {
         return taskList;
@@ -64,11 +67,11 @@ public class TaskCreator {
         taskList.sort(Comparator.comparing(Task::getTimeAppear));
     }
 
-    public static class Config {
-        public static int numberTaskMax  = 100;
-        public static int timeAppearMax  = 30;
-        public static int timeAppearMin  = 1;
-        public static int timeExecuteMax = 5;
-        public static int timeExecuteMin = 2;
+    private static class Config {
+        private static int numberTaskMax  = 50;
+        private static int timeAppearMax  = 15;
+        private static int timeAppearMin  = 1;
+        private static int timeExecuteMax = 5;
+        private static int timeExecuteMin = 1;
     }
 }

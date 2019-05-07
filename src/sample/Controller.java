@@ -4,12 +4,13 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import sample.Algorithm.MultiPathPlanning;
 import sample.Creator.MapCreator;
@@ -20,6 +21,7 @@ import sample.Manager.MapData;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
 import sample.Model.*;
+import sample.Model.Map;
 import sample.UI.ScatterView;
 import sample.UI.ViewModel.RobotViewModel;
 import sample.UI.ViewModel.TaskViewModel;
@@ -29,7 +31,6 @@ import java.util.*;
 
 public class Controller implements Initializable {
     private Random       random     = new Random();
-    private MapCreator   mapCreator = new MapCreator();
     private RobotCreator robotCreator;
     private TaskCreator  taskCreator;
 
@@ -55,12 +56,12 @@ public class Controller implements Initializable {
      */
     public TextField txtRobotStartX;
     public TextField txtRobotStartY;
-    public ChoiceBox cbRobotHeading;
+    public ChoiceBox<String> cbRobotHeading;
     public Button    btnCreateRobot;
     public TextField txtNumOfRandRobot;
     public Button    btnCreateRobotRandom;
 
-    public ObservableList<String> cbRobotHeadingList = FXCollections.observableArrayList(PointInfo.Status.getRobotHeadingStringList());
+    private ObservableList<String> cbRobotHeadingList = FXCollections.observableArrayList(PointInfo.Status.getRobotHeadingStringList());
     /**
      * Task
      */
@@ -68,13 +69,14 @@ public class Controller implements Initializable {
     public TextField txtTaskGoalY;
     public TextField txtTaskTimeAppear;
     public TextField txtTaskTimeExecute;
+    public ChoiceBox<String> cbTaskHeading;
     public Button    btnCreateTask;
     public TextField txtNumOfRandTask;
     public Button    btnCreateTaskRandom;
     /**
      * Robot TableView
      */
-    public TableView tableViewRobotList;
+    public TableView<RobotViewModel>            tableViewRobotList;
     public TableColumn<RobotViewModel, Integer> tableColRobotID;
     public TableColumn<RobotViewModel, Integer> tableColRobotX;
     public TableColumn<RobotViewModel, Integer> tableColRobotY;
@@ -83,14 +85,15 @@ public class Controller implements Initializable {
     /**
      * Task TableView
      */
-    public TableView tableViewTaskList;
+    public TableView<TaskViewModel>            tableViewTaskList;
     public TableColumn<TaskViewModel, Integer> tableColTaskID;
-    public TableColumn<TaskViewModel, Integer> tableColTaskAppearTime;
-    public TableColumn<TaskViewModel, Integer> tableColTaskExecuteTime;
+    public TableColumn<TaskViewModel, Integer> tableColTaskTimeAppear;
+    public TableColumn<TaskViewModel, Integer> tableColTaskTimeExecute;
     public TableColumn<TaskViewModel, Integer> tableColTaskX;
     public TableColumn<TaskViewModel, Integer> tableColTaskY;
+    public TableColumn<TaskViewModel, String>  tableColTaskHeading;
     public TableColumn<TaskViewModel, String>  tableColTaskStatus;
-    private ObservableList<RobotViewModel>     taskObservableList = FXCollections.observableArrayList();
+    private ObservableList<TaskViewModel>      taskObservableList = FXCollections.observableArrayList();
     /**
      * Scatter chart
      */
@@ -103,30 +106,55 @@ public class Controller implements Initializable {
     public TextField txtRandomSeed;
     public TextField txtTime;
     public TextField txtTimeMax;
+    public TextField txtStepCost;
+    public TextField txtRotateCost;
+    public TextField txtTaskNumber;
+    public TextField txtTaskDoneNumber;
+    public TextField txtTimeSolve;
     public Button    btnStartSimulation;
     public Button    btnSaveSystemConfig;
     public Button    btnReset;
+    public  ChoiceBox<Integer>      cbPlaySpeed;
+    private ObservableList<Integer> cbPlaySpeedList = FXCollections.observableArrayList(1,2,4);
+    public  ChoiceBox<Integer>      cbHeuristic;
+    private ObservableList<Integer> cbHeuristicList = FXCollections.observableArrayList(1,2);
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         xAxis.setAutoRanging(false);
         yAxis.setAutoRanging(false);
-        initializeTextField();
         initializeTableView();
 
         cbRobotHeading.setValue(cbRobotHeadingList.get(0));
         cbRobotHeading.setItems(cbRobotHeadingList);
+        cbTaskHeading.setValue(cbRobotHeadingList.get(0));
+        cbTaskHeading.setItems(cbRobotHeadingList);
+        cbPlaySpeed.setValue(cbPlaySpeedList.get(0));
+        cbPlaySpeed.setItems(cbPlaySpeedList);
+        cbHeuristic.setValue(cbHeuristicList.get(0));
+        cbHeuristic.setItems(cbHeuristicList);
 
+
+        txtTimeMax.setText(Integer.toString(Context.timeMax));
+
+        final DropShadow shadow = new DropShadow();
+        shadow.setOffsetX(2);
+        shadow.setColor(Color.GREY);
+        scatterChart.setEffect(shadow);
     }
 
     public void btnSaveSimulationConfigClick(){
         try {
             int randomSeed = Integer.parseInt(txtRandomSeed.getText());
-            int timeMax    = Integer.parseInt(txtTimeMax.getText());
-
+            int playSpeed  = cbPlaySpeed.getValue();
+            int timeSolve  = Integer.parseInt(txtTimeSolve.getText());
+            int heuristic  = cbHeuristic.getValue();
             random.setSeed(randomSeed);
-            Context.timeMax             = timeMax;
-            MapData.Config.numberMapMax = timeMax;
+            Context.playSpeed                     = playSpeed;
+            Context.heuristic                     = heuristic;
+            MultiPathPlanning.Config.timeSolveMax = timeSolve;
+
         }
         catch (Exception e){
             viewErrorNotification("Some properties of Config are wrong");
@@ -134,7 +162,7 @@ public class Controller implements Initializable {
 
     }
 
-    public void btnSaveShelfConfigClick(ActionEvent event) {
+    public void btnSaveShelfConfigClick() {
         try {
             int shelfXLength         = Integer.parseInt(txtShelfXLength.getText());
             int shelfYLength         = Integer.parseInt(txtShelfYLength.getText());
@@ -143,19 +171,23 @@ public class Controller implements Initializable {
             int distanceShelfToShelf = Integer.parseInt(txtDistanceShelfToShelf.getText());
             int distanceBoundToShelf = Integer.parseInt(txtDistanceBoundToShelf.getText());
 
-            mapCreator.getShelf().setxLength(shelfXLength);
-            mapCreator.getShelf().setyLength(shelfYLength);
-            mapCreator.getShelf().setxNumber(shelfEachRowNumber);
-            mapCreator.getShelf().setyNumber(shelfEachColNumber);
-            mapCreator.getDistance().setShelfToHorizontalShelf(distanceShelfToShelf);
-            mapCreator.getDistance().setShelfToVerticalShelf(distanceShelfToShelf);
-            mapCreator.getDistance().setBoundToHorizontalShelf(distanceBoundToShelf);
-            mapCreator.getDistance().setBoundToVerticalShelf(distanceBoundToShelf);
-            mapCreator.create();
+            MapCreator.Shelf.xLength = shelfXLength;
+            MapCreator.Shelf.yLength = shelfYLength;
+            MapCreator.Shelf.xNumber = shelfEachRowNumber;
+            MapCreator.Shelf.yNumber = shelfEachColNumber;
+            MapCreator.Distance.shelfToHorShelf = distanceShelfToShelf;
+            MapCreator.Distance.shelfToVerShelf = distanceShelfToShelf;
+            MapCreator.Distance.boundToHorShelf = distanceBoundToShelf;
+            MapCreator.Distance.boundToVerShelf = distanceBoundToShelf;
+            MapCreator.create();
 
-            mapData      = new MapData(mapCreator);
-            robotCreator = new RobotCreator(mapCreator, random);
-            taskCreator  = new TaskCreator(mapCreator, random);
+            int lengthOfAxis = Math.max(Map.xLength,Map.yLength);
+            xAxis.setUpperBound(lengthOfAxis);
+            yAxis.setUpperBound(lengthOfAxis);
+
+            mapData      = new MapData();
+            robotCreator = new RobotCreator(random);
+            taskCreator  = new TaskCreator(random);
             robotManager = new RobotManager(robotCreator, mapData);
             taskManager  = new TaskManager(taskCreator);
 
@@ -166,8 +198,10 @@ public class Controller implements Initializable {
         catch (Exception e){
             viewErrorNotification("Some properties of Map are wrong");
         }
+
+
     }
-    public void btnCreateRobotClick(ActionEvent event) {
+    public void btnCreateRobotClick() {
         try {
             int robotStartX = Integer.parseInt(txtRobotStartX.getText());
             int robotStartY = Integer.parseInt(txtRobotStartY.getText());
@@ -195,7 +229,7 @@ public class Controller implements Initializable {
             viewErrorNotification("Some properties of Robot are wrong");
         }
     }
-    public void btnCreateRobotRandomClick(ActionEvent event) {
+    public void btnCreateRobotRandomClick() {
         try {
             int robotNumOfRand  = Integer.parseInt(txtNumOfRandRobot.getText());
             robotCreator.createRandom(robotNumOfRand);
@@ -206,13 +240,28 @@ public class Controller implements Initializable {
         }
 
     }
-    public void btnCreateTaskClick(ActionEvent event) {
+    public void btnCreateTaskClick() {
         try {
             int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
             int taskTimeAppear  = Integer.parseInt(txtTaskTimeAppear.getText());
+
+            PointInfo.Status taskGoalHeading;
+            if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(0))){
+                taskGoalHeading = PointInfo.Status.ROBOT_UP;
+            }
+            else if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(1))){
+                taskGoalHeading = PointInfo.Status.ROBOT_DOWN;
+            }
+            else if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(2))){
+                taskGoalHeading = PointInfo.Status.ROBOT_LEFT;
+            }
+            else {
+                taskGoalHeading = PointInfo.Status.ROBOT_RIGHT;
+            }
+
             int taskGoalX       = Integer.parseInt(txtTaskGoalX.getText());
             int taskGoalY       = Integer.parseInt(txtTaskGoalY.getText());
-            Point taskGoalPoint = new Point(taskGoalX,taskGoalY);
+            Point taskGoalPoint = new Point(taskGoalX,taskGoalY,taskGoalHeading);
 
             if (taskCreator.create(new Task(taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
                 updateAndViewAtTime(0);
@@ -222,7 +271,7 @@ public class Controller implements Initializable {
             viewErrorNotification("Some properties of Task are wrong");
         }
     }
-    public void btnCreateTaskRandomClick(ActionEvent event){
+    public void btnCreateTaskRandomClick(){
         try {
             int taskNumOfRand  = Integer.parseInt(txtNumOfRandTask.getText());
 
@@ -239,77 +288,87 @@ public class Controller implements Initializable {
         if(Context.simulating){
             timeline.play();
             btnStartSimulation.setText("Stop simulation");
+
+            btnCreateMapBase.setDisable(true);
+            btnCreateRobot.setDisable(true);
+            btnCreateRobotRandom.setDisable(true);
+            btnCreateTask.setDisable(true);
+            btnCreateTaskRandom.setDisable(true);
+            btnSaveSystemConfig.setDisable(true);
+
         }
         else{
             timeline.pause();
             btnStartSimulation.setText("Resume simalation");
+
+            btnCreateMapBase.setDisable(false);
+            btnCreateRobot.setDisable(false);
+            btnCreateRobotRandom.setDisable(false);
+            btnCreateTask.setDisable(false);
+            btnCreateTaskRandom.setDisable(false);
+            btnSaveSystemConfig.setDisable(false);
         }
     }
 
-    public void btnResetClick(ActionEvent event) {
-        Context.time = 0;
+    public void btnResetClick() {
+        btnStartSimulation.setText("Start Simulation");
+        txtTime.setText("0");
+        txtStepCost.setText("0");
+        txtTaskNumber.setText("0");
+        txtTaskDoneNumber.setText("0");
+        timeline.stop();
         initializeTimeline();
+        Context.reset();
+        taskCreator.getTaskList().clear();
+        robotCreator.getRobotList().clear();
+
+        btnCreateMapBase.setDisable(false);
+        btnCreateRobot.setDisable(false);
+        btnCreateRobotRandom.setDisable(false);
+        btnCreateTask.setDisable(false);
+        btnCreateTaskRandom.setDisable(false);
+        btnSaveSystemConfig.setDisable(false);
     }
 
 
     private void initializeTimeline(){
-        timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
-            int time = Context.increaseTime();
+        timeline = new Timeline(new KeyFrame(Duration.millis(Context.getTimelineDurationMillis()), ev -> {
+            if(taskManager.finishAllTasks()) {
+                timeline.stop();
+            }
+            Context.time++;
+            logData("@TIME = " + Context.time);
+            updateAndViewAtTime(Context.time);
+            updateTotalPathCost(Context.time);
 
-            updateTaskAtTime(time);
-            viewTaskListToTableView();
-            updateRobotAtTime(time);
-            viewRobotListToTableViewAtTime(time);
+            if((!Context.solvingMultiPath) & (taskManager.assignable())){
+                Context.solvingMultiPath = true;
 
-            if((!Context.solvingMultiPath) & (taskManager.isAssignable(time))){
-                    Context.solvingMultiPath = true;
-                    taskManager.setLastTimeAssign(time);
-                    int timeAssign = time + MultiPathPlanning.Config.timeSolveMax;
-                    updateRobotAtTime(timeAssign);
+                int timeAssign = Context.time + MultiPathPlanning.Config.timeSolveMax;
+                robotManager.updateByTime(timeAssign);
 
-                    solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolveMax), ev1 -> {
-                        long t1 = System.currentTimeMillis();
-                        System.out.println("@@@@@START_THREAD");
+                solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolveMax), ev1 -> {
+                    long timeStartThread = System.currentTimeMillis();
 
+                    MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager,robotManager,mapData,timeAssign,random);
+                    multiPathPlanning.execute();
 
-                        MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager,robotManager,mapData,timeAssign,random);
-                        multiPathPlanning.execute();
-                        Context.solvingMultiPath = false;
+                    Context.solvingMultiPath = false;
 
-
-
-                        long t2 = System.currentTimeMillis();
-                        System.out.println("timeSolving in milisecond: "+(t2-t1));
-                        System.out.println("@@@@@END_THREAD");
+                    long timeEndThread = System.currentTimeMillis();
+                    logData("Time of thread solving in millis: "+(timeEndThread-timeStartThread));
 
                     }));
-                    solvingThread.setCycleCount(1);
-                    solvingThread.playFrom(Duration.millis(MultiPathPlanning.Config.getTimeSolveMaxMillis()-1)); /*prevent Delay*/
-                    System.out.println("@@@@@END");
-
+                solvingThread.setCycleCount(1);
+                solvingThread.playFrom(Duration.millis(MultiPathPlanning.Config.getTimeSolveMaxMillis()-1)); /*prevent Delay*/
             }
 
 
-            viewMapToScatterAtTime(time);
-            txtTime.setText(Integer.toString(Context.time));
 
         }));
         timeline.setCycleCount(Context.timeMax-1);
     }
-    private void initializeTextField(){
-        txtShelfXLength.setText("2");
-        txtShelfYLength.setText("5");
-        txtShelfEachRowNumber.setText("2");
-        txtShelfEachColNumber.setText("1");
-        txtDistanceShelfToShelf.setText("2");
-        txtDistanceBoundToShelf.setText("1");
 
-        txtNumOfRandRobot.setText("7");
-        txtNumOfRandTask.setText("20");
-
-        txtRandomSeed.setText("0");
-        txtTimeMax.setText("300");
-    }
     private void initializeTableView(){
         tableColRobotID.setCellValueFactory(new PropertyValueFactory<>("RobotID"));
         tableColRobotX.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointX"));
@@ -320,21 +379,38 @@ public class Controller implements Initializable {
         tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("TaskID"));
         tableColTaskX.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointX"));
         tableColTaskY.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointY"));
-        tableColTaskAppearTime.setCellValueFactory(new PropertyValueFactory<>("TaskAppearTime"));
-        tableColTaskExecuteTime.setCellValueFactory(new PropertyValueFactory<>("TaskExecuteTime"));
+        tableColTaskHeading.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointHeading"));
+        tableColTaskTimeAppear.setCellValueFactory(new PropertyValueFactory<>("TaskAppearTime"));
+        tableColTaskTimeExecute.setCellValueFactory(new PropertyValueFactory<>("TaskExecuteTime"));
         tableColTaskStatus.setCellValueFactory(new PropertyValueFactory<>("TaskStatus"));
         tableViewTaskList.setItems(taskObservableList);
     }
     private void viewTaskListToTableView() {
         List<TaskViewModel> taskViewModelList = new ArrayList<>();
-        for (int idx = 0; idx < taskCreator.getTaskList().size(); idx++) {
-            Task task = taskCreator.getTaskList().get(idx);
-            int taskIDView          = task.getId();
-            int taskXView           = task.getGoal().getX();
-            int taskYView           = task.getGoal().getY();
-            int taskAppearTimeView  = task.getTimeAppear();
-            int taskExecuteTimeView = task.getTimeExecute();
-            Task.Status taskStatus  = task.getStatus();
+        for (Task task: taskCreator.getTaskList()) {
+            int  taskIDView = task.getId();
+            int  taskXView  = task.getGoal().getX();
+            int  taskYView  = task.getGoal().getY();
+            int  taskTimeAppearView  = task.getTimeAppear();
+            int  taskTimeExecuteView = task.getTimeExecute();
+            Task.Status taskStatus   = task.getStatus();
+
+            PointInfo.Status taskHeading  = task.getGoal().getStatus();
+            String taskHeadingView;
+            switch (taskHeading){
+                case ROBOT_UP:
+                    taskHeadingView = "UP";
+                    break;
+                case ROBOT_DOWN:
+                    taskHeadingView = "DOWN";
+                    break;
+                case ROBOT_LEFT:
+                    taskHeadingView = "LEFT";
+                    break;
+                default:
+                    taskHeadingView = "RIGHT";
+            }
+
             String taskStatusView;
             switch (taskStatus){
                 case NEW:
@@ -350,9 +426,7 @@ public class Controller implements Initializable {
                     taskStatusView = "DONE";
                     break;
             }
-
-            TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskXView, taskYView,
-                                                            taskAppearTimeView, taskExecuteTimeView, taskStatusView);
+            TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskXView, taskYView, taskHeadingView, taskTimeAppearView, taskTimeExecuteView, taskStatusView);
             taskViewModelList.add(taskViewModel);
         }
         tableViewTaskList.getItems().clear();
@@ -360,14 +434,12 @@ public class Controller implements Initializable {
     }
     private void viewRobotListToTableViewAtTime(int time) {
         List<RobotViewModel> robotViewModelList = new ArrayList<>();
-        for (int robotId = 0; robotId < robotManager.getRobotList().size(); robotId++) {
-            Robot robot       = robotManager.getRobotById(robotId);
+        for (Robot robot: robotCreator.getRobotList()) {
             int robotIDView   = robot.getId();
             int robotXView    = robot.getPointByTime(time).getX();
             int robotYView    = robot.getPointByTime(time).getY();
-            PointInfo.Status robotHeading  = robot.getHeadingByTime(time);
             String robotHeadingView;
-            switch (robotHeading){
+            switch (robot.getHeadingByTime(time)){
                 case ROBOT_UP:
                     robotHeadingView = "UP";
                     break;
@@ -380,7 +452,6 @@ public class Controller implements Initializable {
                 default:
                     robotHeadingView = "RIGHT";
             }
-
             RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView);
             robotViewModelList.add(robotViewModel);
         }
@@ -392,21 +463,32 @@ public class Controller implements Initializable {
         scatterView.display(time);
     }
     private void updateAndViewAtTime(int time) {
-        updateTaskAtTime(time);
+        taskManager.updateByTime(time);
+        robotManager.updateByTime(time);
         viewTaskListToTableView();
-
-        updateRobotAtTime(time);
         viewRobotListToTableViewAtTime(time);
-
         viewMapToScatterAtTime(time);
+
+        txtTaskNumber.setText(Integer.toString(taskManager.getTaskList().size()));
+        txtTaskDoneNumber.setText(Integer.toString(taskManager.getDoneTaskNumber()));
+        txtTime.setText(Integer.toString(Context.time));
+        txtStepCost.setText(Integer.toString(Context.stepCost));
+
     }
     private void viewErrorNotification(String content){
         Alert alert = new Alert(Alert.AlertType.WARNING, content);
         alert.showAndWait();
     }
+    private void updateTotalPathCost(int time){
+        robotManager.updatePathCost(time);
+        Context.stepCost += robotManager.getStepCost();
+        Context.rotateCost += robotManager.getRotateCost();
+        txtStepCost.setText(Integer.toString(Context.stepCost));
+        txtRotateCost.setText(Integer.toString(Context.rotateCost));
+    }
+    private void logData(String string){
+        System.out.println(string);
+    }
 
 
-
-    private void updateRobotAtTime(int time){robotManager.updateByTime(time);}
-    private void updateTaskAtTime(int time){taskManager.updateByTime(time);}
 }

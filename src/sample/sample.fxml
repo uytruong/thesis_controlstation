@@ -21,56 +21,64 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="618.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane prefHeight="728.0" prefWidth="1113.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <center>
-        <VBox prefHeight="539.0" prefWidth="544.0" spacing="8.0" BorderPane.alignment="CENTER">
+        <VBox fillWidth="false" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                <Insets />
             </BorderPane.margin>
          <children>
-            <TitledPane animated="false" collapsible="false" contentDisplay="BOTTOM" expanded="false" prefHeight="529.0" prefWidth="550.0" text="Map View">
+            <TitledPane animated="false" collapsible="false" contentDisplay="BOTTOM" expanded="false" text="Map View">
                <graphic>
-                    <ScatterChart fx:id="scatterChart" prefHeight="400.0" prefWidth="400.0" stylesheets="@UI/chart.css">
+                    <ScatterChart fx:id="scatterChart" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="500.0" maxWidth="500.0" minHeight="500.0" minWidth="500.0" prefHeight="500.0" prefWidth="500.0" stylesheets="@UI/chart.css" titleSide="BOTTOM" verticalZeroLineVisible="false">
                         <xAxis>
-                            <NumberAxis lowerBound="-0.5" minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="15.0" fx:id="xAxis" />
+                            <NumberAxis lowerBound="-0.5" minorTickLength="1.0" side="BOTTOM" tickUnit="1.0" upperBound="10.0" fx:id="xAxis" />
                         </xAxis>
                         <yAxis>
-                            <NumberAxis fx:id="yAxis" lowerBound="-0.5" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="15.0" />
+                            <NumberAxis fx:id="yAxis" lowerBound="-0.5" minorTickLength="1.0" side="LEFT" tickUnit="1.0" upperBound="10.0" />
                         </yAxis>
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
                     </ScatterChart>
                </graphic>
+               <padding>
+                  <Insets left="90.0" />
+               </padding>
             </TitledPane>
          </children>
         </VBox>
     </center>
    <top>
-          <HBox prefHeight="182.0" prefWidth="1333.0" spacing="8.0" BorderPane.alignment="CENTER">
+          <HBox prefHeight="182.0" prefWidth="942.0" spacing="8.0" BorderPane.alignment="CENTER">
               <children>
-            <GridPane>
+            <GridPane prefHeight="172.0" prefWidth="1130.0">
               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="100.0" prefWidth="140.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="10.0" prefWidth="255.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="145.0" prefWidth="195.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="115.0" minWidth="70.0" prefWidth="105.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="276.0" minWidth="10.0" prefWidth="181.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="278.0" minWidth="10.0" prefWidth="240.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="130.0" prefWidth="130.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="245.0" minWidth="245.0" prefWidth="245.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <TitledPane fx:id="titledPaneEvaluation" animated="false" collapsible="false" contentDisplay="BOTTOM" prefHeight="172.0" prefWidth="115.0" text="System">
+                  <TitledPane fx:id="titledPaneEvaluation" animated="false" collapsible="false" contentDisplay="BOTTOM" prefHeight="172.0" prefWidth="115.0" text="System Config">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="146.0" prefWidth="115.0">
                            <children>
-                              <TextField fx:id="txtRandomSeed" layoutX="82.0" layoutY="5.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
+                              <TextField fx:id="txtRandomSeed" alignment="CENTER" layoutX="82.0" layoutY="5.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="0" />
                               <Label layoutX="5.0" layoutY="5.0" prefHeight="20.0" text="Random Seed" />
-                              <Button fx:id="btnSaveSystemConfig" layoutX="52.0" layoutY="119.0" mnemonicParsing="false" onAction="#btnSaveSimulationConfigClick" text="Save" />
-                              <TextField fx:id="txtTimeMax" alignment="CENTER" editable="false" layoutX="82.0" layoutY="30.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" promptText="2" />
-                              <Label layoutX="5.0" layoutY="30.0" prefHeight="20.0" text="Time max" />
+                              <Button fx:id="btnSaveSystemConfig" layoutX="80.0" layoutY="105.0" mnemonicParsing="false" onAction="#btnSaveSimulationConfigClick" text="Save" />
+                              <Label layoutX="5.0" layoutY="30.0" prefHeight="20.0" text="Heuristic" />
+                              <Label alignment="CENTER" layoutX="5.0" layoutY="55.0" text="Play Speed: x" />
+                              <ChoiceBox fx:id="cbPlaySpeed" layoutX="80.0" layoutY="55.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
+                              <Label layoutX="5.0" layoutY="80.0" text="Time solve" />
+                              <TextField fx:id="txtTimeSolve" alignment="CENTER" layoutX="80.0" layoutY="80.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="10" />
+                              <ChoiceBox fx:id="cbHeuristic" layoutX="80.0" layoutY="30.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -80,36 +88,16 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="146.0" prefWidth="214.0">
                                     <children>
                                         <Label layoutX="5.0" layoutY="5.0" prefHeight="20.0" text="Shelf's length in X,Y's direction" />
-                                        <TextField fx:id="txtShelfXLength" alignment="CENTER" layoutX="170.0" layoutY="5.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </TextField>
-                                        <TextField fx:id="txtShelfYLength" alignment="CENTER" layoutX="205.0" layoutY="5.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </TextField>
+                                        <TextField fx:id="txtShelfXLength" alignment="CENTER" layoutX="170.0" layoutY="5.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="2" />
+                                        <TextField fx:id="txtShelfYLength" alignment="CENTER" layoutX="205.0" layoutY="5.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="4" />
                                         <Label layoutX="5.0" layoutY="30.0" prefHeight="20.0" text="Number each row, colum" />
-                                        <TextField fx:id="txtShelfEachRowNumber" alignment="CENTER" layoutX="170.0" layoutY="30.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </TextField>
-                                        <TextField fx:id="txtShelfEachColNumber" alignment="CENTER" layoutX="205.0" layoutY="30.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" />
+                                        <TextField fx:id="txtShelfEachRowNumber" alignment="CENTER" layoutX="170.0" layoutY="30.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="3" />
+                                        <TextField fx:id="txtShelfEachColNumber" alignment="CENTER" layoutX="205.0" layoutY="30.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="2" />
                                         <Label layoutX="5.0" layoutY="55.0" prefHeight="20.0" text="Distance between 2 shelf" />
-                                        <TextField fx:id="txtDistanceShelfToShelf" alignment="CENTER" layoutX="205.0" layoutY="55.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </TextField>
-                                        <Button fx:id="btnCreateMapBase" layoutX="170.0" layoutY="105.0" mnemonicParsing="false" onAction="#btnSaveShelfConfigClick" prefHeight="23.0" prefWidth="65.0" text="Create" />
+                                        <TextField fx:id="txtDistanceShelfToShelf" alignment="CENTER" layoutX="205.0" layoutY="55.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="2" />
+                                        <Button fx:id="btnCreateMapBase" layoutX="170.0" layoutY="105.0" maxHeight="25.0" maxWidth="65.0" minHeight="25.0" minWidth="65.0" mnemonicParsing="false" onAction="#btnSaveShelfConfigClick" prefHeight="25.0" prefWidth="65.0" text="Create" />
                                         <Label layoutX="5.0" layoutY="80.0" prefHeight="20.0" text="Shelf &amp; bound distance" />
-                                        <TextField fx:id="txtDistanceBoundToShelf" alignment="CENTER" layoutX="205.0" layoutY="80.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </TextField>
+                                        <TextField fx:id="txtDistanceBoundToShelf" alignment="CENTER" layoutX="205.0" layoutY="80.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="2" />
                                     </children>
                         </AnchorPane>
                             </content>
@@ -118,43 +106,41 @@
                      <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="146.0" prefWidth="149.0">
                                     <children>
-                                        <Label layoutX="5.0" layoutY="30.0" text="Appear Time" />
-                                        <TextField fx:id="txtTaskTimeAppear" alignment="CENTER" layoutX="105.0" layoutY="30.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" />
-                                        <TextField fx:id="txtTaskTimeExecute" alignment="CENTER" layoutX="105.0" layoutY="55.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" />
-                                        <Button fx:id="btnCreateTask" layoutX="109.0" layoutY="104.0" mnemonicParsing="false" onAction="#btnCreateTaskClick" prefHeight="25.0" prefWidth="53.0" text="Create" />
+                                        <Label layoutX="5.0" layoutY="55.0" text="Appear Time" />
+                                        <TextField fx:id="txtTaskTimeAppear" alignment="CENTER" layoutX="105.0" layoutY="55.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="1" />
+                                        <TextField fx:id="txtTaskTimeExecute" alignment="CENTER" layoutX="105.0" layoutY="80.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="1" />
+                                        <Button fx:id="btnCreateTask" layoutX="105.0" layoutY="105.0" maxHeight="25.0" maxWidth="65.0" minHeight="25.0" minWidth="65.0" mnemonicParsing="false" onAction="#btnCreateTaskClick" prefHeight="25.0" prefWidth="65.0" text="Create" />
                                         <TextField fx:id="txtTaskGoalX" alignment="CENTER" layoutX="105.0" layoutY="5.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" />
                                         <TextField fx:id="txtTaskGoalY" alignment="CENTER" layoutX="140.0" layoutY="5.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" />
                                         <Label layoutX="5.0" layoutY="5.0" text="Goal position X,Y:" />
-                              <Button fx:id="btnReset" layoutX="21.0" layoutY="104.0" mnemonicParsing="false" onAction="#btnResetClick" text="Reset" />
-                              <Label layoutX="5.0" layoutY="55.0" text="Execute Time" />
+                              <Label layoutX="5.0" layoutY="80.0" text="Execute Time" />
+                              <Label alignment="CENTER" layoutX="105.0" layoutY="30.0" text="Start heading" />
+                              <ChoiceBox fx:id="cbTaskHeading" layoutX="105.0" layoutY="30.0" maxHeight="22.0" maxWidth="90.0" minHeight="22.0" minWidth="90.0" prefHeight="22.0" prefWidth="90.0" />
+                              <Label alignment="CENTER" layoutX="5.0" layoutY="30.0" text="Goal heading" />
                                     </children>
                         </AnchorPane>
                      </content>
                         </TitledPane>
                   <TitledPane alignment="TOP_LEFT" animated="false" collapsible="false" prefHeight="170.0" prefWidth="174.0" text="Task Random" GridPane.columnIndex="3">
                      <content>
-                        <AnchorPane prefHeight="144.0" prefWidth="79.0">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="88.0">
                            <children>
                               <Label layoutX="5.0" layoutY="5.0" text="Nụmber of Tasks" />
-                              <TextField fx:id="txtNumOfRandTask" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="30.0" />
-                              <Button fx:id="btnCreateTaskRandom" layoutX="25.0" layoutY="100.0" mnemonicParsing="false" onAction="#btnCreateTaskRandomClick" prefHeight="25.0" prefWidth="64.0" text="Random" />
+                              <TextField fx:id="txtNumOfRandTask" alignment="CENTER" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="30" />
+                              <Button fx:id="btnCreateTaskRandom" layoutX="23.0" layoutY="105.0" maxHeight="25.0" maxWidth="52.0" minHeight="25.0" minWidth="52.0" mnemonicParsing="false" onAction="#btnCreateTaskRandomClick" prefHeight="25.0" prefWidth="52.0" text="Create" />
                            </children>
                         </AnchorPane>
                      </content>
                   </TitledPane>
                   <TitledPane animated="false" collapsible="false" prefHeight="172.0" prefWidth="202.0" text="Robot" GridPane.columnIndex="4">
                      <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="146.0" prefWidth="202.0">
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="158.0">
                                     <children>
-                                        <TextField fx:id="txtRobotStartX" alignment="CENTER" layoutX="105.0" layoutY="5.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" />
-                                        <TextField fx:id="txtRobotStartY" alignment="CENTER" layoutX="140.0" layoutY="5.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" />
+                                        <TextField fx:id="txtRobotStartX" alignment="CENTER" layoutX="105.0" layoutY="5.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
+                                        <TextField fx:id="txtRobotStartY" alignment="CENTER" layoutX="155.0" layoutY="5.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
                                         <Label alignment="CENTER" layoutX="5.0" layoutY="5.0" text="Start position X,Y:" />
-                                        <Button fx:id="btnCreateRobot" layoutX="46.0" layoutY="80.0" mnemonicParsing="false" onAction="#btnCreateRobotClick" prefHeight="19.0" prefWidth="53.0" text="Create">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </Button>
-                              <ChoiceBox fx:id="cbRobotHeading" layoutX="105.0" layoutY="30.0" maxHeight="22.0" maxWidth="65.0" minHeight="22.0" minWidth="65.0" prefHeight="22.0" prefWidth="65.0" />
+                                        <Button fx:id="btnCreateRobot" alignment="CENTER" layoutX="105.0" layoutY="105.0" maxHeight="25.0" maxWidth="52.0" minHeight="25.0" minWidth="52.0" mnemonicParsing="false" onAction="#btnCreateRobotClick" prefHeight="19.0" prefWidth="52.0" text="Create" />
+                              <ChoiceBox fx:id="cbRobotHeading" layoutX="105.0" layoutY="30.0" maxHeight="22.0" maxWidth="90.0" minHeight="22.0" minWidth="90.0" prefHeight="22.0" prefWidth="90.0" />
                               <Label alignment="CENTER" layoutX="5.0" layoutY="30.0" text="Start heading" />
                                     </children>
                         </AnchorPane>
@@ -162,22 +148,40 @@
                   </TitledPane>
                   <TitledPane animated="false" collapsible="false" prefHeight="172.0" prefWidth="177.0" text="Robot Random" GridPane.columnIndex="5">
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="25.0">
                            <children>
-                              <AnchorPane prefHeight="172.0" prefWidth="142.0">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="172.0" prefWidth="142.0">
                                  <children>
                                     <Label layoutX="5.0" layoutY="5.0" text="Number of Robot" />
-                                    <TextField fx:id="txtNumOfRandRobot" layoutX="25.0" layoutY="21.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" />
-                                    <Button fx:id="btnCreateRobotRandom" layoutX="17.0" layoutY="74.0" mnemonicParsing="false" onAction="#btnCreateRobotRandomClick" prefHeight="25.0" prefWidth="57.0" text="Create Random">
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                    </Button>
+                                    <TextField fx:id="txtNumOfRandRobot" alignment="CENTER" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" text="15" />
+                                    <Button fx:id="btnCreateRobotRandom" layoutX="25.0" layoutY="105.0" maxHeight="25.0" maxWidth="52.0" minHeight="25.0" minWidth="52.0" mnemonicParsing="false" onAction="#btnCreateRobotRandomClick" prefHeight="25.0" prefWidth="52.0" text="Create" />
                                  </children>
                               </AnchorPane>
                            </children>
                         </AnchorPane>
                     </content>
+                  </TitledPane>
+                  <TitledPane animated="false" collapsible="false" maxHeight="400.0" prefHeight="136.0" prefWidth="115.0" text="Evaluation" GridPane.columnIndex="6">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="326.0" prefWidth="148.0">
+                           <children>
+                              <TextField fx:id="txtTime" alignment="CENTER" editable="false" layoutX="70.0" layoutY="5.0" maxHeight="22.0" maxWidth="35.0" minHeight="22.0" minWidth="35.0" prefHeight="22.0" prefWidth="35.0" text="0" />
+                              <Label layoutX="5.0" layoutY="5.0" text="Time" />
+                              <Label layoutX="5.0" layoutY="30.0" text="Step cost" />
+                              <TextField fx:id="txtStepCost" alignment="CENTER" editable="false" layoutX="70.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" text="0" />
+                              <Button fx:id="btnStartSimulation" layoutX="5.0" layoutY="105.0" maxHeight="25.0" maxWidth="105.0" minHeight="25.0" minWidth="105.0" mnemonicParsing="false" onAction="#btnStartSimulationClick" prefHeight="25.0" prefWidth="100.0" text="Start Simulation" />
+                              <TextField fx:id="txtTaskDoneNumber" alignment="CENTER" editable="false" layoutX="70.0" layoutY="78.0" maxHeight="22.0" maxWidth="35.0" minHeight="22.0" minWidth="35.0" prefHeight="22.0" prefWidth="35.0" text="0" />
+                              <Label layoutX="5.0" layoutY="80.0" text="Complete" />
+                              <Label layoutX="110.0" layoutY="81.0" text="/" />
+                              <TextField fx:id="txtTaskNumber" alignment="CENTER" editable="false" layoutX="120.0" layoutY="78.0" maxHeight="22.0" maxWidth="35.0" minHeight="22.0" minWidth="35.0" prefHeight="22.0" prefWidth="35.0" text="0" />
+                              <Button fx:id="btnReset" layoutX="120.0" layoutY="105.0" mnemonicParsing="false" onAction="#btnResetClick" text="Reset" />
+                              <TextField fx:id="txtTimeMax" alignment="CENTER" layoutX="120.0" layoutY="5.0" maxHeight="22.0" maxWidth="35.0" minHeight="22.0" minWidth="35.0" prefHeight="22.0" prefWidth="35.0" text="300" />
+                              <Label layoutX="110.0" layoutY="6.0" text="/" />
+                              <TextField fx:id="txtRotateCost" alignment="CENTER" editable="false" layoutX="70.0" layoutY="55.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" text="0" />
+                              <Label layoutX="5.0" layoutY="55.0" text="Rotate cost" />
+                           </children>
+                        </AnchorPane>
+                     </content>
                   </TitledPane>
                </children>
                <padding>
@@ -191,68 +195,39 @@
           </HBox>
    </top>
    <left>
-      <VBox prefHeight="526.0" prefWidth="349.0" BorderPane.alignment="CENTER">
+      <VBox BorderPane.alignment="CENTER">
          <children>
-                <TitledPane fx:id="titledPaneTaskList" animated="false" collapsible="false" expanded="false" prefHeight="190.0" prefWidth="402.0">
+                <TitledPane fx:id="titledPaneTaskList" animated="false" collapsible="false" expanded="false">
                <graphic>
-                          <TableView fx:id="tableViewTaskList" prefHeight="200.0" prefWidth="340.0">
+                          <TableView fx:id="tableViewTaskList" maxHeight="250.0" maxWidth="450.0" minHeight="250.0" minWidth="450.0" prefHeight="250.0" prefWidth="450.0">
                               <columns>
-                                  <TableColumn fx:id="tableColTaskID" prefWidth="30.0" text="ID" />
-                                  <TableColumn fx:id="tableColTaskX" minWidth="0.0" prefWidth="30.0" text="x" />
-                                  <TableColumn fx:id="tableColTaskY" prefWidth="30.0" text="y" />
-                                  <TableColumn fx:id="tableColTaskAppearTime" prefWidth="85.0" text="Appear Time" />
-                                  <TableColumn fx:id="tableColTaskExecuteTime" prefWidth="85.0" text="Execute Time" />
-                                  <TableColumn fx:id="tableColTaskStatus" prefWidth="78.0" text="Status" />
+                                  <TableColumn fx:id="tableColTaskID" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="ID" />
+                                  <TableColumn fx:id="tableColTaskX" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="x" />
+                                  <TableColumn fx:id="tableColTaskY" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="y" />
+                        <TableColumn fx:id="tableColTaskHeading" maxWidth="70.0" minWidth="70.0" prefWidth="70.0" resizable="false" text="Heading" />
+                                  <TableColumn fx:id="tableColTaskTimeAppear" maxWidth="80.0" minWidth="80.0" resizable="false" text="Appear Time" />
+                                  <TableColumn fx:id="tableColTaskTimeExecute" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="Execute Time" />
+                                  <TableColumn fx:id="tableColTaskStatus" maxWidth="80.0" minWidth="80.0" resizable="false" text="Status" />
                               </columns>
                           </TableView>
                </graphic>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
                 </TitledPane>
-                <TitledPane fx:id="titledPaneRobotList" animated="false" collapsible="false" expanded="false" prefHeight="220.0" prefWidth="368.0">
+                <TitledPane fx:id="titledPaneRobotList" animated="false" collapsible="false" expanded="false">
                <graphic>
-                          <TableView fx:id="tableViewRobotList" prefHeight="210.0" prefWidth="340.0">
+                          <TableView fx:id="tableViewRobotList" maxHeight="250.0" maxWidth="450.0" minHeight="250.0" minWidth="450.0" prefHeight="250.0" prefWidth="450.0">
                               <columns>
-                                  <TableColumn fx:id="tableColRobotID" prefWidth="83.0" text="ID" />
-                                  <TableColumn fx:id="tableColRobotX" prefWidth="83.0" text="x" />
-                                  <TableColumn fx:id="tableColRobotY" prefWidth="83.0" text="y" />
-                                  <TableColumn fx:id="tableColRobotHeading" prefWidth="83.0" text="Heading" />
+                                  <TableColumn fx:id="tableColRobotID" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" resizable="false" text="ID" />
+                                  <TableColumn fx:id="tableColRobotX" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" resizable="false" text="x" />
+                                  <TableColumn fx:id="tableColRobotY" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" resizable="false" text="y" />
+                                  <TableColumn fx:id="tableColRobotHeading" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" resizable="false" text="Heading" />
                               </columns>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
                           </TableView>
                </graphic>
-               <padding>
-                  <Insets bottom="30.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
                 </TitledPane>
          </children>
          <BorderPane.margin>
             <Insets bottom="30.0" />
          </BorderPane.margin>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
       </VBox>
    </left>
-   <right>
-      <VBox prefHeight="555.0" prefWidth="245.0" BorderPane.alignment="CENTER">
-         <children>
-            <TitledPane animated="false" collapsible="false" prefHeight="560.0" prefWidth="245.0" text="Evaluation">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="529.0" prefWidth="197.0">
-                     <children>
-                        <TextField fx:id="txtTime" editable="false" layoutX="81.0" layoutY="15.0" prefHeight="25.0" prefWidth="48.0" />
-                        <Label layoutX="17.0" layoutY="27.0" text="Time" />
-                        <Label layoutX="18.0" layoutY="49.0" text="Total cost" />
-                        <TextField editable="false" layoutX="75.0" layoutY="44.0" prefHeight="14.0" prefWidth="30.0" />
-                        <Button fx:id="btnStartSimulation" layoutX="9.0" layoutY="100.0" mnemonicParsing="false" onAction="#btnStartSimulationClick" prefHeight="25.0" prefWidth="90.0" text="Start Simulation" />
-                     </children>
-                  </AnchorPane>
-              </content>
-            </TitledPane>
-         </children></VBox>
-   </right>
 </BorderPane>

@@ -1,8 +1,8 @@
 package sample.Algorithm;
 
+import sample.Creator.MapCreator;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
-import sample.Model.Map;
 import sample.Model.Robot;
 import sample.Model.Task;
 
@@ -41,7 +41,7 @@ public class Assignment {
         for (int i = 0; i < m ; i++) {
             Robot robot = robotList.get(i);
             for (int j = 0; j < n; j++) {
-                costMatrix[i][j] += Map.getEstimatePathCost(robot.getLastPoint(), readyTaskList.get(j).getGoal());
+                costMatrix[i][j] += MapCreator.getEstimatePathCost2(robot.getLastPoint(), readyTaskList.get(j).getGoal());
             }
         }
     }
@@ -67,16 +67,6 @@ public class Assignment {
     public void execute(){
         calculateCostMatrix();
         assignment();
-        printResult();
-    }
-
-    private void printResult(){
-        System.out.print("Optimal Assginment:");
-        for (Robot robot: robotList) {
-            if(robot.getTask() != null)
-                System.out.println("robotId = "+robot.getId() + " come with task id =" + robot.getTask().getId());
-        }
-        System.out.println();
     }
 
 }

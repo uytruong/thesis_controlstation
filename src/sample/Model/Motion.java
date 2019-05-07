@@ -59,27 +59,23 @@ public class Motion {
     public static int getPenaltyCost(Action previousAction, Action action){
         switch (action){
             case NONE: return 1;
-            case STEP:
+            case STEP:{
                 switch (previousAction){
                     case STEP: return 2;
                     case SPEED_DOWN: return 1;
                 }
                 break;
-            case SPEED_UP:
-                switch (previousAction){
-                    case STEP: return 2;
-                    case SPEED_DOWN: return 1;
+            }
+            case SPEED_UP: {
+                switch (previousAction) {
+                    case STEP:
+                        return 2;
+                    case SPEED_DOWN:
+                        return 1;
                 }
                 break;
+            }
         }
         return 0;
     }
-
-    public static Action getRotateActionByStatusChange(PointInfo.Status previousStatus, PointInfo.Status status){
-        return Action.ROTATE_LEFT;
-    }
-
-
-    
-
 }

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Robot {
-    private int id;
+    private int         id;
     private List<Point> pointList         = new ArrayList<>();
 
     private List<Point> mainPlanPointList = new ArrayList<>();
     private List<Point> subPlanPointList  = new ArrayList<>();
     private Task        task;
 
-    private int lastTimeUpdateToMap = -1;
+    private int         lastTimeUpdateToMap = -1;
 
     public Robot(Point start) {
         this.pointList.add(start.getPointClone());
@@ -32,6 +32,7 @@ public class Robot {
     public void setLastTimeUpdateToMap(int lastTimeUpdateToMap) {
         this.lastTimeUpdateToMap = lastTimeUpdateToMap;
     }
+
     public void setMainPlanPointList(List<Point> mainPlanPointList) {
         this.mainPlanPointList = mainPlanPointList;
     }
@@ -51,17 +52,18 @@ public class Robot {
         this.task = task;
     }
 
-    public Point getLastPointByPlan(){
-        if(mainPlanPointList.size() == 0)
-            return getLastPoint();
-        else
-            return mainPlanPointList.get(mainPlanPointList.size()-1);
-    }
-    public int getTimeFreeByPlan(){
-        return getTimeFree()+mainPlanPointList.size();
-    }
 
 
+    /**
+     * USER DEFINE
+     * */
+
+    public void clearMainPlanPointList(){
+        this.mainPlanPointList = new ArrayList<>();
+    }
+    public void clearSubPlanPointList(){
+        this.subPlanPointList = new ArrayList<>();
+    }
 
     public int getLastTimeBusy() {
         return pointList.size()-1;
@@ -69,46 +71,36 @@ public class Robot {
     public int getTimeFree(){
         return pointList.size();
     }
-
-    public PointInfo.Status getHeadingByTime(int time) {
-        return getPointByTime(time).getStatus();
+    public int getTimeFreeByPlan(){
+        return getTimeFree()+ mainPlanPointList.size();
     }
+
     public Point getPointByTime(int time){
         return pointList.get(time);
     }
-    /**
-     * USER DEFINE
-     * */
+    public Point getLastPoint(){ return getPointByTime(getLastTimeBusy());}
+    public Point getLastPointByPlan(){
+        return mainPlanPointList.get(mainPlanPointList.size()-1);
+    }
+    public PointInfo.Status getHeadingByTime(int time) {
+        return getPointByTime(time).getStatus();
+    }
+
     /*this create is for robot doesn't have any task so it does not move*/
     public void updateByTime(int time){
-        Point lastPoint = pointList.get(getLastTimeBusy()).getPointClone();
+        Point lastPoint = getLastPoint();
         int   lastTime  = getLastTimeBusy();
         for (int i = 0; i < time - lastTime; i++) {
             pointList.add(lastPoint.getPointClone());
         }
     }
 
-    public void assignMainPlanPointList() {
+
+    public void assignTask(){
         pointList.addAll(mainPlanPointList);
+        task.setStatus(Task.Status.RUNNING);
+        task.setTimeFinish(getLastTimeBusy());
     }
 
 
-
-    public void assignTaskByPlan(){
-        if(task != null){
-            task.setStatus(Task.Status.RUNNING);
-            task.setTimeFinish(getLastTimeBusy()+mainPlanPointList.size());
-        }
-    }
-
-
-    public void unassignTask(){
-        if(task != null){
-            task.setTimeFinish(Integer.MAX_VALUE);
-            task.setStatus(Task.Status.READY);
-            task = null;
-        }
-    }
-
-    public Point getLastPoint(){ return getPointByTime(getLastTimeBusy());}
 }

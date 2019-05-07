@@ -1,5 +1,7 @@
 package sample.Model;
 
+import sample.Creator.MapCreator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,7 +110,9 @@ public class Node extends Point {
     }
 
     private void updateHScore(){
-        hScore = Map.getEstimatePathCost(this,goal);
+        //hScore = Map.getEstimatePathCost(this,goal);
+        //hScore = MapCreator.getEstimatePathCost(this,goal);
+        hScore = MapCreator.getEstimatePathCost2(this,goal);
     }
     private void updateGScore(){
         gScore = getPreviousNode().getgScore() + Motion.getActionPathCost(actionToGetThis);
@@ -121,7 +125,7 @@ public class Node extends Point {
         if ((actionToGetThis == Motion.Action.SPEED_UP) | (actionToGetThis == Motion.Action.MOVE_CONSTANT))
             return false;
         else
-            return ((isCoincident(this,goal)));
+            return (((isCoincident(this,goal))) & (headingSameDirection(this,goal)));
     }
 
     public List<Point> getCorrespondPoints(){

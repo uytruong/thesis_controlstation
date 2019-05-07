@@ -10,7 +10,6 @@ import java.util.List;
 public class TaskManager {
     private List<Task>  taskList;
     private int         doneTaskNumber = 0;
-    private int         lastTimeAssign = 0;
 
     public TaskManager(TaskCreator taskCreator) {
         this.taskList = taskCreator.getTaskList();
@@ -31,9 +30,8 @@ public class TaskManager {
                     task.setStatus(Task.Status.READY);
                 }
             } else if (task.getTimeFinish() == time) {
-                task.setStatus(Task.Status.DONE);
-                Context.totalCost += task.getCostOfRobotPath();
                 doneTaskNumber++;
+                task.setStatus(Task.Status.DONE);
             }
         }
     }
@@ -56,29 +54,18 @@ public class TaskManager {
         }
         return runningTaskList;
     }
-
-    public Task getTaskById(int id){
-        for (Task task: taskList ) {
-            if(task.getId() == id)
-                return task;
-        }
-        return null;
+    public List<Task> getTaskList() {
+        return taskList;
+    }
+    public int getDoneTaskNumber() {
+        return doneTaskNumber;
     }
 
-    public boolean isAssignable(int time){
-        List<Task> readyTaskList = getReadyTaskList();
-        boolean condition1 = ((time-lastTimeAssign)>=Config.timeAssignDelayMax) & (readyTaskList.size()>0);
-        boolean condition2 = (readyTaskList.size()>=Config.taskAssignNumberMin);
-        return (condition1 | condition2);
+    public boolean assignable(){
+        return (getReadyTaskList().size()>0);
     }
-
-    public void setLastTimeAssign(int lastTimeAssign) {
-        this.lastTimeAssign = lastTimeAssign;
-    }
-
-    public static class Config{
-        public static int timeAssignDelayMax = 0;
-        public static int taskAssignNumberMin = 3;
+    public boolean finishAllTasks(){
+        return (doneTaskNumber==taskList.size());
     }
 
 }

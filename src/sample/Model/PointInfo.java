@@ -74,4 +74,5 @@ public class PointInfo {
     }
 
     public boolean isEmpty(){ return (status == Status.NONE);}
+    public boolean isShelf(){ return (status == Status.SHELF);}
 }

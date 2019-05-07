@@ -7,17 +7,14 @@ import java.util.List;
 
 public class SinglePathPlanning {
     private MapData     mapData;
-    private Robot       robot;
     private Task        task;
 
     private Node        startNode, goalNode;
     private List<Node>  openList      = new ArrayList<>();
     private List<Node>  closeList     = new ArrayList<>();
     private List<Point> planPointList = new ArrayList<>();
-    private boolean     success       = true;
 
     public SinglePathPlanning(Robot robot,MapData mapData){
-        this.robot     = robot;
         this.mapData   = mapData;
         this.task      = robot.getTask();
 
@@ -26,11 +23,7 @@ public class SinglePathPlanning {
     }
 
     public boolean execute(){
-        int     timeLoop = 0;
-        boolean loop     = true;
-        while (loop){
-            timeLoop++;
-
+        while (openList.size() != 0){
             /*Finding the lowest fScore value in openList*/
             int nearestNodefScore = openList.get(0).getfScore();
             int nearestNodeIndex  = 0;
@@ -45,7 +38,6 @@ public class SinglePathPlanning {
             if (node.isGoal()){
                 goalNode = node;
                 calculatePlanPointList();
-                task.setCostOfRobotPath(goalNode.getgScore());
                 return true;
             }
             else{
@@ -54,12 +46,7 @@ public class SinglePathPlanning {
             }
             /** With each neighbor in current Node, add it to openList and find its the gScore, hScore, fScore.**/
             openList.addAll(getNeighborNodes(node));
-
-
-            if((timeLoop >= Config.timeLoopMax) | (openList.size() == 0))
-                loop = false;
         }
-        success = false;
         return false;
     }
 
@@ -92,32 +79,19 @@ public class SinglePathPlanning {
             Node        suitableNode     = node.getNeighborNodeByAction(action);
             List<Point> correspondPoints = suitableNode.getCorrespondPoints();
 
-            boolean valid = true;
+            boolean emptyToGo = true;
+            Point   prePoint  = node;
             for (int idx = 0; idx < correspondPoints.size(); idx++) {
-                int x       = correspondPoints.get(idx).getX();
-                int y       = correspondPoints.get(idx).getY();
-                int tOffset = suitableNode.getTimeArrived()-correspondPoints.size()+1;
-                if (!mapData.getMapByTime(tOffset+idx).getPointInfoByXY(x,y).isEmpty()){
-                    valid = false;
+                Point point     = correspondPoints.get(idx);
+                int timeOffset  = suitableNode.getTimeArrived()- correspondPoints.size()+1;
+                int timeOfPoint = timeOffset + idx;
+
+                emptyToGo = mapData.emptyToGo(prePoint,point,timeOfPoint);
+                if(!emptyToGo)
                     break;
-                }
-                if(valid){
-                    if ((action == Motion.Action.SPEED_UP) | (action == Motion.Action.MOVE_CONSTANT)){
-                        Node        farFutureNode                  = suitableNode.getNeighborNodeByAction(Motion.Action.SPEED_DOWN);
-                        List<Point> correspondPointsFromFutureNode = farFutureNode.getCorrespondPoints();
-                        for (int j = 0; j < correspondPoints.size(); j++) {
-                            int farFutureX       = correspondPointsFromFutureNode.get(j).getX();
-                            int farFutureY       = correspondPointsFromFutureNode.get(j).getY();
-                            int farFutureTOffest = farFutureNode.getTimeArrived() - correspondPointsFromFutureNode.size() + 1;
-                            if (!mapData.getMapByTime(farFutureTOffest+j).getPointInfoByXY(farFutureX,farFutureY).isEmpty()){
-                                valid = false;
-                                break;
-                            }
-                        }
-                    }
-                }
+                prePoint = point;
             }
-            if(valid)
+            if(emptyToGo)
                 neighborNodes.add(suitableNode);
         }
         return neighborNodes;
@@ -125,14 +99,8 @@ public class SinglePathPlanning {
 
 
     public List<Point> getPlanPointList(){ return planPointList;}
-    public boolean isSuccess() {
-        return success;
-    }
     public int getPathPlanningCost(){return goalNode.getgScore();}
-    public static class Config{
-        public static int timeLoopMax = Integer.MAX_VALUE;
 
-    }
 
 
 }

@@ -62,4 +62,8 @@ public class Point extends PointInfo {
     static public boolean isCoincident(Point point1, Point point2){
         return ((point1.getX() == point2.getX()) & (point1.getY() == point2.getY()));
     }
+
+    static public boolean headingSameDirection(Point point1, Point point2){
+        return (point1.getStatus() == point2.getStatus());
+    }
 }
