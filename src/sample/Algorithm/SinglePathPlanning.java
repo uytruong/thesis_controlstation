@@ -23,7 +23,9 @@ public class SinglePathPlanning {
     }
 
     public boolean execute(){
+        int timeLoop = 0;
         while (openList.size() != 0){
+            timeLoop++;
             /*Finding the lowest fScore value in openList*/
             int nearestNodefScore = openList.get(0).getfScore();
             int nearestNodeIndex  = 0;
@@ -46,6 +48,8 @@ public class SinglePathPlanning {
             }
             /** With each neighbor in current Node, add it to openList and find its the gScore, hScore, fScore.**/
             openList.addAll(getNeighborNodes(node));
+            if(timeLoop == Config.timeLoopMax)
+                break;
         }
         return false;
     }
@@ -87,6 +91,7 @@ public class SinglePathPlanning {
                 int timeOfPoint = timeOffset + idx;
 
                 emptyToGo = mapData.emptyToGo(prePoint,point,timeOfPoint);
+                //emptyToGo = mapData.getMapByTime(timeOfPoint).getPointInfoByXY(point.getX(),point.getY()).isEmpty();
                 if(!emptyToGo)
                     break;
                 prePoint = point;
@@ -101,6 +106,7 @@ public class SinglePathPlanning {
     public List<Point> getPlanPointList(){ return planPointList;}
     public int getPathPlanningCost(){return goalNode.getgScore();}
 
-
-
+    private static class Config{
+        private static int timeLoopMax = 10000;
+    }
 }

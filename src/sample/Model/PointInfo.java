@@ -42,13 +42,11 @@ public class PointInfo {
         }
 
         public static Status getEnum(int value){ return Status.values()[value];}
-
     }
 
     private Status status  = Status.NONE;
     private Robot  robot   = null;
-    public PointInfo() {
-    }
+    public PointInfo() {}
 
     public PointInfo(Status status){
         this.status = status;
@@ -74,5 +72,4 @@ public class PointInfo {
     }
 
     public boolean isEmpty(){ return (status == Status.NONE);}
-    public boolean isShelf(){ return (status == Status.SHELF);}
 }

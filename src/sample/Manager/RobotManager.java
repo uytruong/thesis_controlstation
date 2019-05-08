@@ -47,7 +47,6 @@ public class RobotManager {
         }
     }
 
-
     public List<Robot> getRobotList() {
         return robotList;
     }

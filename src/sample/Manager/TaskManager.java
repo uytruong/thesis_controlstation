@@ -10,6 +10,7 @@ import java.util.List;
 public class TaskManager {
     private List<Task>  taskList;
     private int         doneTaskNumber = 0;
+    private int         lastTimeAssign = 0;
 
     public TaskManager(TaskCreator taskCreator) {
         this.taskList = taskCreator.getTaskList();
@@ -34,6 +35,10 @@ public class TaskManager {
                 task.setStatus(Task.Status.DONE);
             }
         }
+    }
+
+    public void setLastTimeAssign(int lastTimeAssign) {
+        this.lastTimeAssign = lastTimeAssign;
     }
 
     public List<Task> getReadyTaskList(){
@@ -63,6 +68,9 @@ public class TaskManager {
 
     public boolean assignable(){
         return (getReadyTaskList().size()>0);
+    }
+    public boolean assignable(int time){
+        return ((getReadyTaskList().size()>0) &((time-lastTimeAssign)>8));
     }
     public boolean finishAllTasks(){
         return (doneTaskNumber==taskList.size());

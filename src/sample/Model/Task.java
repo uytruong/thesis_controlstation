@@ -8,10 +8,10 @@ public class Task{
         DONE
     }
 
-    private int id;
-    private final int   timeExecute;
-    private final int   timeAppear;
-    private final Point goal;
+    private int   id;
+    private int   timeExecute;
+    private int   timeAppear;
+    private Point goal;
 
     private int    timeFinish = Integer.MAX_VALUE;
     private Status status     = Status.NEW;
@@ -22,9 +22,6 @@ public class Task{
         this.goal        = goal;
     }
 
-    /**
-     * GETTER AND SETTER
-     * */
     public int getId() {
         return id;
     }

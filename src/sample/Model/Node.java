@@ -29,7 +29,9 @@ public class Node extends Point {
         node.setActionToGetThis(Motion.Action.NONE);
         node.setTimeArrived(robot.getLastTimeBusy());
 
-        node.setGoal(robot.getTask().getGoal());
+        Task task = robot.getTask();
+        Point goal = task.getGoal();
+        node.setGoal(goal);
         node.setgScore(0);
         node.setpScore(0);
         node.updateHScore();
@@ -112,7 +114,7 @@ public class Node extends Point {
     private void updateHScore(){
         //hScore = Map.getEstimatePathCost(this,goal);
         //hScore = MapCreator.getEstimatePathCost(this,goal);
-        hScore = MapCreator.getEstimatePathCost2(this,goal);
+        hScore = MapCreator.getEstimatePathCost(this,goal);
     }
     private void updateGScore(){
         gScore = getPreviousNode().getgScore() + Motion.getActionPathCost(actionToGetThis);

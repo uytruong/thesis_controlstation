@@ -40,11 +40,9 @@ public class MultiPathPlanning {
         Assignment assignment = new Assignment(robotManager, taskManager,timeAssignment);
         assignment.execute();
 
-        Context.logData("#The tasks which are assigned before Optimize:");
-        for (Robot robot: robotManager.getRobotList()) {
-            if(robot.getTask() != null){
-                Context.logData("----- robotId = " + robot.getId() + " assigned to taskId =" + robot.getTask().getId());
-            }
+        Context.logData("### The tasks which are assigned at first:");
+        for (Robot robot: robotManager.getRobotListWithTask()) {
+            Context.logData("--- robotId = " + robot.getId() + " assigned to taskId =" + robot.getTask().getId());
         }
     }
 
@@ -55,8 +53,12 @@ public class MultiPathPlanning {
          * */
         for (Robot robot: robotManager.getRobotListWithTask()) {
             SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData);
-            if(singlePathPlanning.execute())
+            if(singlePathPlanning.execute()){
                 robot.setMainPlanPointList(singlePathPlanning.getPlanPointList());
+                robot.setMainPlanSuccess(true);
+                System.out.println("!@!!!!!!!!!!!!!!!!! " + robot.getId());
+
+            }
             else{
                 robot.setTask(null);
             }
@@ -82,8 +84,8 @@ public class MultiPathPlanning {
                     map.setPointInfoByPoint(point);
 
                     if(!Point.isCoincident(point,prePoint)) {
-                        int preX = prePoint.getX();
-                        int preY = prePoint.getY();
+                        int preX   = prePoint.getX();
+                        int preY   = prePoint.getY();
                         Map preMap = mapData.getMapByTime(timeOfPoint - 1);
                         PointInfo prePointThisTime = map.getPointInfoByXY(preX, preY);
                         PointInfo thisPointPreTime = preMap.getPointInfoByXY(x, y);
@@ -91,24 +93,34 @@ public class MultiPathPlanning {
                         if (!thisPointPreTime.isEmpty() & !prePointThisTime.isEmpty()) {
                             if (thisPointPreTime.getRobot() == prePointThisTime.getRobot()) {
                                 conflict.add(thisPointPreTime.getRobot());
+                                conflict.add(robot);
                             }
                         }
                     }
+
                 }
                 else{
+                    Context.logData("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB    "+(thisPointThisTime.getRobot().getTask()==null) + "  " + (robot.getTask()==null));
                     conflict.add(thisPointThisTime.getRobot());
+                    conflict.add(robot);
                 }
                 prePoint = point;
             }
         }
 
-        for (Robot robot: robotManager.getRobotListWithTask()){
-            if(conflict.exist(robot)){
+        for (Robot robot: conflict.robotList){
+            if(robot.isMainPlanSuccess()){
                 mapData.clearPointsFromMaps(robot.getMainPlanPointList(), robot.getTimeFree());
                 robot.clearMainPlanPointList();
+                robot.setMainPlanSuccess(false);
             }
-            else{
-                mapData.writePointsToMaps(robot.getMainPlanPointList(),robot.getTimeFree());
+        }
+        for (Robot robot: robotManager.getRobotListWithTask()) {
+            if(!conflict.exist(robot)){
+                if(robot.isMainPlanSuccess()){
+                    mapData.writePointsToMaps(robot.getMainPlanPointList(),robot.getTimeFree());
+                    robot.setMainPlanSuccess(true);
+                }
             }
         }
 
@@ -128,53 +140,78 @@ public class MultiPathPlanning {
         }
 
         int totalCostMin    = 0;
-
+        int taskCpltMax     = 0;
         for (Robot robot: robotListConflicted) {
             SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData);
-            singlePathPlanning.execute();
-
-            totalCostMin   += singlePathPlanning.getPathPlanningCost();
-
-            robot.setMainPlanPointList(singlePathPlanning.getPlanPointList());
-            mapData.writePointsToMaps(robot.getMainPlanPointList(),robot.getTimeFree());
-
+            if(singlePathPlanning.execute()) {
+                taskCpltMax++;
+                totalCostMin += singlePathPlanning.getPathPlanningCost();
+                robot.setMainPlanSuccess(true);
+                robot.setMainPlanPointList(singlePathPlanning.getPlanPointList());
+                mapData.writePointsToMaps(robot.getMainPlanPointList(), robot.getTimeFree());
+            }
+            else {
+                robot.setMainPlanSuccess(false);
+            }
+            Context.logData("$$$ robotId = " + robot.getId() + " success = " + robot.isMainPlanSuccess());
         }
 
         for (Robot robot: robotListConflicted) {
-            mapData.clearPointsFromMaps(robot.getMainPlanPointList(),robot.getTimeFree());
+            if(robot.isMainPlanSuccess())
+                mapData.clearPointsFromMaps(robot.getMainPlanPointList(),robot.getTimeFree());
         }
 
-        //int timeLoop = Config.getTimeLoopForPriorPlan(robotListConflicted.size());
-        int timeLoop = 5;
+        int timeLoop = Config.getTimeLoopForPriorPlan(robotListConflicted.size());
+        //int timeLoop = 5;
         for (int i = 0; i <  timeLoop; i++) {
             //Collections.shuffle(robotListConflicted,random);
             conflict.randomSwapElement(random);
             int totalCost   = 0;
+            int taskCplt    = 0;
             for (Robot robot: robotListConflicted) {
                 SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData);
-                singlePathPlanning.execute();
-
-                totalCost += singlePathPlanning.getPathPlanningCost();
-
-                robot.setSubPlanPointList(singlePathPlanning.getPlanPointList());
-                mapData.writePointsToMaps(robot.getSubPlanPointList(),robot.getTimeFree());
+                if(singlePathPlanning.execute()){
+                    taskCplt++;
+                    totalCost += singlePathPlanning.getPathPlanningCost();
+                    robot.setSubPlanPointList(singlePathPlanning.getPlanPointList());
+                    robot.setSubPlanSuccess(true);
+                    mapData.writePointsToMaps(robot.getSubPlanPointList(),robot.getTimeFree());
+                }
+                else {
+                    robot.setSubPlanSuccess(false);
+                }
             }
             for (Robot robot: robotListConflicted) {
-                mapData.clearPointsFromMaps(robot.getSubPlanPointList(),robot.getTimeFree());
+                if(robot.isSubPlanSuccess())
+                    mapData.clearPointsFromMaps(robot.getSubPlanPointList(),robot.getTimeFree());
             }
 
-            if(totalCost<=totalCostMin){
-                totalCostMin   = totalCost;
-                for (Robot robot: robotListConflicted) {
-                    robot.setMainPlanPointList(robot.getSubPlanPointList());
+            if(taskCplt>=taskCpltMax){
+                if(totalCost<=totalCostMin){
+                    totalCostMin = totalCost;
+                    taskCpltMax  = taskCplt;
+                    for (Robot robot: robotListConflicted) {
+                        if(robot.isSubPlanSuccess()){
+                            robot.setMainPlanPointList(robot.getSubPlanPointList());
+                            robot.setMainPlanSuccess(true);
+                        }
+                        else{
+                            robot.setMainPlanSuccess(false);
+                        }
+                    }
                 }
             }
 
         }
 
         for (Robot robot : robotListConflicted) {
-            mapData.writePointsToMaps(robot.getMainPlanPointList(),robot.getTimeFree());
-            robot.clearSubPlanPointList();
+            if(robot.isMainPlanSuccess()){
+                mapData.writePointsToMaps(robot.getMainPlanPointList(),robot.getTimeFree());
+                robot.clearSubPlanPointList();
+            }
+            else{
+                robot.setTask(null);
+            }
         }
     }
 
@@ -213,10 +250,19 @@ public class MultiPathPlanning {
 
                 if(other != null){
                     System.out.println("~robotId = " + robot.getId() + " may be crashed in the future by robotId = " + other.getId());
-                    mapData.clearPointsFromMaps(other.getMainPlanPointList(),other.getTimeFree());
-                    other.clearMainPlanPointList();
-                    other.setTask(null);
-                    break;
+                    if(other.getTask() != null){
+                        other.setMainPlanSuccess(false);
+                        mapData.clearPointsFromMaps(other.getMainPlanPointList(),other.getTimeFree());
+                        other.clearMainPlanPointList();
+                        other.setTask(null);
+                        break;
+                    }
+                    else{
+                        Context.logData("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+                    }
+
+
+
                 }
 
                 if (robot == lastRobot){
@@ -241,8 +287,8 @@ public class MultiPathPlanning {
         Context.logData("#The tasks which are assigned:");
         for (Robot robot: robotManager.getRobotList()) {
             if(robot.getTask() != null){
-                robot.assignTask();
-                Context.logData("   - robotId = " + robot.getId() + " assigned to taskId =" + robot.getTask().getId());
+                if(robot.isMainPlanSuccess())
+                    robot.assignTask();
             }
         }
 

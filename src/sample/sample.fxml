@@ -55,6 +55,7 @@
             <GridPane prefHeight="172.0" prefWidth="1130.0">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="130.0" prefWidth="130.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="245.0" minWidth="245.0" prefWidth="245.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
@@ -72,18 +73,16 @@
                            <children>
                               <TextField fx:id="txtRandomSeed" alignment="CENTER" layoutX="82.0" layoutY="5.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="0" />
                               <Label layoutX="5.0" layoutY="5.0" prefHeight="20.0" text="Random Seed" />
-                              <Button fx:id="btnSaveSystemConfig" layoutX="80.0" layoutY="105.0" mnemonicParsing="false" onAction="#btnSaveSimulationConfigClick" text="Save" />
-                              <Label layoutX="5.0" layoutY="30.0" prefHeight="20.0" text="Heuristic" />
-                              <Label alignment="CENTER" layoutX="5.0" layoutY="55.0" text="Play Speed: x" />
-                              <ChoiceBox fx:id="cbPlaySpeed" layoutX="80.0" layoutY="55.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
-                              <Label layoutX="5.0" layoutY="80.0" text="Time solve" />
-                              <TextField fx:id="txtTimeSolve" alignment="CENTER" layoutX="80.0" layoutY="80.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="10" />
-                              <ChoiceBox fx:id="cbHeuristic" layoutX="80.0" layoutY="30.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
+                              <Button fx:id="btnSaveSystemConfig" layoutX="82.0" layoutY="105.0" mnemonicParsing="false" onAction="#btnSaveSimulationConfigClick" text="Save" />
+                              <Label alignment="CENTER" layoutX="5.0" layoutY="30.0" text="Play Speed: x" />
+                              <ChoiceBox fx:id="cbPlaySpeed" layoutX="82.0" layoutY="30.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
+                              <Label layoutX="5.0" layoutY="55.0" text="Time solve" />
+                              <TextField fx:id="txtTimeSolve" alignment="CENTER" layoutX="82.0" layoutY="55.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="1" />
                            </children>
                         </AnchorPane>
                      </content>
                   </TitledPane>
-                        <TitledPane fx:id="titledPaneShelf" animated="false" collapsible="false" prefHeight="172.0" prefWidth="235.0" text="Map Creator" GridPane.columnIndex="1">
+                        <TitledPane fx:id="titledPaneShelf" animated="false" collapsible="false" prefHeight="172.0" prefWidth="235.0" text="Map Creator" GridPane.columnIndex="2">
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="146.0" prefWidth="214.0">
                                     <children>
@@ -102,7 +101,7 @@
                         </AnchorPane>
                             </content>
                         </TitledPane>
-                        <TitledPane fx:id="titledPaneTask" alignment="TOP_LEFT" animated="false" collapsible="false" contentDisplay="BOTTOM" prefHeight="172.0" prefWidth="181.0" text="Task" textAlignment="RIGHT" GridPane.columnIndex="2">
+                        <TitledPane fx:id="titledPaneTask" alignment="TOP_LEFT" animated="false" collapsible="false" contentDisplay="BOTTOM" prefHeight="172.0" prefWidth="181.0" text="Task" textAlignment="RIGHT" GridPane.columnIndex="3">
                      <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="146.0" prefWidth="149.0">
                                     <children>
@@ -121,7 +120,7 @@
                         </AnchorPane>
                      </content>
                         </TitledPane>
-                  <TitledPane alignment="TOP_LEFT" animated="false" collapsible="false" prefHeight="170.0" prefWidth="174.0" text="Task Random" GridPane.columnIndex="3">
+                  <TitledPane alignment="TOP_LEFT" animated="false" collapsible="false" prefHeight="170.0" prefWidth="174.0" text="Task Random" GridPane.columnIndex="4">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="88.0">
                            <children>
@@ -132,7 +131,7 @@
                         </AnchorPane>
                      </content>
                   </TitledPane>
-                  <TitledPane animated="false" collapsible="false" prefHeight="172.0" prefWidth="202.0" text="Robot" GridPane.columnIndex="4">
+                  <TitledPane animated="false" collapsible="false" prefHeight="172.0" prefWidth="202.0" text="Robot" GridPane.columnIndex="5">
                      <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="158.0">
                                     <children>
@@ -146,14 +145,14 @@
                         </AnchorPane>
                      </content>
                   </TitledPane>
-                  <TitledPane animated="false" collapsible="false" prefHeight="172.0" prefWidth="177.0" text="Robot Random" GridPane.columnIndex="5">
+                  <TitledPane animated="false" collapsible="false" prefHeight="172.0" prefWidth="177.0" text="Robot Random" GridPane.columnIndex="6">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="25.0">
                            <children>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="172.0" prefWidth="142.0">
                                  <children>
                                     <Label layoutX="5.0" layoutY="5.0" text="Number of Robot" />
-                                    <TextField fx:id="txtNumOfRandRobot" alignment="CENTER" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" text="15" />
+                                    <TextField fx:id="txtNumOfRandRobot" alignment="CENTER" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" text="5" />
                                     <Button fx:id="btnCreateRobotRandom" layoutX="25.0" layoutY="105.0" maxHeight="25.0" maxWidth="52.0" minHeight="25.0" minWidth="52.0" mnemonicParsing="false" onAction="#btnCreateRobotRandomClick" prefHeight="25.0" prefWidth="52.0" text="Create" />
                                  </children>
                               </AnchorPane>
@@ -161,7 +160,7 @@
                         </AnchorPane>
                     </content>
                   </TitledPane>
-                  <TitledPane animated="false" collapsible="false" maxHeight="400.0" prefHeight="136.0" prefWidth="115.0" text="Evaluation" GridPane.columnIndex="6">
+                  <TitledPane animated="false" collapsible="false" maxHeight="400.0" prefHeight="136.0" prefWidth="115.0" text="Evaluation" GridPane.columnIndex="7">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="326.0" prefWidth="148.0">
                            <children>
@@ -179,6 +178,19 @@
                               <Label layoutX="110.0" layoutY="6.0" text="/" />
                               <TextField fx:id="txtRotateCost" alignment="CENTER" editable="false" layoutX="70.0" layoutY="55.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" text="0" />
                               <Label layoutX="5.0" layoutY="55.0" text="Rotate cost" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane alignment="TOP_LEFT" animated="false" collapsible="false" prefHeight="170.0" prefWidth="174.0" text="Map Empty Creator" GridPane.columnIndex="1">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="88.0">
+                           <children>
+                              <Label layoutX="5.0" layoutY="5.0" text="Map X Length" />
+                              <TextField fx:id="txtEmptyMapBaseXLength" alignment="CENTER" layoutX="82.0" layoutY="5.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="10" />
+                              <Button fx:id="btnCreateMapBaseEmpty" layoutX="81.0" layoutY="105.0" maxHeight="22.0" maxWidth="52.0" minHeight="22.0" minWidth="52.0" mnemonicParsing="false" onAction="#btnCreateMapBaseEmptyClick" prefHeight="22.0" prefWidth="52.0" text="Create" />
+                              <Label layoutX="5.0" layoutY="30.0" text="Map Y Length" />
+                              <TextField fx:id="txtEmptyMapBaseYLength" alignment="CENTER" layoutX="82.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="10" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -216,10 +228,11 @@
                <graphic>
                           <TableView fx:id="tableViewRobotList" maxHeight="250.0" maxWidth="450.0" minHeight="250.0" minWidth="450.0" prefHeight="250.0" prefWidth="450.0">
                               <columns>
-                                  <TableColumn fx:id="tableColRobotID" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" resizable="false" text="ID" />
-                                  <TableColumn fx:id="tableColRobotX" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" resizable="false" text="x" />
-                                  <TableColumn fx:id="tableColRobotY" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" resizable="false" text="y" />
-                                  <TableColumn fx:id="tableColRobotHeading" maxWidth="105.0" minWidth="105.0" prefWidth="105.0" resizable="false" text="Heading" />
+                                  <TableColumn fx:id="tableColRobotID" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="ID" />
+                                  <TableColumn fx:id="tableColRobotX" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="x" />
+                                  <TableColumn fx:id="tableColRobotY" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="y" />
+                                  <TableColumn fx:id="tableColRobotHeading" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="Heading" />
+                        <TableColumn fx:id="tableColRobotTimeFree" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="Time Free" />
                               </columns>
                           </TableView>
                </graphic>

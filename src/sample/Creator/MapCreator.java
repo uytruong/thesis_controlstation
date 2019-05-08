@@ -9,14 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapCreator {
-    public static Map map = new Map();
+    public static Map map;
 
 
     public static void create(){
+        map = new Map();
         Bound.update();
         Area.update();
         Map.xLength = Bound.xLength;
         Map.yLength = Bound.yLength;
+        Map.type    = Map.MAP_TYPE_WAREHOUSE;
 
         map.setPointInfos(new PointInfo[Map.xLength][Map.yLength]);
         for (int i = 0; i < Bound.xLength ; i++)
@@ -37,6 +39,17 @@ public class MapCreator {
         }
     }
 
+    public static void createEmpty(){
+        map = new Map();
+        Map.xLength = Bound.xLength;
+        Map.yLength = Bound.yLength;
+        Map.type    = Map.MAP_TYPE_EMPTY;
+        map.setPointInfos(new PointInfo[Map.xLength][Map.yLength]);
+        for (int i = 0; i < Bound.xLength ; i++)
+            for (int j = 0; j < Bound.yLength; j++)
+                map.getPointInfos()[i][j] = new PointInfo();
+    }
+
     public static class Shelf{
         public static int xLength, yLength;
         public static int xNumber, yNumber;
@@ -45,8 +58,8 @@ public class MapCreator {
         public static int boundToVerShelf, boundToHorShelf;
         public static int shelfToVerShelf, shelfToHorShelf;
     }
-    private static class Bound {
-        private static int xLength, yLength;
+    public static class Bound {
+        public static int xLength, yLength;
 
         private static void update() {
             xLength = Distance.boundToVerShelf *2 + Shelf.xNumber*(Shelf.xLength + Distance.shelfToVerShelf) - Distance.shelfToVerShelf;
@@ -129,15 +142,28 @@ public class MapCreator {
     }
 
     public static int getEstimatePathCost(Point start, Point goal){
-        //return getEstimatePathCost(start,goal);
-        return getEstimatePathCost1(start,goal);
-        //return (Math.abs(start.getX() - goal.getX()) + Math.abs(start.getY() - goal.getY()) + 1);
+        if(Map.type == Map.MAP_TYPE_EMPTY)
+            return getEstimatePathCost1(start,goal);
+        else
+            return getEstimatePathCost2(start,goal);
     }
-    public static int getEstimatePathCost2(Point start, Point goal){
+
+
+    public static int getEstimateAssignmentCost(Point start, Point goal){
+        if(Map.type == Map.MAP_TYPE_EMPTY)
+            return getEstimatePathCost1(start,goal);
+        else
+            return getEstimatePathCost2(start,goal);
+    }
+
+
+    public static int getEstimatePathCost1(Point start, Point goal){
         return (Math.abs(start.getX() - goal.getX()) + Math.abs(start.getY() - goal.getY()));
     }
 
-    public static int getEstimatePathCost1(Point start, Point goal){
+
+
+    public static int getEstimatePathCost2(Point start, Point goal){
         Area area1 = new Area(start);
         Area area2 = new Area(goal);
 

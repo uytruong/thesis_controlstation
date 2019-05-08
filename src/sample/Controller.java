@@ -51,6 +51,11 @@ public class Controller implements Initializable {
     public TextField txtDistanceShelfToShelf;
     public TextField txtDistanceBoundToShelf;
     public Button    btnCreateMapBase;
+
+
+    public TextField txtEmptyMapBaseXLength;
+    public TextField txtEmptyMapBaseYLength;
+    public Button    btnCreateMapBaseEmpty;
     /**
      * Robot
      */
@@ -81,6 +86,7 @@ public class Controller implements Initializable {
     public TableColumn<RobotViewModel, Integer> tableColRobotX;
     public TableColumn<RobotViewModel, Integer> tableColRobotY;
     public TableColumn<RobotViewModel, String>  tableColRobotHeading;
+    public TableColumn<RobotViewModel, Integer> tableColRobotTimeFree;
     private ObservableList<RobotViewModel>      robotObservableList = FXCollections.observableArrayList();
     /**
      * Task TableView
@@ -116,8 +122,6 @@ public class Controller implements Initializable {
     public Button    btnReset;
     public  ChoiceBox<Integer>      cbPlaySpeed;
     private ObservableList<Integer> cbPlaySpeedList = FXCollections.observableArrayList(1,2,4);
-    public  ChoiceBox<Integer>      cbHeuristic;
-    private ObservableList<Integer> cbHeuristicList = FXCollections.observableArrayList(1,2);
 
 
     @Override
@@ -132,8 +136,6 @@ public class Controller implements Initializable {
         cbTaskHeading.setItems(cbRobotHeadingList);
         cbPlaySpeed.setValue(cbPlaySpeedList.get(0));
         cbPlaySpeed.setItems(cbPlaySpeedList);
-        cbHeuristic.setValue(cbHeuristicList.get(0));
-        cbHeuristic.setItems(cbHeuristicList);
 
 
         txtTimeMax.setText(Integer.toString(Context.timeMax));
@@ -149,10 +151,8 @@ public class Controller implements Initializable {
             int randomSeed = Integer.parseInt(txtRandomSeed.getText());
             int playSpeed  = cbPlaySpeed.getValue();
             int timeSolve  = Integer.parseInt(txtTimeSolve.getText());
-            int heuristic  = cbHeuristic.getValue();
             random.setSeed(randomSeed);
             Context.playSpeed                     = playSpeed;
-            Context.heuristic                     = heuristic;
             MultiPathPlanning.Config.timeSolveMax = timeSolve;
 
         }
@@ -161,6 +161,34 @@ public class Controller implements Initializable {
         }
 
     }
+    public void btnCreateMapBaseEmptyClick(){
+        try {
+            int xLength = Integer.parseInt(txtEmptyMapBaseXLength.getText());
+            int yLength = Integer.parseInt(txtEmptyMapBaseYLength.getText());
+            MapCreator.Bound.xLength = xLength;
+            MapCreator.Bound.yLength = yLength;
+            MapCreator.createEmpty();
+
+            int lengthOfAxis = Math.max(Map.xLength,Map.yLength);
+            xAxis.setUpperBound(lengthOfAxis);
+            yAxis.setUpperBound(lengthOfAxis);
+
+            mapData      = new MapData();
+            robotCreator = new RobotCreator(random);
+            taskCreator  = new TaskCreator(random);
+            robotManager = new RobotManager(robotCreator, mapData);
+            taskManager  = new TaskManager(taskCreator);
+
+            initializeTimeline();
+
+            updateAndViewAtTime(0);
+
+        }
+        catch (Exception e){
+            viewErrorNotification("Some properties of Create Empty Map are wrong");
+        }
+    }
+
 
     public void btnSaveShelfConfigClick() {
         try {
@@ -337,9 +365,9 @@ public class Controller implements Initializable {
                 timeline.stop();
             }
             Context.time++;
-            logData("@TIME = " + Context.time);
+            Context.logData("\n@TIME = " + Context.time);
             updateAndViewAtTime(Context.time);
-            updateTotalPathCost(Context.time);
+            updatePathCost(Context.time);
 
             if((!Context.solvingMultiPath) & (taskManager.assignable())){
                 Context.solvingMultiPath = true;
@@ -350,14 +378,14 @@ public class Controller implements Initializable {
                 solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolveMax), ev1 -> {
                     long timeStartThread = System.currentTimeMillis();
 
+                    taskManager.setLastTimeAssign(timeAssign);
                     MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager,robotManager,mapData,timeAssign,random);
                     multiPathPlanning.execute();
 
                     Context.solvingMultiPath = false;
 
                     long timeEndThread = System.currentTimeMillis();
-                    logData("Time of thread solving in millis: "+(timeEndThread-timeStartThread));
-
+                    Context.logData("Time of thread solving in millis: "+(timeEndThread-timeStartThread));
                     }));
                 solvingThread.setCycleCount(1);
                 solvingThread.playFrom(Duration.millis(MultiPathPlanning.Config.getTimeSolveMaxMillis()-1)); /*prevent Delay*/
@@ -374,6 +402,7 @@ public class Controller implements Initializable {
         tableColRobotX.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointX"));
         tableColRobotY.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointY"));
         tableColRobotHeading.setCellValueFactory(new PropertyValueFactory<>("RobotHeading"));
+        tableColRobotTimeFree.setCellValueFactory(new PropertyValueFactory<>("RobotTimeFree"));
         tableViewRobotList.setItems(robotObservableList);
 
         tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("TaskID"));
@@ -438,6 +467,7 @@ public class Controller implements Initializable {
             int robotIDView   = robot.getId();
             int robotXView    = robot.getPointByTime(time).getX();
             int robotYView    = robot.getPointByTime(time).getY();
+            int robotTimeFreeView = robot.getTimeFree();
             String robotHeadingView;
             switch (robot.getHeadingByTime(time)){
                 case ROBOT_UP:
@@ -452,7 +482,7 @@ public class Controller implements Initializable {
                 default:
                     robotHeadingView = "RIGHT";
             }
-            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView);
+            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView, robotTimeFreeView);
             robotViewModelList.add(robotViewModel);
         }
         tableViewRobotList.getItems().clear();
@@ -473,22 +503,19 @@ public class Controller implements Initializable {
         txtTaskDoneNumber.setText(Integer.toString(taskManager.getDoneTaskNumber()));
         txtTime.setText(Integer.toString(Context.time));
         txtStepCost.setText(Integer.toString(Context.stepCost));
+        txtRotateCost.setText(Integer.toString(Context.rotateCost));
+
 
     }
     private void viewErrorNotification(String content){
         Alert alert = new Alert(Alert.AlertType.WARNING, content);
         alert.showAndWait();
     }
-    private void updateTotalPathCost(int time){
+    private void updatePathCost(int time) {
         robotManager.updatePathCost(time);
-        Context.stepCost += robotManager.getStepCost();
-        Context.rotateCost += robotManager.getRotateCost();
+        Context.stepCost = robotManager.getStepCost();
+        Context.rotateCost = robotManager.getRotateCost();
         txtStepCost.setText(Integer.toString(Context.stepCost));
         txtRotateCost.setText(Integer.toString(Context.rotateCost));
     }
-    private void logData(String string){
-        System.out.println(string);
-    }
-
-
 }

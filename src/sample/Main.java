@@ -9,8 +9,6 @@ import sample.Creator.MapCreator;
 
 public class Main extends Application {
 
-    private MapCreator mapCreator = new MapCreator();
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));

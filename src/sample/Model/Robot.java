@@ -1,25 +1,26 @@
 package sample.Model;
 
+import sample.Manager.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Robot {
     private int         id;
-    private List<Point> pointList         = new ArrayList<>();
+    private List<Point> pointList           = new ArrayList<>();
+    private int         lastTimeUpdateToMap = -1;
 
     private List<Point> mainPlanPointList = new ArrayList<>();
     private List<Point> subPlanPointList  = new ArrayList<>();
     private Task        task;
+    private boolean     mainPlanSuccess   = true;
+    private boolean     subPlanSuccess    = true;
 
-    private int         lastTimeUpdateToMap = -1;
 
     public Robot(Point start) {
         this.pointList.add(start.getPointClone());
     }
 
-    /**
-     * GETTER AND SETTER
-     * */
     public int getId() {
         return id;
     }
@@ -36,14 +37,14 @@ public class Robot {
     public void setMainPlanPointList(List<Point> mainPlanPointList) {
         this.mainPlanPointList = mainPlanPointList;
     }
+    public void setSubPlanPointList(List<Point> subPlanPointList) {
+        this.subPlanPointList = subPlanPointList;
+    }
     public List<Point> getMainPlanPointList() {
         return mainPlanPointList;
     }
     public List<Point> getSubPlanPointList() {
         return subPlanPointList;
-    }
-    public void setSubPlanPointList(List<Point> subPlanPointList) {
-        this.subPlanPointList = subPlanPointList;
     }
     public Task getTask() {
         return task;
@@ -51,8 +52,18 @@ public class Robot {
     public void setTask(Task task) {
         this.task = task;
     }
-
-
+    public boolean isMainPlanSuccess() {
+        return mainPlanSuccess;
+    }
+    public void setMainPlanSuccess(boolean mainPlanSuccess) {
+        this.mainPlanSuccess = mainPlanSuccess;
+    }
+    public boolean isSubPlanSuccess() {
+        return subPlanSuccess;
+    }
+    public void setSubPlanSuccess(boolean subPlanSuccess) {
+        this.subPlanSuccess = subPlanSuccess;
+    }
 
     /**
      * USER DEFINE
@@ -82,11 +93,11 @@ public class Robot {
     public Point getLastPointByPlan(){
         return mainPlanPointList.get(mainPlanPointList.size()-1);
     }
+
     public PointInfo.Status getHeadingByTime(int time) {
         return getPointByTime(time).getStatus();
     }
 
-    /*this create is for robot doesn't have any task so it does not move*/
     public void updateByTime(int time){
         Point lastPoint = getLastPoint();
         int   lastTime  = getLastTimeBusy();
@@ -95,12 +106,18 @@ public class Robot {
         }
     }
 
-
     public void assignTask(){
+        Context.logData("   - robotId = " + getId() + " assigned to taskId =" + getTask().getId());
+
         pointList.addAll(mainPlanPointList);
+        clearMainPlanPointList();
+        clearSubPlanPointList();
+
         task.setStatus(Task.Status.RUNNING);
         task.setTimeFinish(getLastTimeBusy());
+        task = null;
     }
+
 
 
 }

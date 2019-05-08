@@ -41,7 +41,7 @@ public class Assignment {
         for (int i = 0; i < m ; i++) {
             Robot robot = robotList.get(i);
             for (int j = 0; j < n; j++) {
-                costMatrix[i][j] += MapCreator.getEstimatePathCost2(robot.getLastPoint(), readyTaskList.get(j).getGoal());
+                costMatrix[i][j] += MapCreator.getEstimateAssignmentCost(robot.getLastPoint(), readyTaskList.get(j).getGoal());
             }
         }
     }
