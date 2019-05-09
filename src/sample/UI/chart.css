@@ -5,7 +5,7 @@
     -fx-scale-y: 3;
 }
 .series1.chart-symbol { /* solid square ready task */
-    -fx-background-color: #237057;
+    -fx-background-color: #EE7057;
     -fx-background-radius: 1;
     -fx-scale-x: 2;
     -fx-scale-y: 2;

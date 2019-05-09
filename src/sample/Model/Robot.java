@@ -110,12 +110,18 @@ public class Robot {
         Context.logData("   - robotId = " + getId() + " assigned to taskId =" + getTask().getId());
 
         pointList.addAll(mainPlanPointList);
-        clearMainPlanPointList();
-        clearSubPlanPointList();
-
         task.setStatus(Task.Status.RUNNING);
         task.setTimeFinish(getLastTimeBusy());
+
+        abortTask();
+    }
+
+    public void abortTask(){
         task = null;
+        clearMainPlanPointList();
+        clearSubPlanPointList();
+        mainPlanSuccess = false;
+        subPlanSuccess  = false;
     }
 
 

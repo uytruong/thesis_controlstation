@@ -18,7 +18,7 @@ public class MultiPathPlanning {
     private int          timeAssignment;
     private Random       random;
 
-    private Conflict     conflict = new Conflict();
+    private Conflict     conflict;
 
     public MultiPathPlanning(TaskManager taskManager, RobotManager robotManager, MapData mapData, int timeAssignment, Random random) {
         this.taskManager    = taskManager;
@@ -26,28 +26,28 @@ public class MultiPathPlanning {
         this.mapData        = mapData;
         this.timeAssignment = timeAssignment;
         this.random         = random;
+
+        this.conflict = new Conflict();
     }
 
     private void clearData(){
         for (Robot robot: robotManager.getRobotList()) {
-            robot.setTask(null);
-            robot.clearMainPlanPointList();
-            robot.clearSubPlanPointList();
+            robot.abortTask();
         }
     }
 
     private void assignTasks(){
-        Assignment assignment = new Assignment(robotManager, taskManager,timeAssignment);
+        Assignment assignment = new Assignment(robotManager, taskManager, timeAssignment);
         assignment.execute();
 
-        Context.logData("### The tasks which are assigned at first:");
+        Context.logData("### ### assignTasks");
         for (Robot robot: robotManager.getRobotListWithTask()) {
-            Context.logData("--- robotId = " + robot.getId() + " assigned to taskId =" + robot.getTask().getId());
+            Context.logData("   --- robotId = " + robot.getId() + " assigned to taskId =" + robot.getTask().getId());
         }
     }
 
     private void simplePlan(){
-        Context.logData("simplePlan");
+        Context.logData("### ### simplePlan");
         /**
          * get simple plan for each robot
          * */
@@ -56,89 +56,93 @@ public class MultiPathPlanning {
             if(singlePathPlanning.execute()){
                 robot.setMainPlanPointList(singlePathPlanning.getPlanPointList());
                 robot.setMainPlanSuccess(true);
-                System.out.println("!@!!!!!!!!!!!!!!!!! " + robot.getId());
-
+                Context.logData("  --- success with robot Id = " + robot.getId());
             }
             else{
-                robot.setTask(null);
+                Context.logData("  --- fail with robot Id = " + robot.getId());
+                robot.abortTask();
             }
         }
-
+    }
+    private void priorPlan(){
         /**
          * write plan points into maps to get the conflict paths
          * then erase the plan paths which are conflicted
          * */
+        Context.logData("### ### conflict checking");
+
         for (Robot robot: robotManager.getRobotListWithTask()) {
-            List<Point> planPointList = robot.getMainPlanPointList();
-            int         timeOffset    = robot.getTimeFree();
-            Point       prePoint      = robot.getLastPoint();
-            for (int idx = 0; idx < planPointList.size(); idx++) {
-                Point point       = planPointList.get(idx);
-                int   x           = point.getX();
-                int   y           = point.getY();
-                int   timeOfPoint = timeOffset + idx;
-                Map   map         = mapData.getMapByTime(timeOfPoint);
+            if(robot.isMainPlanSuccess()){
+                Context.logData("   --- checking robotId = " + robot.getId() + " , mainPlanSuccess = true");
+                List<Point> planPointList = robot.getMainPlanPointList();
+                int         timeOffset    = robot.getTimeFree();
+                Point       prePoint      = robot.getLastPoint();
+                for (int idx = 0; idx < planPointList.size(); idx++) {
+                    Point point       = planPointList.get(idx);
+                    int   x           = point.getX();
+                    int   y           = point.getY();
+                    int   timeOfPoint = timeOffset + idx;
+                    Map   map         = mapData.getMapByTime(timeOfPoint);
 
-                PointInfo thisPointThisTime = map.getPointInfoByXY(x,y);
-                if(thisPointThisTime.isEmpty()){
-                    map.setPointInfoByPoint(point);
+                    PointInfo thisPointThisTime = map.getPointInfoByXY(x,y);
+                    if(thisPointThisTime.isEmpty()){
+                        map.setPointInfoByPoint(point);
+                        if(!Point.isCoincident(point,prePoint)) {
+                            int preX   = prePoint.getX();
+                            int preY   = prePoint.getY();
+                            Map preMap = mapData.getMapByTime(timeOfPoint - 1);
+                            PointInfo prePointThisTime = map.getPointInfoByXY(preX, preY);
+                            PointInfo thisPointPreTime = preMap.getPointInfoByXY(x, y);
 
-                    if(!Point.isCoincident(point,prePoint)) {
-                        int preX   = prePoint.getX();
-                        int preY   = prePoint.getY();
-                        Map preMap = mapData.getMapByTime(timeOfPoint - 1);
-                        PointInfo prePointThisTime = map.getPointInfoByXY(preX, preY);
-                        PointInfo thisPointPreTime = preMap.getPointInfoByXY(x, y);
-
-                        if (!thisPointPreTime.isEmpty() & !prePointThisTime.isEmpty()) {
-                            if (thisPointPreTime.getRobot() == prePointThisTime.getRobot()) {
-                                conflict.add(thisPointPreTime.getRobot());
-                                conflict.add(robot);
+                            if ((!thisPointPreTime.isEmpty()) & (!prePointThisTime.isEmpty()) ) {
+                                if (thisPointPreTime.getRobot() == prePointThisTime.getRobot()) {
+                                    conflict.add(thisPointPreTime.getRobot());
+                                    conflict.add(robot);
+                                    Context.logData("      +++ robotId = " + robot.getId() + ", otherId = " + thisPointPreTime.getRobot().getId());
+                                }
                             }
                         }
+
+                    }
+                    else{
+                        Robot other = thisPointThisTime.getRobot();
+                        Context.logData("      +++ robotId = " + robot.getId() + " is conflicted with otherId = " + other.getId() + " & other.taskId = ");
+                        Context.logData("      +++ the conflict point of Robot: " + point.getStringData() + " at time = " + timeOfPoint);
+                        Context.logData("      +++ the conflict point of mapData: " + thisPointThisTime.getStringData() + " at time = " + timeOfPoint);
+                        conflict.add(other);
+                        conflict.add(robot);
                     }
 
-                }
-                else{
-                    Context.logData("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB    "+(thisPointThisTime.getRobot().getTask()==null) + "  " + (robot.getTask()==null));
-                    conflict.add(thisPointThisTime.getRobot());
-                    conflict.add(robot);
-                }
-                prePoint = point;
-            }
-        }
 
-        for (Robot robot: conflict.robotList){
-            if(robot.isMainPlanSuccess()){
-                mapData.clearPointsFromMaps(robot.getMainPlanPointList(), robot.getTimeFree());
-                robot.clearMainPlanPointList();
-                robot.setMainPlanSuccess(false);
-            }
-        }
-        for (Robot robot: robotManager.getRobotListWithTask()) {
-            if(!conflict.exist(robot)){
-                if(robot.isMainPlanSuccess()){
-                    mapData.writePointsToMaps(robot.getMainPlanPointList(),robot.getTimeFree());
-                    robot.setMainPlanSuccess(true);
+                    prePoint = point;
                 }
             }
+            else {
+                Context.logData("   $$$ conflict checking error: simplePlan is not success but robot still has Task ");
+            }
         }
-
-    }
-    private void priorPlan(){
         List<Robot> robotListConflicted = conflict.robotList;
 
         if(robotListConflicted.size()==0){
-            System.out.println("#priorPlan: no conflict");
+            Context.logData("### ### priorPlan: no conflict");
             return;
         }
-        else
-            System.out.println("#priorPlan: conficted...");
 
-        for (Robot robot: robotListConflicted) {
-            System.out.println("    ~robotId = "+robot.getId()+ " is conflicted");
+        for (Robot robot: robotManager.getRobotListWithTask()){
+            if(conflict.exist(robot)){
+                Context.logData("   --- conflict robot with id = " + robot.getId());
+                mapData.clearPointsFromMaps(robot.getMainPlanPointList(), robot.getTimeFree());
+                robot.setMainPlanSuccess(false);
+            }
+            else{
+                robot.setMainPlanSuccess(true);
+                mapData.writePointsToMaps(robot.getMainPlanPointList(),robot.getTimeFree());
+            }
         }
 
+
+
+        Context.logData("### ### priorPlan search first plan");
         int totalCostMin    = 0;
         int taskCpltMax     = 0;
         for (Robot robot: robotListConflicted) {
@@ -152,17 +156,19 @@ public class MultiPathPlanning {
             }
             else {
                 robot.setMainPlanSuccess(false);
+                robot.clearMainPlanPointList();
             }
             Context.logData("$$$ robotId = " + robot.getId() + " success = " + robot.isMainPlanSuccess());
         }
 
         for (Robot robot: robotListConflicted) {
-            if(robot.isMainPlanSuccess())
+            if(robot.isMainPlanSuccess()){
                 mapData.clearPointsFromMaps(robot.getMainPlanPointList(),robot.getTimeFree());
+                }
         }
 
         int timeLoop = Config.getTimeLoopForPriorPlan(robotListConflicted.size());
-        //int timeLoop = 5;
+        Context.logData("time Loop for priorPlan is : " + timeLoop);
         for (int i = 0; i <  timeLoop; i++) {
             //Collections.shuffle(robotListConflicted,random);
             conflict.randomSwapElement(random);
@@ -186,31 +192,31 @@ public class MultiPathPlanning {
                     mapData.clearPointsFromMaps(robot.getSubPlanPointList(),robot.getTimeFree());
             }
 
-            if(taskCplt>=taskCpltMax){
-                if(totalCost<=totalCostMin){
-                    totalCostMin = totalCost;
-                    taskCpltMax  = taskCplt;
-                    for (Robot robot: robotListConflicted) {
-                        if(robot.isSubPlanSuccess()){
-                            robot.setMainPlanPointList(robot.getSubPlanPointList());
-                            robot.setMainPlanSuccess(true);
-                        }
-                        else{
-                            robot.setMainPlanSuccess(false);
-                        }
+            if((taskCplt>taskCpltMax) | ((taskCplt==taskCpltMax) &(totalCost<totalCostMin))){
+                totalCostMin = totalCost;
+                taskCpltMax  = taskCplt;
+                Context.logData("There is better case for robotId");
+                for (Robot robot: robotListConflicted) {
+                    Context.logData("robotId = " + robot.getId() + " sucess = " + robot.isSubPlanSuccess());
+                    if(robot.isSubPlanSuccess()){
+                        robot.setMainPlanPointList(robot.getSubPlanPointList());
+                        robot.setMainPlanSuccess(true);
+                    }
+                    else{
+                        robot.setMainPlanSuccess(false);
                     }
                 }
             }
 
         }
 
+
         for (Robot robot : robotListConflicted) {
             if(robot.isMainPlanSuccess()){
                 mapData.writePointsToMaps(robot.getMainPlanPointList(),robot.getTimeFree());
-                robot.clearSubPlanPointList();
             }
             else{
-                robot.setTask(null);
+                robot.abortTask();
             }
         }
     }
@@ -220,17 +226,30 @@ public class MultiPathPlanning {
         Robot       lastRobot = robotList.get(robotList.size()-1);
         boolean     loop      = true;
 
-        System.out.println("#optimizePlan: checking...");
+        System.out.println("### ### optimizePlan: checking...");
         while (loop){
+            Context.logData("   --- reloop again");
+            int loopRequired = 0;
             for (Robot robot: robotList) {
+                Context.logData("   --- checking robotId =" + robot.getId());
+                loopRequired++;
                 Point lastPoint;
                 int   lastX,lastY;
                 int   timeFree;
                 if(robot.getTask() != null) {
-                    lastPoint = robot.getLastPointByPlan();
-                    lastX     = lastPoint.getX();
-                    lastY     = lastPoint.getY();
-                    timeFree  = robot.getTimeFreeByPlan();
+                    if(robot.isMainPlanSuccess()){
+                        lastPoint = robot.getLastPointByPlan();
+                        lastX     = lastPoint.getX();
+                        lastY     = lastPoint.getY();
+                        timeFree  = robot.getTimeFreeByPlan();
+                    }
+                    else{
+                        Context.logData("exist plan which is not success by robotId = " + robot.getId());
+                        lastPoint = robot.getLastPoint();
+                        lastX     = lastPoint.getX();
+                        lastY     = lastPoint.getY();
+                        timeFree  = robot.getTimeFree();
+                    }
                 }
                 else{
                     lastPoint = robot.getLastPoint();
@@ -239,7 +258,7 @@ public class MultiPathPlanning {
                     timeFree  = robot.getTimeFree();
                 }
 
-                Robot other    = null;
+                Robot other = null;
                 for (int time = timeFree; time < Context.timeMax; time++) {
                     PointInfo pointInfo = mapData.getMapByTime(time).getPointInfoByXY(lastX,lastY);
                     if(!pointInfo.isEmpty()){
@@ -249,25 +268,30 @@ public class MultiPathPlanning {
                 }
 
                 if(other != null){
-                    System.out.println("~robotId = " + robot.getId() + " may be crashed in the future by robotId = " + other.getId());
+                    Context.logData("~ robotId = " + robot.getId() + " may be crashed in the future by robotId = " + other.getId());
                     if(other.getTask() != null){
-                        other.setMainPlanSuccess(false);
+                        Context.logData("~ otherId = " + other.getId() + " have taskId = " +other.getTask().getId() + " is aborted");
                         mapData.clearPointsFromMaps(other.getMainPlanPointList(),other.getTimeFree());
-                        other.clearMainPlanPointList();
-                        other.setTask(null);
+                        other.abortTask();
                         break;
                     }
                     else{
-                        Context.logData("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+                        if(robot.getTask() != null){
+                            Context.logData("~ robotId = " + robot.getId() + " have taskId = " + robot.getTask().getId() + " is aborted");
+                            mapData.clearPointsFromMaps(robot.getMainPlanPointList(),robot.getTimeFree());
+                            robot.abortTask();
+                            break;
+                        }
+                        else{
+                            Context.logData("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+                        }
                     }
-
-
-
                 }
-
+                /*
                 if (robot == lastRobot){
                     loop = false;
-                }
+                }*/
+                if(loopRequired == robotList.size()){loop = false;}
             }
 
         }
@@ -281,15 +305,19 @@ public class MultiPathPlanning {
         assignTasks();
         simplePlan();
         priorPlan();
-
         optimizePlan();
-
         Context.logData("#The tasks which are assigned:");
         for (Robot robot: robotManager.getRobotList()) {
             if(robot.getTask() != null){
-                if(robot.isMainPlanSuccess())
+                if(robot.isMainPlanSuccess()){
                     robot.assignTask();
+                    robot.updateByTime(timeAssignment);
+                }
+                else{
+                    Context.logData("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                }
             }
+
         }
 
 
@@ -300,8 +328,8 @@ public class MultiPathPlanning {
         public static int timeSolveMax = 1;
 
 
-        private static int timeLoopForPriorPlanMax = 5;
-        private static int getTimeLoopForPriorPlan(int size){
+        public static int timeLoopForPriorPlanMax = 5;
+        public static int getTimeLoopForPriorPlan(int size){
             int timeLoopMax = timeLoopForPriorPlanMax;
             int timeLoop = 1;
             for (int i = 2; i <= size; i++) {

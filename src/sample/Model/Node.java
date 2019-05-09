@@ -134,20 +134,20 @@ public class Node extends Point {
         List<Point> correspondPoints = new ArrayList<>();
         switch (actionToGetThis){
             case ROTATE_BACK:
-                Point middlePoint = new Point(this);
+                Point middlePoint = this.getPointClone();
                 middlePoint.setStatus(getNeighborNodeHeadingByAction(Motion.Action.ROTATE_LEFT));
                 correspondPoints.add(middlePoint);
                 break;
             case SPEED_DOWN:
-                correspondPoints.add(new Point(this));
+                correspondPoints.add(this.getPointClone());
                 break;
             case SPEED_UP:
-                correspondPoints.add(new Point(previousNode));
+                correspondPoints.add(previousNode.getPointClone());
                 break;
             case STEP:
-                correspondPoints.add(new Point(this));
+                correspondPoints.add(this.getPointClone());
         }
-        correspondPoints.add(new Point(this));
+        correspondPoints.add(this.getPointClone());
         return correspondPoints;
     }
 

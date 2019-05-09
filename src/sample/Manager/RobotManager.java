@@ -20,6 +20,7 @@ public class RobotManager {
     }
 
     public void updateByTime(int time){
+        List<Point> robotPointListThisTime = new ArrayList<>();
         for (Robot robot: robotList) {
             if (robot.getLastTimeBusy() <= time) {
                 robot.updateByTime(time);
@@ -34,8 +35,20 @@ public class RobotManager {
                 }
                 robot.setLastTimeUpdateToMap(robot.getLastTimeBusy());
             }
+
+            Point robotPointThisTime = robot.getPointByTime(time);
+            robotPointListThisTime.add(robotPointThisTime);
+            for (Point point: robotPointListThisTime) {
+                if(point.getRobot() != robotPointThisTime.getRobot()){
+                    if(Point.isCoincident(point,robotPointThisTime)){
+                        Context.logData("Crash by robot Manager Checking:");
+                        Context.logData("   --- robot: " + point.getRobot().getId() + " & " + robotPointThisTime.getRobot().getId() );
+                    }
+                }
+            }
         }
     }
+
     public void updatePathCost(int time){
          for (Robot robot: robotList) {
             Point point    = robot.getPointByTime(time);

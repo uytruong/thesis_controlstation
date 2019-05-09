@@ -52,9 +52,8 @@ public class Point extends PointInfo {
     }
 
 
-    public void print(){
-        String info = "x=" + x + ", y=" + y + ", status=" + getStatus() + "robotId="+getRobot();
-        System.out.println(info);
+    public String getStringData(){
+        return "x=" + x + ", y=" + y + ", status=" + getStatus() + "robotId="+getRobot().getId();
     }
     /**
      * ===========================   STATIC PUBLIC METHODS =========================== *

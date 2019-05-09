@@ -1,4 +1,5 @@
 package sample.Algorithm;
+import sample.Manager.Context;
 import sample.Manager.MapData;
 import sample.Model.*;
 
@@ -8,6 +9,7 @@ import java.util.List;
 public class SinglePathPlanning {
     private MapData     mapData;
     private Task        task;
+    private Robot       robot;
 
     private Node        startNode, goalNode;
     private List<Node>  openList      = new ArrayList<>();
@@ -17,6 +19,7 @@ public class SinglePathPlanning {
     public SinglePathPlanning(Robot robot,MapData mapData){
         this.mapData   = mapData;
         this.task      = robot.getTask();
+        this.robot     = robot;
 
         this.startNode = Node.getStartNode(robot);
         this.openList.add(startNode);
@@ -82,22 +85,47 @@ public class SinglePathPlanning {
         for (Motion.Action action: suitableActions) {
             Node        suitableNode     = node.getNeighborNodeByAction(action);
             List<Point> correspondPoints = suitableNode.getCorrespondPoints();
+            int         timeOffset       = suitableNode.getTimeArrived()- correspondPoints.size()+1;
 
             boolean emptyToGo = true;
-            Point   prePoint  = node;
+            Point   prePoint  = suitableNode.getPreviousNode();
             for (int idx = 0; idx < correspondPoints.size(); idx++) {
-                Point point     = correspondPoints.get(idx);
-                int timeOffset  = suitableNode.getTimeArrived()- correspondPoints.size()+1;
-                int timeOfPoint = timeOffset + idx;
+                Point point       = correspondPoints.get(idx);
+                int   timeOfPoint = timeOffset + idx;
 
-                emptyToGo = mapData.emptyToGo(prePoint,point,timeOfPoint);
-                //emptyToGo = mapData.getMapByTime(timeOfPoint).getPointInfoByXY(point.getX(),point.getY()).isEmpty();
-                if(!emptyToGo)
+                Map map = mapData.getMapByTime(timeOfPoint);
+                int x   = point.getX();
+                int y   = point.getY();
+                PointInfo thisPointThisTime = map.getPointInfoByXY(x,y);
+
+                if(thisPointThisTime.isEmpty()) {
+                    if(!Point.isCoincident(prePoint,point)) {
+                        int preX   = prePoint.getX();
+                        int preY   = prePoint.getY();
+                        Map preMap = mapData.getMapByTime(timeOfPoint - 1);
+                        PointInfo prePointThisTime = map.getPointInfoByXY(preX, preY);
+                        PointInfo thisPointPreTime = preMap.getPointInfoByXY(x, y);
+                        if ((!thisPointPreTime.isEmpty()) & (!prePointThisTime.isEmpty())) {
+                            Robot robot = thisPointPreTime.getRobot();
+                            Context.logData("exist move frw crash at x,y ="+ x + "," +y + " between robotId = " + robot.getId() + " and this");
+                            if( (robot == prePointThisTime.getRobot()) & (robot != this.robot)) {
+                                emptyToGo = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else{
+                    emptyToGo = false;
                     break;
+                }
+                //emptyToGo = mapData.emptyToGo(prePoint,point,timeOfPoint);
+                //emptyToGo = mapData.getMapByTime(timeOfPoint).getPointInfoByXY(point.getX(),point.getY()).isEmpty();
                 prePoint = point;
             }
-            if(emptyToGo)
+            if(emptyToGo){
                 neighborNodes.add(suitableNode);
+            }
         }
         return neighborNodes;
     }

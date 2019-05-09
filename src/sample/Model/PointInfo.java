@@ -72,4 +72,7 @@ public class PointInfo {
     }
 
     public boolean isEmpty(){ return (status == Status.NONE);}
+    public String getStringData(){
+        return "status = " + status + ", robotId = " + robot.getId();
+    }
 }

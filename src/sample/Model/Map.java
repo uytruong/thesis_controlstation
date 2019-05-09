@@ -35,12 +35,21 @@ public class Map {
      * USER DEFINE
      * */
     public PointInfo getPointInfoByXY(int x, int y){
+        if((x<0)|(x>xLength-1)|(y<0)|(y>yLength-1))
+            return new PointInfo(PointInfo.Status.SHELF);
+        else
+            return pointInfos[x][y];
+    }
+    public PointInfo getPointInfoByPoint(Point point){
+        int x = point.getX();
+        int y = point.getY();
         PointInfo pointInfo = new PointInfo(PointInfo.Status.SHELF);
         if((x<0)|(x>xLength-1)|(y<0)|(y>yLength-1))
             return pointInfo;
         else
             return pointInfos[x][y];
     }
+
     public void setPointInfoByPoint(Point point){
         int x = point.getX();
         int y = point.getY();

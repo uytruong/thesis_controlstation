@@ -62,7 +62,7 @@ public class Motion {
             case STEP:{
                 switch (previousAction){
                     case STEP: return 2;
-                    case SPEED_DOWN: return 1;
+                    case SPEED_DOWN: return 2;
                 }
                 break;
             }

@@ -19,16 +19,16 @@ public class MapData {
     }
 
     public void writePointsToMaps(List<Point> pointList, int timeWrite){
-        for (int time = 0; time < pointList.size(); time++) {
-            Point point = pointList.get(time);
-            getMapByTime(time+timeWrite).setPointInfoByPoint(point);
+        for (int idx = 0; idx < pointList.size(); idx++) {
+            Point point = pointList.get(idx);
+            getMapByTime(idx+timeWrite).setPointInfoByPoint(point);
         }
     }
     public void clearPointsFromMaps(List<Point> pointList, int timeClear){
-        for (int time = 0; time < pointList.size(); time++) {
-            Point point = pointList.get(time);
-            getMapByTime(time+timeClear).getPointInfoByXY(point.getX(), point.getY()).setStatus(PointInfo.Status.NONE);
-            getMapByTime(time+timeClear).getPointInfoByXY(point.getX(), point.getY()).setRobot(null);
+        for (int idx = 0; idx < pointList.size(); idx++) {
+            Point point = pointList.get(idx);
+            getMapByTime(idx+timeClear).getPointInfoByXY(point.getX(), point.getY()).setStatus(PointInfo.Status.NONE);
+            getMapByTime(idx+timeClear).getPointInfoByXY(point.getX(), point.getY()).setRobot(null);
         }
 
     }
@@ -47,7 +47,7 @@ public class MapData {
             PointInfo prePointThisTime = map.getPointInfoByXY(preX, preY);
             PointInfo thisPointPreTime = preMap.getPointInfoByXY(x, y);
 
-            if (!thisPointPreTime.isEmpty() & !prePointThisTime.isEmpty()) {
+            if ((!thisPointPreTime.isEmpty()) & (!prePointThisTime.isEmpty())) {
                 Robot robot = thisPointPreTime.getRobot();
                 return  !(robot == prePointThisTime.getRobot());
             }
@@ -55,10 +55,34 @@ public class MapData {
         return true;
     }
 
+    public boolean isEmpty(Point point, int timeOfPoint){
+        Map map = getMapByTime(timeOfPoint);
+        int x   = point.getX();
+        int y   = point.getY();
+        PointInfo infoOfPointInMap = map.getPointInfoByXY(x,y);
+        return (infoOfPointInMap.isEmpty());
+    }
+    public boolean isEmptyToMoveIn(Point prePoint, Point point, int timeOfPoint){
+        if(!Point.isCoincident(prePoint,point)){
+            if(isEmpty(point,timeOfPoint-1)){
+                return isEmpty(point,timeOfPoint);
+            }
+            else if (isEmpty(prePoint,timeOfPoint)){
+                return isEmpty(point,timeOfPoint);
+            }
+            else {
+                return false;
+            }
+        }
+        else{
+            return isEmpty(point,timeOfPoint);
+        }
+    }
+
+
     public Map getMapByTime(int time){
         return maps[time];
     }
-
 
     private static class Config{
         private static int numberMapMax = Context.timeMax;

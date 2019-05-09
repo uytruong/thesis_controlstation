@@ -117,6 +117,7 @@ public class Controller implements Initializable {
     public TextField txtTaskNumber;
     public TextField txtTaskDoneNumber;
     public TextField txtTimeSolve;
+    public TextField txtTimeLoopMaxForPriorSearch;
     public Button    btnStartSimulation;
     public Button    btnSaveSystemConfig;
     public Button    btnReset;
@@ -151,9 +152,12 @@ public class Controller implements Initializable {
             int randomSeed = Integer.parseInt(txtRandomSeed.getText());
             int playSpeed  = cbPlaySpeed.getValue();
             int timeSolve  = Integer.parseInt(txtTimeSolve.getText());
+            int loopMaxPrior = Integer.parseInt(txtTimeLoopMaxForPriorSearch.getText());
+
             random.setSeed(randomSeed);
             Context.playSpeed                     = playSpeed;
             MultiPathPlanning.Config.timeSolveMax = timeSolve;
+            MultiPathPlanning.Config.timeLoopForPriorPlanMax = loopMaxPrior;
 
         }
         catch (Exception e){
@@ -379,6 +383,8 @@ public class Controller implements Initializable {
                     long timeStartThread = System.currentTimeMillis();
 
                     taskManager.setLastTimeAssign(timeAssign);
+                    if(Context.time == 27)
+                        Context.time = 27;
                     MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager,robotManager,mapData,timeAssign,random);
                     multiPathPlanning.execute();
 

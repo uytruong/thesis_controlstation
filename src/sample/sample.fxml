@@ -78,6 +78,8 @@
                               <ChoiceBox fx:id="cbPlaySpeed" layoutX="82.0" layoutY="30.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
                               <Label layoutX="5.0" layoutY="55.0" text="Time solve" />
                               <TextField fx:id="txtTimeSolve" alignment="CENTER" layoutX="82.0" layoutY="55.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="1" />
+                              <Label layoutX="5.0" layoutY="80.0" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" text="Loop max for prior search" wrapText="true" />
+                              <TextField fx:id="txtTimeLoopMaxForPriorSearch" alignment="CENTER" layoutX="82.0" layoutY="80.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="0" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -93,10 +95,10 @@
                                         <TextField fx:id="txtShelfEachRowNumber" alignment="CENTER" layoutX="170.0" layoutY="30.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="3" />
                                         <TextField fx:id="txtShelfEachColNumber" alignment="CENTER" layoutX="205.0" layoutY="30.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="2" />
                                         <Label layoutX="5.0" layoutY="55.0" prefHeight="20.0" text="Distance between 2 shelf" />
-                                        <TextField fx:id="txtDistanceShelfToShelf" alignment="CENTER" layoutX="205.0" layoutY="55.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="2" />
+                                        <TextField fx:id="txtDistanceShelfToShelf" alignment="CENTER" layoutX="205.0" layoutY="55.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="1" />
                                         <Button fx:id="btnCreateMapBase" layoutX="170.0" layoutY="105.0" maxHeight="25.0" maxWidth="65.0" minHeight="25.0" minWidth="65.0" mnemonicParsing="false" onAction="#btnSaveShelfConfigClick" prefHeight="25.0" prefWidth="65.0" text="Create" />
                                         <Label layoutX="5.0" layoutY="80.0" prefHeight="20.0" text="Shelf &amp; bound distance" />
-                                        <TextField fx:id="txtDistanceBoundToShelf" alignment="CENTER" layoutX="205.0" layoutY="80.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="2" />
+                                        <TextField fx:id="txtDistanceBoundToShelf" alignment="CENTER" layoutX="205.0" layoutY="80.0" maxHeight="22.0" maxWidth="30.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="30.0" text="1" />
                                     </children>
                         </AnchorPane>
                             </content>
@@ -125,7 +127,7 @@
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="88.0">
                            <children>
                               <Label layoutX="5.0" layoutY="5.0" text="Nụmber of Tasks" />
-                              <TextField fx:id="txtNumOfRandTask" alignment="CENTER" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="30" />
+                              <TextField fx:id="txtNumOfRandTask" alignment="CENTER" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="40" />
                               <Button fx:id="btnCreateTaskRandom" layoutX="23.0" layoutY="105.0" maxHeight="25.0" maxWidth="52.0" minHeight="25.0" minWidth="52.0" mnemonicParsing="false" onAction="#btnCreateTaskRandomClick" prefHeight="25.0" prefWidth="52.0" text="Create" />
                            </children>
                         </AnchorPane>
@@ -152,7 +154,7 @@
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="172.0" prefWidth="142.0">
                                  <children>
                                     <Label layoutX="5.0" layoutY="5.0" text="Number of Robot" />
-                                    <TextField fx:id="txtNumOfRandRobot" alignment="CENTER" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" text="5" />
+                                    <TextField fx:id="txtNumOfRandRobot" alignment="CENTER" layoutX="25.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="22.0" prefWidth="50.0" text="12" />
                                     <Button fx:id="btnCreateRobotRandom" layoutX="25.0" layoutY="105.0" maxHeight="25.0" maxWidth="52.0" minHeight="25.0" minWidth="52.0" mnemonicParsing="false" onAction="#btnCreateRobotRandomClick" prefHeight="25.0" prefWidth="52.0" text="Create" />
                                  </children>
                               </AnchorPane>
@@ -187,10 +189,10 @@
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="88.0">
                            <children>
                               <Label layoutX="5.0" layoutY="5.0" text="Map X Length" />
-                              <TextField fx:id="txtEmptyMapBaseXLength" alignment="CENTER" layoutX="82.0" layoutY="5.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="10" />
+                              <TextField fx:id="txtEmptyMapBaseXLength" alignment="CENTER" layoutX="82.0" layoutY="5.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="3" />
                               <Button fx:id="btnCreateMapBaseEmpty" layoutX="81.0" layoutY="105.0" maxHeight="22.0" maxWidth="52.0" minHeight="22.0" minWidth="52.0" mnemonicParsing="false" onAction="#btnCreateMapBaseEmptyClick" prefHeight="22.0" prefWidth="52.0" text="Create" />
                               <Label layoutX="5.0" layoutY="30.0" text="Map Y Length" />
-                              <TextField fx:id="txtEmptyMapBaseYLength" alignment="CENTER" layoutX="82.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="10" />
+                              <TextField fx:id="txtEmptyMapBaseYLength" alignment="CENTER" layoutX="82.0" layoutY="30.0" maxHeight="22.0" maxWidth="50.0" minHeight="22.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0" text="3" />
                            </children>
                         </AnchorPane>
                      </content>
