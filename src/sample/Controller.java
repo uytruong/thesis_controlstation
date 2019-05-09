@@ -87,6 +87,7 @@ public class Controller implements Initializable {
     public TableColumn<RobotViewModel, Integer> tableColRobotY;
     public TableColumn<RobotViewModel, String>  tableColRobotHeading;
     public TableColumn<RobotViewModel, Integer> tableColRobotTimeFree;
+    public TableColumn<RobotViewModel, String>  tableColRobotStatus;
     private ObservableList<RobotViewModel>      robotObservableList = FXCollections.observableArrayList();
     /**
      * Task TableView
@@ -373,7 +374,7 @@ public class Controller implements Initializable {
             updateAndViewAtTime(Context.time);
             updatePathCost(Context.time);
 
-            if((!Context.solvingMultiPath) & (taskManager.assignable())){
+            if((!Context.solvingMultiPath) & (taskManager.assignable(Context.time, robotManager))){
                 Context.solvingMultiPath = true;
 
                 int timeAssign = Context.time + MultiPathPlanning.Config.timeSolveMax;
@@ -383,15 +384,18 @@ public class Controller implements Initializable {
                     long timeStartThread = System.currentTimeMillis();
 
                     taskManager.setLastTimeAssign(timeAssign);
-                    if(Context.time == 27)
-                        Context.time = 27;
+
                     MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager,robotManager,mapData,timeAssign,random);
                     multiPathPlanning.execute();
 
                     Context.solvingMultiPath = false;
 
                     long timeEndThread = System.currentTimeMillis();
-                    Context.logData("Time of thread solving in millis: "+(timeEndThread-timeStartThread));
+                    long timeRunThread = timeEndThread - timeStartThread;
+                    Context.logData("Time of thread solving in millis: "+(timeRunThread));
+                    if(timeRunThread > (MultiPathPlanning.Config.timeSolveMax*1000)){
+                        Context.logData("\n ============================\n ERROR \n ============================\n");
+                    }
                     }));
                 solvingThread.setCycleCount(1);
                 solvingThread.playFrom(Duration.millis(MultiPathPlanning.Config.getTimeSolveMaxMillis()-1)); /*prevent Delay*/
@@ -409,6 +413,7 @@ public class Controller implements Initializable {
         tableColRobotY.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointY"));
         tableColRobotHeading.setCellValueFactory(new PropertyValueFactory<>("RobotHeading"));
         tableColRobotTimeFree.setCellValueFactory(new PropertyValueFactory<>("RobotTimeFree"));
+        tableColRobotStatus.setCellValueFactory(new PropertyValueFactory<>("RobotStatus"));
         tableViewRobotList.setItems(robotObservableList);
 
         tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("TaskID"));
@@ -488,7 +493,18 @@ public class Controller implements Initializable {
                 default:
                     robotHeadingView = "RIGHT";
             }
-            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView, robotTimeFreeView);
+
+            String robotStatusView = "UNKNOWN";
+            switch (robot.getStatus()){
+                case FREE:
+                    robotStatusView = "FREE";
+                    break;
+                case BUSY:
+                    robotStatusView = "BUSY";
+                    break;
+            }
+
+            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView, robotTimeFreeView, robotStatusView);
             robotViewModelList.add(robotViewModel);
         }
         tableViewRobotList.getItems().clear();

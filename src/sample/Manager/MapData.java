@@ -63,20 +63,17 @@ public class MapData {
         return (infoOfPointInMap.isEmpty());
     }
     public boolean isEmptyToMoveIn(Point prePoint, Point point, int timeOfPoint){
-        if(!Point.isCoincident(prePoint,point)){
-            if(isEmpty(point,timeOfPoint-1)){
-                return isEmpty(point,timeOfPoint);
+        if(isEmpty(point,timeOfPoint))
+        {
+            if((!isEmpty(prePoint,timeOfPoint)) & (!isEmpty(point,timeOfPoint-1))){
+                Robot other = getMapByTime(timeOfPoint).getPointInfoByPoint(prePoint).getRobot();
+                if(other == getMapByTime(timeOfPoint-1).getPointInfoByPoint(point).getRobot())
+                    return false;
             }
-            else if (isEmpty(prePoint,timeOfPoint)){
-                return isEmpty(point,timeOfPoint);
-            }
-            else {
-                return false;
-            }
+            else
+                return true;
         }
-        else{
-            return isEmpty(point,timeOfPoint);
-        }
+        return false;
     }
 
 

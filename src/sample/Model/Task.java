@@ -15,6 +15,7 @@ public class Task{
 
     private int    timeFinish = Integer.MAX_VALUE;
     private Status status     = Status.NEW;
+    private Robot  robot      = null;
 
     public Task(int timeExecute, int timeAppear, Point goal) {
         this.timeExecute = timeExecute;
@@ -50,5 +51,11 @@ public class Task{
     }
     public void setTimeFinish(int timeFinish) {
         this.timeFinish = timeFinish;
+    }
+    public Robot getRobot() {
+        return robot;
+    }
+    public void setRobot(Robot robot) {
+        this.robot = robot;
     }
 }

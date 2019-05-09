@@ -10,14 +10,28 @@ public class RobotViewModel {
     private SimpleIntegerProperty robotStartPointX;
     private SimpleIntegerProperty robotStartPointY;
     private SimpleStringProperty  robotHeading;
+    private SimpleStringProperty  robotStatus;
     private SimpleIntegerProperty robotTimeFree;
 
-    public RobotViewModel(int robotID, int robotX, int robotY, String robotHeading, int robotTimeFree) {
+    public RobotViewModel(int robotID, int robotX, int robotY, String robotHeading, int robotTimeFree, String robotStatus) {
         this.robotID = new SimpleIntegerProperty(robotID);
         this.robotStartPointX = new SimpleIntegerProperty(robotX);
         this.robotStartPointY = new SimpleIntegerProperty(robotY);
         this.robotHeading = new SimpleStringProperty(robotHeading);
+        this.robotStatus = new SimpleStringProperty(robotStatus);
         this.robotTimeFree = new SimpleIntegerProperty(robotTimeFree);
+    }
+
+    public String getRobotStatus() {
+        return robotStatus.get();
+    }
+
+    public SimpleStringProperty robotStatusProperty() {
+        return robotStatus;
+    }
+
+    public void setRobotStatus(String robotStatus) {
+        this.robotStatus.set(robotStatus);
     }
 
     public int getRobotID() {

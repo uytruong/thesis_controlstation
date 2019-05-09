@@ -2,6 +2,7 @@ package sample.Manager;
 
 import sample.Creator.TaskCreator;
 import sample.Model.Point;
+import sample.Model.Robot;
 import sample.Model.Task;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class TaskManager {
             } else if (task.getTimeFinish() == time) {
                 doneTaskNumber++;
                 task.setStatus(Task.Status.DONE);
+                task.getRobot().setStatus(Robot.Status.FREE);
             }
         }
     }
@@ -69,11 +71,22 @@ public class TaskManager {
     public boolean assignable(){
         return (getReadyTaskList().size()>0);
     }
-    public boolean assignable(int time){
-        return ((getReadyTaskList().size()>0) &((time-lastTimeAssign)>8));
+    public boolean assignable(int time, RobotManager robotManager){
+        int freeRobotNum = 0;
+        for (Robot robot: robotManager.getRobotList()) {
+            if(robot.getStatus() == Robot.Status.FREE)
+                freeRobotNum++;
+        }
+        if (freeRobotNum == 0)
+            return false;
+        else
+            return ((getReadyTaskList().size()>0) &((time-lastTimeAssign)>Config.timeDelayForNextAssign));
     }
     public boolean finishAllTasks(){
         return (doneTaskNumber==taskList.size());
     }
 
+    public static class Config{
+        public static int timeDelayForNextAssign = 5;
+    }
 }

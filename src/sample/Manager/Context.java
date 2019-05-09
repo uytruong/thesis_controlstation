@@ -4,7 +4,7 @@ public class Context {
 
 
     public static int time = 0;
-    public static int timeMax = 150;
+    public static int timeMax = 300;
     public static int stepCost = 0;
     public static int rotateCost = 0;
 

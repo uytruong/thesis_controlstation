@@ -6,7 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Robot {
+    public enum Status{
+        FREE,
+        BUSY,
+    }
+
     private int         id;
+    private Status      status              = Status.FREE;
     private List<Point> pointList           = new ArrayList<>();
     private int         lastTimeUpdateToMap = -1;
 
@@ -64,6 +70,12 @@ public class Robot {
     public void setSubPlanSuccess(boolean subPlanSuccess) {
         this.subPlanSuccess = subPlanSuccess;
     }
+    public Status getStatus() {
+        return status;
+    }
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     /**
      * USER DEFINE
@@ -108,11 +120,12 @@ public class Robot {
 
     public void assignTask(){
         Context.logData("   - robotId = " + getId() + " assigned to taskId =" + getTask().getId());
+        status = Status.BUSY;
 
         pointList.addAll(mainPlanPointList);
         task.setStatus(Task.Status.RUNNING);
         task.setTimeFinish(getLastTimeBusy());
-
+        task.setRobot(this);
         abortTask();
     }
 

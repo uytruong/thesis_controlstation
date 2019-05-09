@@ -71,6 +71,15 @@ public class RobotManager {
         }
         return robotListWithTask;
     }
+    public List<Robot> getFreeRobotList(){
+        List<Robot> freeRobotList = new ArrayList<>();
+        for (Robot robot: this.robotList) {
+            if(robot.getStatus() == Robot.Status.FREE)
+                freeRobotList.add(robot);
+        }
+        return freeRobotList;
+    }
+
     public int getRotateCost() {
         return rotateCost;
     }

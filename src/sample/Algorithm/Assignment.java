@@ -17,7 +17,7 @@ public class Assignment {
     private int[]      assignment;
 
     public Assignment(RobotManager robotManager, TaskManager taskManager, int timeAssignment) {
-        this.robotList      = robotManager.getRobotList();
+        this.robotList      = robotManager.getFreeRobotList();
         this.readyTaskList  = taskManager.getReadyTaskList();
         this.timeAssignment = timeAssignment;
     }

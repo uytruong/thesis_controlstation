@@ -1,5 +1,4 @@
 package sample.Algorithm;
-import sample.Manager.Context;
 import sample.Manager.MapData;
 import sample.Model.*;
 
@@ -29,7 +28,7 @@ public class SinglePathPlanning {
         int timeLoop = 0;
         while (openList.size() != 0){
             timeLoop++;
-            /*Finding the lowest fScore value in openList*/
+
             int nearestNodefScore = openList.get(0).getfScore();
             int nearestNodeIndex  = 0;
             for (int i = 1; i < openList.size(); i++) {
@@ -49,8 +48,9 @@ public class SinglePathPlanning {
                 closeList.add(node);
                 openList.remove(nearestNodeIndex);
             }
-            /** With each neighbor in current Node, add it to openList and find its the gScore, hScore, fScore.**/
+
             openList.addAll(getNeighborNodes(node));
+
             if(timeLoop == Config.timeLoopMax)
                 break;
         }
@@ -73,54 +73,24 @@ public class SinglePathPlanning {
 
 
     private List<Node> getNeighborNodes(Node node){
-        /**
-         * get Suitable actions which fit to previous action !!!
-         * */
         Motion.Action[] suitableActions = Motion.getSuitableActions(node.getActionToGetThis());
         List<Node>      neighborNodes   = new ArrayList<>();
-        /**
-         * get each neighbor Node corresponding to each suitable action !!!
-         * check in the map if it's blocked or not to add its to <neighborNodes> !!!!
-         * */
+
         for (Motion.Action action: suitableActions) {
             Node        suitableNode     = node.getNeighborNodeByAction(action);
             List<Point> correspondPoints = suitableNode.getCorrespondPoints();
             int         timeOffset       = suitableNode.getTimeArrived()- correspondPoints.size()+1;
 
             boolean emptyToGo = true;
-            Point   prePoint  = suitableNode.getPreviousNode();
+            Point   prePoint  = suitableNode.getPreviousNode().getPointClone();
             for (int idx = 0; idx < correspondPoints.size(); idx++) {
-                Point point       = correspondPoints.get(idx);
                 int   timeOfPoint = timeOffset + idx;
+                Point point       = correspondPoints.get(idx);
 
-                Map map = mapData.getMapByTime(timeOfPoint);
-                int x   = point.getX();
-                int y   = point.getY();
-                PointInfo thisPointThisTime = map.getPointInfoByXY(x,y);
-
-                if(thisPointThisTime.isEmpty()) {
-                    if(!Point.isCoincident(prePoint,point)) {
-                        int preX   = prePoint.getX();
-                        int preY   = prePoint.getY();
-                        Map preMap = mapData.getMapByTime(timeOfPoint - 1);
-                        PointInfo prePointThisTime = map.getPointInfoByXY(preX, preY);
-                        PointInfo thisPointPreTime = preMap.getPointInfoByXY(x, y);
-                        if ((!thisPointPreTime.isEmpty()) & (!prePointThisTime.isEmpty())) {
-                            Robot robot = thisPointPreTime.getRobot();
-                            Context.logData("exist move frw crash at x,y ="+ x + "," +y + " between robotId = " + robot.getId() + " and this");
-                            if( (robot == prePointThisTime.getRobot()) & (robot != this.robot)) {
-                                emptyToGo = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-                else{
-                    emptyToGo = false;
+                emptyToGo = mapData.isEmptyToMoveIn(prePoint,point,timeOfPoint);
+                if(!emptyToGo){
                     break;
                 }
-                //emptyToGo = mapData.emptyToGo(prePoint,point,timeOfPoint);
-                //emptyToGo = mapData.getMapByTime(timeOfPoint).getPointInfoByXY(point.getX(),point.getY()).isEmpty();
                 prePoint = point;
             }
             if(emptyToGo){
@@ -130,11 +100,10 @@ public class SinglePathPlanning {
         return neighborNodes;
     }
 
-
     public List<Point> getPlanPointList(){ return planPointList;}
     public int getPathPlanningCost(){return goalNode.getgScore();}
 
     private static class Config{
-        private static int timeLoopMax = 10000;
+        private static int timeLoopMax = 5000;
     }
 }
