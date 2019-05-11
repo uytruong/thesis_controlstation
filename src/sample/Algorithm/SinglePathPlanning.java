@@ -7,8 +7,6 @@ import java.util.List;
 
 public class SinglePathPlanning {
     private MapData     mapData;
-    private Task        task;
-    private Robot       robot;
 
     private Node        startNode, goalNode;
     private List<Node>  openList      = new ArrayList<>();
@@ -17,9 +15,6 @@ public class SinglePathPlanning {
 
     public SinglePathPlanning(Robot robot,MapData mapData){
         this.mapData   = mapData;
-        this.task      = robot.getTask();
-        this.robot     = robot;
-
         this.startNode = Node.getStartNode(robot);
         this.openList.add(startNode);
     }
@@ -29,8 +24,8 @@ public class SinglePathPlanning {
         while (openList.size() != 0){
             timeLoop++;
 
-            int nearestNodefScore = openList.get(0).getfScore();
-            int nearestNodeIndex  = 0;
+            float nearestNodefScore = openList.get(0).getfScore();
+            int   nearestNodeIndex  = 0;
             for (int i = 1; i < openList.size(); i++) {
                 if (nearestNodefScore > openList.get(i).getfScore()) {
                     nearestNodeIndex  = i;
@@ -64,9 +59,6 @@ public class SinglePathPlanning {
             for (int i = correspondPoints.size() - 1; i >= 0; i--)
                 planPointList.add(0, correspondPoints.get(i));
             node = node.getPreviousNode();
-        }
-        for (int i = 0; i < task.getTimeExecute(); i++) {
-            planPointList.add(goalNode.getPointClone());
         }
     }
 

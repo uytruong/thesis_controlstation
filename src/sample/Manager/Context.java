@@ -4,13 +4,14 @@ public class Context {
 
 
     public static int time = 0;
-    public static int timeMax = 300;
+    public static int timeMax = 400;
+    public static int timeSolveMaxMillis = 0;
+
     public static int stepCost = 0;
     public static int rotateCost = 0;
 
     public static boolean simulating = false;
     public static boolean solvingMultiPath = false;
-
 
     public static int playSpeed = 1;
 

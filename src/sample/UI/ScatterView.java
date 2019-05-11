@@ -26,15 +26,16 @@ public class ScatterView {
     }
 
     private void initDataSeriesList() {
-        for (int idx = 0; idx < 7; idx++) {
+        for (int idx = 0; idx < 8; idx++) {
             dataSeriesList.add(new ScatterChart.Series<>());
         }
         dataSeriesList.get(SymbolViewPriority.ROBOT_RIGHT).setName("Robot Right");
         dataSeriesList.get(SymbolViewPriority.ROBOT_LEFT).setName("Robot Left");
         dataSeriesList.get(SymbolViewPriority.ROBOT_DOWN).setName("Robot Down");
         dataSeriesList.get(SymbolViewPriority.ROBOT_UP).setName("Robot Up");
-        dataSeriesList.get(SymbolViewPriority.TASK_RUNNING).setName("Running Task");
+        dataSeriesList.get(SymbolViewPriority.TASK_BOUND).setName("BOUND Task");
         dataSeriesList.get(SymbolViewPriority.TASK_READY).setName("Ready Task");
+        dataSeriesList.get(SymbolViewPriority.TASK_RUNNING).setName("Running Task");
         dataSeriesList.get(SymbolViewPriority.SHELF).setName("Shelf");
     }
 
@@ -67,17 +68,24 @@ public class ScatterView {
 
         // Prepare Task data
         List<Task> readyTaskList   = taskManager.getReadyTaskList();
+        List<Task> bindedTaskList = taskManager.getBoundTaskList();
         List<Task> runningTaskList = taskManager.getRunningTaskList();
 
-        for (Task readyTask: readyTaskList) {
-            int x = readyTask.getGoal().getX();
-            int y = readyTask.getGoal().getY();
+        for (Task task: readyTaskList) {
+            int x = task.getGoal().getX();
+            int y = task.getGoal().getY();
             ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(x, y);
             dataSeriesList.get(SymbolViewPriority.TASK_READY).getData().add(checkingPoint);
         }
-        for (Task runningTask: runningTaskList) {
-            int x = runningTask.getGoal().getX();
-            int y = runningTask.getGoal().getY();
+        for (Task task: bindedTaskList) {
+            int x = task.getGoal().getX();
+            int y = task.getGoal().getY();
+            ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(x, y);
+            dataSeriesList.get(SymbolViewPriority.TASK_BOUND).getData().add(checkingPoint);
+        }
+        for (Task task: runningTaskList) {
+            int x = task.getGoal().getX();
+            int y = task.getGoal().getY();
             ScatterChart.Data<Number, Number> checkingPoint = new ScatterChart.Data<Number, Number>(x, y);
             dataSeriesList.get(SymbolViewPriority.TASK_RUNNING).getData().add(checkingPoint);
         }
@@ -102,11 +110,12 @@ public class ScatterView {
          * */
         private static final int SHELF        = 0;
         private static final int TASK_READY   = 1;
+        private static final int TASK_BOUND = 3;
         private static final int TASK_RUNNING = 2;
-        private static final int ROBOT_UP     = 3;
-        private static final int ROBOT_DOWN   = 4;
-        private static final int ROBOT_LEFT   = 5;
-        private static final int ROBOT_RIGHT  = 6;
+        private static final int ROBOT_UP     = 4;
+        private static final int ROBOT_DOWN   = 5;
+        private static final int ROBOT_LEFT   = 6;
+        private static final int ROBOT_RIGHT  = 7;
 
     }
 }

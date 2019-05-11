@@ -1,6 +1,7 @@
 package sample.Algorithm;
 
 import sample.Creator.MapCreator;
+import sample.Manager.Context;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
 import sample.Model.Robot;
@@ -10,36 +11,23 @@ import java.util.List;
 
 public class Assignment {
     private List<Task>  readyTaskList;
-    private List<Robot> robotList;
-    private int         timeAssignment;
+    private List<Robot> freeRobotList;
 
     private double[][] costMatrix;
     private int[]      assignment;
 
-    public Assignment(RobotManager robotManager, TaskManager taskManager, int timeAssignment) {
-        this.robotList      = robotManager.getFreeRobotList();
+    public Assignment(RobotManager robotManager, TaskManager taskManager) {
+        this.freeRobotList  = robotManager.getFreeRobotList();
         this.readyTaskList  = taskManager.getReadyTaskList();
-        this.timeAssignment = timeAssignment;
     }
 
     private void calculateCostMatrix(){
-        int m = robotList.size();
+        int m = freeRobotList.size();
         int n = readyTaskList.size();
         costMatrix = new double[m][n];
 
-        /**
-         * Get time offset Cost
-         * */
         for (int i = 0; i < m ; i++) {
-            for (int j = 0; j < n; j++) {
-                costMatrix[i][j] = robotList.get(i).getLastTimeBusy() - timeAssignment;
-            }
-        }
-        /**
-         * Get estimate distance Cost
-         * */
-        for (int i = 0; i < m ; i++) {
-            Robot robot = robotList.get(i);
+            Robot robot = freeRobotList.get(i);
             for (int j = 0; j < n; j++) {
                 costMatrix[i][j] += MapCreator.getEstimateAssignmentCost(robot.getLastPoint(), readyTaskList.get(j).getGoal());
             }
@@ -52,7 +40,7 @@ public class Assignment {
 
         /* convert index of readyTaskList into taskId */
         for (int robotId = 0; robotId < assignment.length; robotId++) {
-            Robot robot = robotList.get(robotId);
+            Robot robot = freeRobotList.get(robotId);
             int taskIdx = assignment[robotId];
             if (taskIdx>=0){
                 Task task = readyTaskList.get(taskIdx);

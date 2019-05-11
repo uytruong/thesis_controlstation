@@ -33,28 +33,6 @@ public class MapData {
 
     }
 
-    public boolean emptyToGo(Point prePoint, Point point, int timeOfPoint){
-        Map map = getMapByTime(timeOfPoint);
-        int x   = point.getX();
-        int y   = point.getY();
-        PointInfo thisPointThisTime = map.getPointInfoByXY(x,y);
-        if(!thisPointThisTime.isEmpty())
-            return false;
-        if(!Point.isCoincident(prePoint,point)) {
-            int preX = prePoint.getX();
-            int preY = prePoint.getY();
-            Map preMap = getMapByTime(timeOfPoint - 1);
-            PointInfo prePointThisTime = map.getPointInfoByXY(preX, preY);
-            PointInfo thisPointPreTime = preMap.getPointInfoByXY(x, y);
-
-            if ((!thisPointPreTime.isEmpty()) & (!prePointThisTime.isEmpty())) {
-                Robot robot = thisPointPreTime.getRobot();
-                return  !(robot == prePointThisTime.getRobot());
-            }
-        }
-        return true;
-    }
-
     public boolean isEmpty(Point point, int timeOfPoint){
         Map map = getMapByTime(timeOfPoint);
         int x   = point.getX();
@@ -67,8 +45,9 @@ public class MapData {
         {
             if((!isEmpty(prePoint,timeOfPoint)) & (!isEmpty(point,timeOfPoint-1))){
                 Robot other = getMapByTime(timeOfPoint).getPointInfoByPoint(prePoint).getRobot();
-                if(other == getMapByTime(timeOfPoint-1).getPointInfoByPoint(point).getRobot())
+                if(other == getMapByTime(timeOfPoint-1).getPointInfoByPoint(point).getRobot()) {
                     return false;
+                }
             }
             else
                 return true;

@@ -4,81 +4,81 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class TaskViewModel {
-    private SimpleIntegerProperty taskID;
-    private SimpleIntegerProperty taskGoalPointX;
-    private SimpleIntegerProperty taskGoalPointY;
-    private SimpleIntegerProperty taskAppearTime;
-    private SimpleIntegerProperty taskExecuteTime;
-    private SimpleStringProperty taskStatus;
-    private SimpleStringProperty taskGoalPointHeading;
+    private SimpleIntegerProperty id;
+    private SimpleIntegerProperty x;
+    private SimpleIntegerProperty y;
+    private SimpleIntegerProperty timeAppear;
+    private SimpleIntegerProperty timeExecute;
+    private SimpleStringProperty status;
+    private SimpleStringProperty heading;
 
-    public TaskViewModel(int taskID, int taskGoalPointX, int taskGoalPointY,String taskGoalPointHeading, int taskAppearTime, int taskExecuteTime, String taskStatus) {
-        this.taskID = new SimpleIntegerProperty(taskID);
-        this.taskGoalPointX = new SimpleIntegerProperty(taskGoalPointX);
-        this.taskGoalPointY = new SimpleIntegerProperty(taskGoalPointY);
-        this.taskAppearTime = new SimpleIntegerProperty(taskAppearTime);
-        this.taskExecuteTime = new SimpleIntegerProperty(taskExecuteTime);
-        this.taskStatus = new SimpleStringProperty(taskStatus);
-        this.taskGoalPointHeading = new SimpleStringProperty(taskGoalPointHeading);
+    public TaskViewModel(int id, int x, int y, String heading, int timeAppear, int timeExecute, String status) {
+        this.id = new SimpleIntegerProperty(id);
+        this.x = new SimpleIntegerProperty(x);
+        this.y = new SimpleIntegerProperty(y);
+        this.timeAppear = new SimpleIntegerProperty(timeAppear);
+        this.timeExecute = new SimpleIntegerProperty(timeExecute);
+        this.status = new SimpleStringProperty(status);
+        this.heading = new SimpleStringProperty(heading);
     }
 
-    public int getTaskID() {
-        return taskID.get();
+    public int getId() {
+        return id.get();
     }
 
-    public void setTaskID(int taskID) {
-        this.taskID = new SimpleIntegerProperty(taskID);
+    public void setId(int id) {
+        this.id = new SimpleIntegerProperty(id);
     }
 
-    public int getTaskGoalPointX() {
-        return taskGoalPointX.get();
+    public int getX() {
+        return x.get();
     }
 
-    public void setTaskGoalPointX(int taskGoalPointX) {
-        this.taskGoalPointX = new SimpleIntegerProperty(taskGoalPointX);
+    public void setX(int x) {
+        this.x = new SimpleIntegerProperty(x);
     }
 
-    public int getTaskGoalPointY() {
-        return taskGoalPointY.get();
+    public int getY() {
+        return y.get();
     }
 
-    public void setTaskGoalPointY(int taskGoalPointY) {
-        this.taskGoalPointY = new SimpleIntegerProperty(taskGoalPointY);
+    public void setY(int y) {
+        this.y = new SimpleIntegerProperty(y);
     }
 
-    public int getTaskAppearTime() {
-        return taskAppearTime.get();
+    public int getTimeAppear() {
+        return timeAppear.get();
     }
 
-    public void setTaskAppearTime(int taskAppearTime) {
-        this.taskAppearTime = new SimpleIntegerProperty(taskAppearTime);
+    public void setTimeAppear(int timeAppear) {
+        this.timeAppear = new SimpleIntegerProperty(timeAppear);
     }
 
-    public int getTaskExecuteTime() {
-        return taskExecuteTime.get();
+    public int getTimeExecute() {
+        return timeExecute.get();
     }
 
-    public void setTaskExecuteTime(int taskExecuteTime) {
-        this.taskExecuteTime = new SimpleIntegerProperty(taskExecuteTime);
+    public void setTimeExecute(int timeExecute) {
+        this.timeExecute = new SimpleIntegerProperty(timeExecute);
     }
 
-    public String getTaskStatus() {
-        return taskStatus.get();
+    public String getStatus() {
+        return status.get();
     }
 
-    public void setTaskStatus(String taskStatus) {
-        this.taskStatus = new SimpleStringProperty(taskStatus);
+    public void setStatus(String status) {
+        this.status = new SimpleStringProperty(status);
     }
 
-    public String getTaskGoalPointHeading() {
-        return taskGoalPointHeading.get();
+    public String getHeading() {
+        return heading.get();
     }
 
-    public SimpleStringProperty taskGoalPointHeadingProperty() {
-        return taskGoalPointHeading;
+    public SimpleStringProperty headingProperty() {
+        return heading;
     }
 
-    public void setTaskGoalPointHeading(String taskGoalPointHeading) {
-        this.taskGoalPointHeading.set(taskGoalPointHeading);
+    public void setHeading(String heading) {
+        this.heading.set(heading);
     }
 }

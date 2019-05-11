@@ -72,4 +72,5 @@ public class PointInfo {
     }
 
     public boolean isEmpty(){ return (status == Status.NONE);}
+    
 }

@@ -1,6 +1,5 @@
 package sample.Creator;
 
-import sample.Manager.Context;
 import sample.Model.Map;
 import sample.Model.Point;
 import sample.Model.PointInfo;
@@ -11,14 +10,13 @@ import java.util.List;
 public class MapCreator {
     public static Map map;
 
-
     public static void create(){
         map = new Map();
         Bound.update();
-        Area.update();
         Map.xLength = Bound.xLength;
         Map.yLength = Bound.yLength;
         Map.type    = Map.MAP_TYPE_WAREHOUSE;
+        Area.update();
 
         map.setPointInfos(new PointInfo[Map.xLength][Map.yLength]);
         for (int i = 0; i < Bound.xLength ; i++)
@@ -98,10 +96,18 @@ public class MapCreator {
             }
             for (int x = Distance.boundToVerShelf; x < Bound.xLength; x++) {
                 int k       = (x-Distance.boundToVerShelf)/ Area.xLength;
-                int xStart  = Distance.boundToVerShelf +k*(Area.xLength);
+                int xStart;
+
+                if(k>= (Shelf.xNumber-1)){
+                    xStart  = Distance.boundToVerShelf +(Shelf.xNumber-1)*(Area.xLength);
+                    xEndList.add((xStart+Area.xLength-1+Distance.boundToVerShelf));}
+                else {
+                    xStart  = Distance.boundToVerShelf +k*(Area.xLength);
+                    xEndList.add(xStart + Area.xLength - 1);
+                }
                 xStartList.add(xStart);
                 xMiddleList.add(xStart+Shelf.xLength);
-                xEndList.add((xStart+Area.xLength-1));
+
             }
 
             for (int y = 0; y < Distance.boundToHorShelf; y++) {
@@ -111,12 +117,18 @@ public class MapCreator {
             }
             for (int y = Distance.boundToHorShelf; y < Bound.yLength; y++) {
                 int k       = (y-Distance.boundToHorShelf)/ Area.yLength;
-                int yStart  = Distance.boundToVerShelf +k*(Area.yLength);
+                int yStart;
+
+                if(k>= (Shelf.yNumber-1)){
+                    yStart  = Distance.boundToHorShelf +(Shelf.yNumber-1)*(Area.yLength);
+                    yEndList.add((yStart+Area.yLength-1+Distance.boundToHorShelf));}
+                else {
+                    yStart  = Distance.boundToHorShelf +k*(Area.yLength);
+                    yEndList.add(yStart + Area.yLength - 1);
+                }
                 yStartList.add(yStart);
                 yMiddleList.add(yStart+Shelf.yLength);
-                yEndList.add((yStart+Area.yLength-1));
             }
-
         }
 
         private Area(Point point){
@@ -167,19 +179,29 @@ public class MapCreator {
         Area area1 = new Area(start);
         Area area2 = new Area(goal);
 
-        if((area1.xStart == area2.xStart) & (area1.x<area1.xMiddle) & (area2.x<area2.xMiddle)){
+        if((area1.xStart == area2.xStart) & (area1.x < area1.xMiddle) & (area2.x < area2.xMiddle)
+                &(area1.xStart != Area.xStartList.get(Area.xStartList.size()-1))
+                &(area1.xStart != Area.xStartList.get(0))){
             if (!((area2.y>=area1.yMiddle) & (area2.y<=area1.yEnd))){
                 int x1 = area1.xStart - 1;
                 int x2 = area1.xMiddle;
-                return Math.min(area1.x + area2.x - 2*x1, 2*x2 - area1.x - area2.x) + Math.abs(area1.y-area2.y);
+                if(x1<0)
+                    return (2*x2 - area1.x - area2.x) + Math.abs(area1.y-area2.y);
+                else
+                    return Math.min(area1.x + area2.x - 2*x1, 2*x2 - area1.x - area2.x) + Math.abs(area1.y-area2.y);
             }
         }
 
-        else if((area1.yStart == area2.yStart) & (area1.y < area1.yMiddle) & (area2.y<area2.yMiddle)){
+        else if((area1.yStart == area2.yStart) & (area1.y < area1.yMiddle) & (area2.y<area2.yMiddle)
+                &(area1.yStart != Area.yStartList.get(Area.yStartList.size()-1))
+                &(area1.yStart != Area.yStartList.get(0))){
             if (!((area2.x>=area1.xMiddle) & (area2.x<=area1.xEnd))){
                 int y1 = area1.yStart - 1;
                 int y2 = area1.yMiddle;
-                return Math.min(area1.y + area2.y - 2*y1, 2*y2 - area1.y - area2.y) + Math.abs(area1.x-area2.x);
+                if(y1<0)
+                    return (2*y2 - area1.y - area2.y) + Math.abs(area1.x-area2.x);
+                else
+                    return Math.min(area1.y + area2.y - 2*y1, 2*y2 - area1.y - area2.y) + Math.abs(area1.x-area2.x);
             }
         }
         return (Math.abs(area1.x - area2.x) + Math.abs(area1.y - area2.y));

@@ -88,6 +88,7 @@ public class Controller implements Initializable {
     public TableColumn<RobotViewModel, String>  tableColRobotHeading;
     public TableColumn<RobotViewModel, Integer> tableColRobotTimeFree;
     public TableColumn<RobotViewModel, String>  tableColRobotStatus;
+    public TableColumn<RobotViewModel, String>  tableColRobotTask;
     private ObservableList<RobotViewModel>      robotObservableList = FXCollections.observableArrayList();
     /**
      * Task TableView
@@ -157,7 +158,7 @@ public class Controller implements Initializable {
 
             random.setSeed(randomSeed);
             Context.playSpeed                     = playSpeed;
-            MultiPathPlanning.Config.timeSolveMax = timeSolve;
+            MultiPathPlanning.Config.timeSolve = timeSolve;
             MultiPathPlanning.Config.timeLoopForPriorPlanMax = loopMaxPrior;
 
         }
@@ -328,18 +329,20 @@ public class Controller implements Initializable {
             btnCreateTask.setDisable(true);
             btnCreateTaskRandom.setDisable(true);
             btnSaveSystemConfig.setDisable(true);
+            btnCreateMapBaseEmpty.setDisable(true);
 
         }
         else{
             timeline.pause();
-            btnStartSimulation.setText("Resume simalation");
 
+            btnStartSimulation.setText("Resume simalation");
             btnCreateMapBase.setDisable(false);
             btnCreateRobot.setDisable(false);
             btnCreateRobotRandom.setDisable(false);
             btnCreateTask.setDisable(false);
             btnCreateTaskRandom.setDisable(false);
             btnSaveSystemConfig.setDisable(false);
+            btnCreateMapBaseEmpty.setDisable(false);
         }
     }
 
@@ -361,13 +364,15 @@ public class Controller implements Initializable {
         btnCreateTask.setDisable(false);
         btnCreateTaskRandom.setDisable(false);
         btnSaveSystemConfig.setDisable(false);
+        btnCreateMapBaseEmpty.setDisable(false);
     }
 
 
     private void initializeTimeline(){
         timeline = new Timeline(new KeyFrame(Duration.millis(Context.getTimelineDurationMillis()), ev -> {
-            if(taskManager.finishAllTasks()) {
+            if(taskManager.isAllTaskFinished()) {
                 timeline.stop();
+                Context.logData("timeRun of thread maximum in millis = " + Context.timeSolveMaxMillis);
             }
             Context.time++;
             Context.logData("\n@TIME = " + Context.time);
@@ -377,10 +382,10 @@ public class Controller implements Initializable {
             if((!Context.solvingMultiPath) & (taskManager.assignable(Context.time, robotManager))){
                 Context.solvingMultiPath = true;
 
-                int timeAssign = Context.time + MultiPathPlanning.Config.timeSolveMax;
+                int timeAssign = Context.time + MultiPathPlanning.Config.timeSolve;
                 robotManager.updateByTime(timeAssign);
 
-                solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolveMax), ev1 -> {
+                solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolve), ev1 -> {
                     long timeStartThread = System.currentTimeMillis();
 
                     taskManager.setLastTimeAssign(timeAssign);
@@ -392,8 +397,11 @@ public class Controller implements Initializable {
 
                     long timeEndThread = System.currentTimeMillis();
                     long timeRunThread = timeEndThread - timeStartThread;
+                    if(timeRunThread > Context.timeSolveMaxMillis)
+                        Context.timeSolveMaxMillis = (int) timeRunThread;
+
                     Context.logData("Time of thread solving in millis: "+(timeRunThread));
-                    if(timeRunThread > (MultiPathPlanning.Config.timeSolveMax*1000)){
+                    if(timeRunThread > (MultiPathPlanning.Config.timeSolve *1000/Context.playSpeed)){
                         Context.logData("\n ============================\n ERROR \n ============================\n");
                     }
                     }));
@@ -408,21 +416,22 @@ public class Controller implements Initializable {
     }
 
     private void initializeTableView(){
-        tableColRobotID.setCellValueFactory(new PropertyValueFactory<>("RobotID"));
-        tableColRobotX.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointX"));
-        tableColRobotY.setCellValueFactory(new PropertyValueFactory<>("RobotStartPointY"));
-        tableColRobotHeading.setCellValueFactory(new PropertyValueFactory<>("RobotHeading"));
-        tableColRobotTimeFree.setCellValueFactory(new PropertyValueFactory<>("RobotTimeFree"));
-        tableColRobotStatus.setCellValueFactory(new PropertyValueFactory<>("RobotStatus"));
+        tableColRobotID.setCellValueFactory(new PropertyValueFactory<>("id"));
+        tableColRobotX.setCellValueFactory(new PropertyValueFactory<>("x"));
+        tableColRobotY.setCellValueFactory(new PropertyValueFactory<>("y"));
+        tableColRobotHeading.setCellValueFactory(new PropertyValueFactory<>("heading"));
+        tableColRobotTimeFree.setCellValueFactory(new PropertyValueFactory<>("timeFree"));
+        tableColRobotStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        tableColRobotTask.setCellValueFactory(new PropertyValueFactory<>("task"));
         tableViewRobotList.setItems(robotObservableList);
 
-        tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("TaskID"));
-        tableColTaskX.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointX"));
-        tableColTaskY.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointY"));
-        tableColTaskHeading.setCellValueFactory(new PropertyValueFactory<>("TaskGoalPointHeading"));
-        tableColTaskTimeAppear.setCellValueFactory(new PropertyValueFactory<>("TaskAppearTime"));
-        tableColTaskTimeExecute.setCellValueFactory(new PropertyValueFactory<>("TaskExecuteTime"));
-        tableColTaskStatus.setCellValueFactory(new PropertyValueFactory<>("TaskStatus"));
+        tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("id"));
+        tableColTaskX.setCellValueFactory(new PropertyValueFactory<>("x"));
+        tableColTaskY.setCellValueFactory(new PropertyValueFactory<>("y"));
+        tableColTaskHeading.setCellValueFactory(new PropertyValueFactory<>("heading"));
+        tableColTaskTimeAppear.setCellValueFactory(new PropertyValueFactory<>("timeAppear"));
+        tableColTaskTimeExecute.setCellValueFactory(new PropertyValueFactory<>("timeExecute"));
+        tableColTaskStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         tableViewTaskList.setItems(taskObservableList);
     }
     private void viewTaskListToTableView() {
@@ -458,6 +467,9 @@ public class Controller implements Initializable {
                     break;
                 case READY:
                     taskStatusView = "READY";
+                    break;
+                case BOUND:
+                    taskStatusView = "BOUND";
                     break;
                 case RUNNING:
                     taskStatusView = "RUNNING";
@@ -503,8 +515,10 @@ public class Controller implements Initializable {
                     robotStatusView = "BUSY";
                     break;
             }
-
-            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView, robotTimeFreeView, robotStatusView);
+            String robotTaskView = "NONE";
+            if(robot.getTask() != null)
+                robotTaskView = Integer.toString(robot.getTask().getId());
+            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView, robotTimeFreeView, robotStatusView, robotTaskView);
             robotViewModelList.add(robotViewModel);
         }
         tableViewRobotList.getItems().clear();

@@ -51,10 +51,6 @@ public class Point extends PointInfo {
         return new Point(this);
     }
 
-
-    public String getStringData(){
-        return "x=" + x + ", y=" + y + ", status=" + getStatus() + "robotId="+getRobot().getId();
-    }
     /**
      * ===========================   STATIC PUBLIC METHODS =========================== *
      * */
@@ -62,7 +58,7 @@ public class Point extends PointInfo {
         return ((point1.getX() == point2.getX()) & (point1.getY() == point2.getY()));
     }
 
-    static public boolean headingSameDirection(Point point1, Point point2){
+    static public boolean isHeadingSameDirection(Point point1, Point point2){
         return (point1.getStatus() == point2.getStatus());
     }
 }

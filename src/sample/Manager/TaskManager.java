@@ -23,7 +23,7 @@ public class TaskManager {
                 boolean valid = true;
                 for (Task otherTask : taskList) {
                     if ((task != otherTask) & ((Point.isCoincident(task.getGoal(), otherTask.getGoal()))) &
-                       ((otherTask.getStatus() == Task.Status.RUNNING) | (otherTask.getStatus() == Task.Status.READY))){
+                       ((otherTask.getStatus() == Task.Status.BOUND) | (otherTask.getStatus() == Task.Status.READY) | (otherTask.getStatus() == Task.Status.RUNNING))){
                         valid = false;
                         break;
                     }
@@ -31,10 +31,17 @@ public class TaskManager {
                 if (valid) {
                     task.setStatus(Task.Status.READY);
                 }
-            } else if (task.getTimeFinish() == time) {
-                doneTaskNumber++;
-                task.setStatus(Task.Status.DONE);
-                task.getRobot().setStatus(Robot.Status.FREE);
+            } else if((task.getStatus() == Task.Status.BOUND) & (time >= task.getTimeArrived())) {
+               task.setStatus(Task.Status.RUNNING);
+            } else if((task.getStatus() == Task.Status.RUNNING)){
+                int timeExecute = time - task.getTimeArrived();
+                if(timeExecute >= task.getTimeExecute())
+                {
+                    doneTaskNumber++;
+                    task.setTimeFinish(time);
+                    task.setStatus(Task.Status.DONE);
+                    task.getRobot().unbindTask();
+                }
             }
         }
     }
@@ -44,22 +51,28 @@ public class TaskManager {
     }
 
     public List<Task> getReadyTaskList(){
-        List<Task> readyTaskList = new ArrayList<>();
-        for (Task task: taskList) {
-            if (task.getStatus() == Task.Status.READY){
-                readyTaskList.add(task);
-            }
+        List<Task> taskList = new ArrayList<>();
+        for (Task task: this.taskList) {
+            if (task.getStatus() == Task.Status.READY)
+                taskList.add(task);
         }
-        return readyTaskList;
+        return taskList;
+    }
+    public List<Task> getBoundTaskList(){
+        List<Task> taskList = new ArrayList<>();
+        for (Task task: this.taskList) {
+            if (task.getStatus() == Task.Status.BOUND)
+                taskList.add(task);
+        }
+        return taskList;
     }
     public List<Task> getRunningTaskList(){
-        List<Task> runningTaskList = new ArrayList<>();
-        for (Task task: taskList) {
-            if (task.getStatus() == Task.Status.RUNNING){
-                runningTaskList.add(task);
-            }
+        List<Task> taskList = new ArrayList<>();
+        for (Task task: this.taskList) {
+            if (task.getStatus() == Task.Status.RUNNING)
+                taskList.add(task);
         }
-        return runningTaskList;
+        return taskList;
     }
     public List<Task> getTaskList() {
         return taskList;
@@ -80,13 +93,13 @@ public class TaskManager {
         if (freeRobotNum == 0)
             return false;
         else
-            return ((getReadyTaskList().size()>0) &((time-lastTimeAssign)>Config.timeDelayForNextAssign));
+            return ((getReadyTaskList().size()>0) &((time-lastTimeAssign)>=Config.timeDelayForNextAssign));
     }
-    public boolean finishAllTasks(){
+    public boolean isAllTaskFinished(){
         return (doneTaskNumber==taskList.size());
     }
 
-    public static class Config{
-        public static int timeDelayForNextAssign = 5;
+    private static class Config{
+        private static int timeDelayForNextAssign = 1;
     }
 }

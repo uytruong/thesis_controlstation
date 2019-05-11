@@ -1,8 +1,4 @@
 package sample.Model;
-import sample.Creator.MapCreator;
-import sample.Manager.Context;
-
-import java.util.*;
 
 public class Map {
     public static final int MAP_TYPE_EMPTY = 0;
@@ -51,9 +47,7 @@ public class Map {
     }
 
     public void setPointInfoByPoint(Point point){
-        int x = point.getX();
-        int y = point.getY();
-        PointInfo pointInfo = getPointInfoByXY(x,y);
+        PointInfo pointInfo = getPointInfoByPoint(point);
         pointInfo.setStatus(point.getStatus());
         pointInfo.setRobot(point.getRobot());
     }

@@ -55,21 +55,13 @@ public class RobotManager {
             Point prePoint = robot.getPointByTime(time-1);
             if (!Point.isCoincident(point,prePoint))
                 stepCost++;
-            else if (!Point.headingSameDirection(point,prePoint))
+            else if (!Point.isHeadingSameDirection(point,prePoint))
                 rotateCost++;
         }
     }
 
     public List<Robot> getRobotList() {
         return robotList;
-    }
-    public List<Robot> getRobotListWithTask() {
-        List<Robot> robotListWithTask = new ArrayList<>();
-        for (Robot robot: this.robotList) {
-            if(robot.getTask()!= null)
-                robotListWithTask.add(robot);
-        }
-        return robotListWithTask;
     }
     public List<Robot> getFreeRobotList(){
         List<Robot> freeRobotList = new ArrayList<>();
@@ -79,6 +71,31 @@ public class RobotManager {
         }
         return freeRobotList;
     }
+    public List<Robot> getFreeRobotListWithTask(){
+        List<Robot> freeRobotListWithTask = new ArrayList<>();
+        for (Robot robot: this.robotList) {
+            if((robot.getStatus() == Robot.Status.FREE) & (robot.getTask() !=null))
+                freeRobotListWithTask.add(robot);
+        }
+        return freeRobotListWithTask;
+    }
+    public List<Robot> getFreeRobotListWithTaskButNoPlan(){
+        List<Robot> freeRobotListWithTaskButNoPlan = new ArrayList<>();
+        for (Robot robot: this.robotList) {
+            if((robot.getStatus() == Robot.Status.FREE) & (robot.getTask() !=null) & (!robot.isMainPlanSuccess()))
+                freeRobotListWithTaskButNoPlan.add(robot);
+        }
+        return freeRobotListWithTaskButNoPlan;
+    }
+    public List<Robot> getBusyAndFreeWithoutTaskRobotList(){
+        List<Robot> busyAndFreeWithoutTaskRobotList = new ArrayList<>();
+        for (Robot robot: this.robotList) {
+            if((robot.getStatus() == Robot.Status.FREE) & (robot.getTask() ==null)
+                    | (robot.getStatus() == Robot.Status.BUSY))
+                busyAndFreeWithoutTaskRobotList.add(robot);
+        }
+        return busyAndFreeWithoutTaskRobotList;
+    }
 
     public int getRotateCost() {
         return rotateCost;
@@ -86,4 +103,5 @@ public class RobotManager {
     public int getStepCost() {
         return stepCost;
     }
+
 }

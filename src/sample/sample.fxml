@@ -77,7 +77,7 @@
                               <Label alignment="CENTER" layoutX="5.0" layoutY="30.0" text="Play Speed: x" />
                               <ChoiceBox fx:id="cbPlaySpeed" layoutX="82.0" layoutY="30.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
                               <Label layoutX="5.0" layoutY="55.0" text="Time solve" />
-                              <TextField fx:id="txtTimeSolve" alignment="CENTER" layoutX="82.0" layoutY="55.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="1" />
+                              <TextField fx:id="txtTimeSolve" alignment="CENTER" layoutX="82.0" layoutY="55.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="2" />
                               <Label layoutX="5.0" layoutY="80.0" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" text="Loop max for prior search" wrapText="true" />
                               <TextField fx:id="txtTimeLoopMaxForPriorSearch" alignment="CENTER" layoutX="82.0" layoutY="80.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="0" />
                            </children>
@@ -230,12 +230,13 @@
                <graphic>
                           <TableView fx:id="tableViewRobotList" maxHeight="250.0" maxWidth="450.0" minHeight="250.0" minWidth="450.0" prefHeight="250.0" prefWidth="450.0">
                               <columns>
-                                  <TableColumn fx:id="tableColRobotID" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" resizable="false" text="ID" />
-                                  <TableColumn fx:id="tableColRobotX" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" resizable="false" text="x" />
-                                  <TableColumn fx:id="tableColRobotY" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" resizable="false" text="y" />
-                                  <TableColumn fx:id="tableColRobotHeading" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="Heading" />
-                        <TableColumn fx:id="tableColRobotTimeFree" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="Time Free" />
-                        <TableColumn fx:id="tableColRobotStatus" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" text="Status" />
+                                  <TableColumn fx:id="tableColRobotID" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="ID" />
+                                  <TableColumn fx:id="tableColRobotX" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="x" />
+                                  <TableColumn fx:id="tableColRobotY" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="y" />
+                                  <TableColumn fx:id="tableColRobotHeading" maxWidth="80.0" minWidth="80.0" resizable="false" text="Heading" />
+                        <TableColumn fx:id="tableColRobotTimeFree" maxWidth="80.0" minWidth="80.0" resizable="false" text="Time Free" />
+                        <TableColumn fx:id="tableColRobotStatus" maxWidth="80.0" minWidth="80.0" resizable="false" text="Status" />
+                        <TableColumn fx:id="tableColRobotTask" maxWidth="80.0" minWidth="80.0" resizable="false" text="Task" />
                               </columns>
                           </TableView>
                </graphic>

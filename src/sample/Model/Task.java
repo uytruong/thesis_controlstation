@@ -4,6 +4,7 @@ public class Task{
     public enum Status{
         NEW,
         READY,
+        BOUND,
         RUNNING,
         DONE
     }
@@ -13,6 +14,7 @@ public class Task{
     private int   timeAppear;
     private Point goal;
 
+    private int    timeArrived= Integer.MAX_VALUE;
     private int    timeFinish = Integer.MAX_VALUE;
     private Status status     = Status.NEW;
     private Robot  robot      = null;
@@ -57,5 +59,11 @@ public class Task{
     }
     public void setRobot(Robot robot) {
         this.robot = robot;
+    }
+    public int getTimeArrived() {
+        return timeArrived;
+    }
+    public void setTimeArrived(int timeArrived) {
+        this.timeArrived = timeArrived;
     }
 }

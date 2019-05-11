@@ -1,7 +1,5 @@
 package sample.Model;
 
-import sample.Manager.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +101,11 @@ public class Robot {
     }
     public Point getLastPoint(){ return getPointByTime(getLastTimeBusy());}
     public Point getLastPointByPlan(){
-        return mainPlanPointList.get(mainPlanPointList.size()-1);
+        int size = mainPlanPointList.size();
+        if (size == 0)
+            return getLastPoint();
+        else
+            return mainPlanPointList.get(size-1);
     }
 
     public PointInfo.Status getHeadingByTime(int time) {
@@ -118,25 +120,28 @@ public class Robot {
         }
     }
 
-    public void assignTask(){
-        Context.logData("   - robotId = " + getId() + " assigned to taskId =" + getTask().getId());
-        status = Status.BUSY;
+    public void bindTask(){
 
         pointList.addAll(mainPlanPointList);
-        task.setStatus(Task.Status.RUNNING);
-        task.setTimeFinish(getLastTimeBusy());
+        status = Status.BUSY;
+
+        task.setStatus(Task.Status.BOUND);
+        task.setTimeArrived(getLastTimeBusy());
         task.setRobot(this);
-        abortTask();
     }
 
-    public void abortTask(){
-        task = null;
-        clearMainPlanPointList();
-        clearSubPlanPointList();
+    public boolean isFreeAndHaveTask(){
+        return (status == Status.FREE) & (task != null);
+    }
+
+    public String getStringInfo(){
+        String taskId = (task == null)? "null" : Integer.toString(task.getId());
+        return "robotId = " + id + ", task = " + taskId + ", status = " + status + " planSuccess = " + mainPlanSuccess;
+    }
+
+    public void unbindTask(){
+        status = Status.FREE;
+        task   = null;
         mainPlanSuccess = false;
-        subPlanSuccess  = false;
     }
-
-
-
 }

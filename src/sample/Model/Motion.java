@@ -56,20 +56,20 @@ public class Motion {
             default:            return 2;
         }
     }
-    public static int getPenaltyCost(Action previousAction, Action action){
+    public static float getPenaltyCost(Action previousAction, Action action){
         switch (action){
-            case NONE: return 1;
+            case NONE: return 0.5f;
             case STEP:{
                 switch (previousAction){
-                    case STEP: return 2;
-                    case SPEED_DOWN: return 2;
+                    case STEP: return 1.5f;
+                    case SPEED_DOWN: return 1.5f;
                 }
                 break;
             }
             case SPEED_UP: {
                 switch (previousAction) {
                     case STEP:
-                        return 2;
+                        return 1.5f;
                     case SPEED_DOWN:
                         return 1;
                 }

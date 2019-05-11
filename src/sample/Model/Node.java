@@ -7,7 +7,8 @@ import java.util.List;
 
 public class Node extends Point {
     private Motion.Action actionToGetThis;
-    private int           gScore, hScore, pScore;
+    private int           gScore, hScore;
+    private float         pScore;
 
     private Node          previousNode;
     private Point         goal;
@@ -127,9 +128,8 @@ public class Node extends Point {
         if ((actionToGetThis == Motion.Action.SPEED_UP) | (actionToGetThis == Motion.Action.MOVE_CONSTANT))
             return false;
         else
-            return (((isCoincident(this,goal))) & (headingSameDirection(this,goal)));
+            return (((isCoincident(this,goal))) & (isHeadingSameDirection(this,goal)));
     }
-
     public List<Point> getCorrespondPoints(){
         List<Point> correspondPoints = new ArrayList<>();
         switch (actionToGetThis){
@@ -152,12 +152,6 @@ public class Node extends Point {
     }
 
 
-
-
-
-
-
-
     public Motion.Action getActionToGetThis() {
         return actionToGetThis;
     }
@@ -170,21 +164,11 @@ public class Node extends Point {
     public void setgScore(int gScore) {
         this.gScore = gScore;
     }
-
-    public int gethScore() {
-        return hScore;
-    }
-    public void sethScore(int hScore) {
-        this.hScore = hScore;
-    }
     public Node getPreviousNode() {
         return previousNode;
     }
     public void setPreviousNode(Node previousNode) {
         this.previousNode = previousNode;
-    }
-    public Point getGoal() {
-        return goal;
     }
     public void setGoal(Point goal) {
         this.goal = goal;
@@ -196,20 +180,12 @@ public class Node extends Point {
     public void setTimeArrived(int timeArrived) {
         this.timeArrived = timeArrived;
     }
-
-    public int getpScore() {
+    public float getpScore() {
         return pScore;
     }
-
-    public void setpScore(int pScore) {
+    public void setpScore(float pScore) {
         this.pScore = pScore;
     }
+    public float getfScore(){return gScore+hScore+pScore;}
 
-    public int getfScore(){return gScore+hScore+pScore;}
-
-    public void print(){
-        String info = "x=" + getX() + ", y=" + getY() + ", status=" + getStatus() + ", timeArrived=" + getTimeArrived() +"***" + getActionToGetThis()
-                    + "***" + getfScore() +"=" + getgScore() + "+"+ gethScore();
-        System.out.println(info);
-    }
 }
