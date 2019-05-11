@@ -33,7 +33,7 @@ public class ScatterView {
         dataSeriesList.get(SymbolViewPriority.ROBOT_LEFT).setName("Robot Left");
         dataSeriesList.get(SymbolViewPriority.ROBOT_DOWN).setName("Robot Down");
         dataSeriesList.get(SymbolViewPriority.ROBOT_UP).setName("Robot Up");
-        dataSeriesList.get(SymbolViewPriority.TASK_BOUND).setName("BOUND Task");
+        dataSeriesList.get(SymbolViewPriority.TASK_BOUND).setName("Bound Task");
         dataSeriesList.get(SymbolViewPriority.TASK_READY).setName("Ready Task");
         dataSeriesList.get(SymbolViewPriority.TASK_RUNNING).setName("Running Task");
         dataSeriesList.get(SymbolViewPriority.SHELF).setName("Shelf");

@@ -77,7 +77,7 @@
                               <Label alignment="CENTER" layoutX="5.0" layoutY="30.0" text="Play Speed: x" />
                               <ChoiceBox fx:id="cbPlaySpeed" layoutX="82.0" layoutY="30.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" />
                               <Label layoutX="5.0" layoutY="55.0" text="Time solve" />
-                              <TextField fx:id="txtTimeSolve" alignment="CENTER" layoutX="82.0" layoutY="55.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="2" />
+                              <TextField fx:id="txtTimeSolveMin" alignment="CENTER" layoutX="82.0" layoutY="55.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="2" />
                               <Label layoutX="5.0" layoutY="80.0" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" text="Loop max for prior search" wrapText="true" />
                               <TextField fx:id="txtTimeLoopMaxForPriorSearch" alignment="CENTER" layoutX="82.0" layoutY="80.0" maxHeight="22.0" maxWidth="40.0" minHeight="22.0" minWidth="40.0" prefHeight="22.0" prefWidth="40.0" text="0" />
                            </children>

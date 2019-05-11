@@ -46,8 +46,11 @@ public class SinglePathPlanning {
 
             openList.addAll(getNeighborNodes(node));
 
-            if(timeLoop == Config.timeLoopMax)
+            if(timeLoop == Config.timeLoopMax){
+                System.out.println(node.getX());
+                System.out.println(node.getY());
                 break;
+            }
         }
         return false;
     }

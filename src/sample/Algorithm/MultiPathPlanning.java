@@ -1,5 +1,6 @@
 package sample.Algorithm;
 
+import sample.Creator.MapCreator;
 import sample.Manager.Context;
 import sample.Manager.MapData;
 import sample.Manager.RobotManager;
@@ -18,6 +19,7 @@ public class MultiPathPlanning {
     private Random       random;
 
     private int          numberTaskAssignment;
+    private int          numberTaskRemoveToMinimizeCost = 0;
 
     public MultiPathPlanning(TaskManager taskManager, RobotManager robotManager, MapData mapData, int timeAssignment, Random random) {
         this.taskManager    = taskManager;
@@ -58,7 +60,6 @@ public class MultiPathPlanning {
         List<Robot> freeRobotListWithTask = robotManager.getFreeRobotListWithTask();
 
         for (Robot robot: freeRobotListWithTask){
-            Context.logData("   $$$ checking robotId = " + robot.getId());
             List<Point> planPointList = robot.getMainPlanPointList();
             int         timeOffset    = robot.getTimeFree();
             Point       prePoint      = robot.getLastPoint();
@@ -80,7 +81,6 @@ public class MultiPathPlanning {
                 }
                 if(mapData.isEmpty(point,timeOfPoint))
                     map.setPointInfoByPoint(point);
-
                 prePoint = point;
             }
         }
@@ -114,9 +114,9 @@ public class MultiPathPlanning {
             else{
                 robot.setMainPlanSuccess(false);
                 robot.clearMainPlanPointList();
+                Context.logData("   --- robotId = " + robot.getId() + " fail");
             }
             mapData.writePointsToMaps(robot.getMainPlanPointList(), robot.getTimeFree());
-            Context.logData("   --- robotId = " + robot.getId() + " success = " + robot.isMainPlanSuccess());
         }
         for (Robot robot: priorRobotList) {
             mapData.clearPointsFromMaps(robot.getMainPlanPointList(), robot.getTimeFree());
@@ -196,8 +196,6 @@ public class MultiPathPlanning {
                 int timeLoop = 0;
                 for (Robot robot : busyAndFreeWithoutTaskRobotList) {
                     timeLoop ++;
-                    Context.logData("   +++ checking robotId = " + robot.getId());
-
                     Point lastPoint = robot.getLastPoint();
                     int   timeFree  = robot.getTimeFree();
                     Robot other     = null;
@@ -212,8 +210,6 @@ public class MultiPathPlanning {
 
                     if (other != null) {
                         Context.logData(" ~~~ " + robot.getStringInfo() + " may be crashed in the future by " + other.getStringInfo());
-                        if (!other.isFreeAndHaveTask())
-                            Context.logData("ERROR 123");
                         mapData.clearPointsFromMaps(other.getMainPlanPointList(), other.getTimeFree());
                         other.setTask(null);
                         doneWithoutErr1 = false;
@@ -238,7 +234,6 @@ public class MultiPathPlanning {
                 int timeLoop = 0;
                 for (Robot robot : freeRobotListWithTask) {
                     timeLoop ++;
-                    Context.logData("   +++ checking robotId = " + robot.getId());
                     Point lastPoint = robot.getLastPointByPlan();
                     int timeFree = robot.getTimeFreeByPlan();
                     Robot other     = null;
@@ -275,26 +270,69 @@ public class MultiPathPlanning {
         }
     }
 
+    private void optimizePlanLv2(){
+        List<Robot> freeRobotListWithTask = robotManager.getFreeRobotListWithTask();
+        List<Robot> busyRobotList         = robotManager.getBusyRobotList();
+        for (Robot frobot: freeRobotListWithTask) {
+            for (Robot brobot: busyRobotList) {
+                int costOfBusyRobot = 10 + brobot.getTimeFree() - timeAssignment + MapCreator.getEstimateAssignmentCost(brobot.getLastPoint(),frobot.getTask().getGoal());
+                int costOfFreeRobot = getCostOfPlanPointList(frobot.getMainPlanPointList());
+                if(costOfBusyRobot < costOfFreeRobot){
+                    mapData.clearPointsFromMaps(frobot.getMainPlanPointList(),frobot.getTimeFree());
+                    frobot.unbindTask();
+                    numberTaskRemoveToMinimizeCost ++;
+                    break;
+                }
+            }
+        }
+
+
+    }
+
 
     public void execute(){
         assignTasks();
         simplePlan();
         priorPlan();
+        optimizePlanLv2();
         optimizePlan();
 
-        Context.logData("### ### FIRST ASSIGNMENT: number of asisignments = " + numberTaskAssignment);
         List<Robot> freeRobotListWithTask = robotManager.getFreeRobotListWithTask();
-        numberTaskAssignment = freeRobotListWithTask.size();
-        Context.logData("### ### FINAL ASSIGNMENT: number of asisignments = " + numberTaskAssignment);
-        for (Robot robot: freeRobotListWithTask) {
-            Context.logData("   ~~~ " + robot.getStringInfo());
-            robot.bindTask();
+        Context.timeEndThreadMillis = System.currentTimeMillis();
+        Context.timeRunThreadMillis = Context.timeEndThreadMillis - Context.timeStartThreadMillis;
+
+
+        if(Context.timeRunThreadMillis > Context.timeSolveMaxMillis)
+            Context.timeSolveMaxMillis = (int) Context.timeRunThreadMillis;
+
+
+        if(Context.timeRunThreadMillis > (MultiPathPlanning.Config.timeSolveMin *1000/Context.playSpeed)){
+            for (Robot robot: freeRobotListWithTask) {
+                if(robot.isMainPlanSuccess())
+                    mapData.clearPointsFromMaps(robot.getMainPlanPointList(),robot.getTimeFree());
+                robot.unbindTask();
+            }
+            MultiPathPlanning.Config.timeSolve++;
+            Context.logData("CANNOT BIND TASK CAUSED BY OVERTIME");
         }
+        else {
+            Context.logData("### ### FIRST ASSIGNMENT: number of asisignments = " + numberTaskAssignment);
+            Context.logData("### ### FIRST ASSIGNMENT: number of remove to reduce cost = " + numberTaskRemoveToMinimizeCost);
+            numberTaskAssignment = freeRobotListWithTask.size();
+            Context.logData("### ### FINAL ASSIGNMENT: number of asisignments = " + numberTaskAssignment);
+            for (Robot robot : freeRobotListWithTask) {
+                Context.logData("   ~~~ " + robot.getStringInfo());
+                robot.bindTask();
+            }
+            MultiPathPlanning.Config.timeSolve = MultiPathPlanning.Config.timeSolveMin;
+        }
+        Context.logData("Time of thread solving in millis: "+(Context.timeRunThreadMillis));
     }
 
 
     public static class Config{
-        public static int timeSolve = 2;
+        public static int timeSolveMin = 2;
+        public static int timeSolve = timeSolveMin;
         public static int timeLoopForPriorPlanMax = 5;
 
         private static int getTimeLoopForPriorPlan(int size){
@@ -309,7 +347,7 @@ public class MultiPathPlanning {
         }
 
         public static int getTimeSolveMaxMillis(){
-            return (timeSolve *1000);
+            return (timeSolveMin *1000);
         }
     }
 
@@ -320,5 +358,19 @@ public class MultiPathPlanning {
             index2 = random.nextInt(robotList.size());
         Collections.swap(robotList,index1,index2);
         return robotList;
+    }
+
+    private int getCostOfPlanPointList(List<Point> pointList){
+        /*
+        int cost = 1;
+        for (int i = 1; i < pointList.size(); i++) {
+            Point point = pointList.get(i);
+            Point prePoint = pointList.get(i-1);
+            if((!Point.isCoincident(point,prePoint)) | (!Point.isHeadingSameDirection(point,prePoint)))
+                cost++;
+        }
+        return cost;
+        */
+        return pointList.size();
     }
 }

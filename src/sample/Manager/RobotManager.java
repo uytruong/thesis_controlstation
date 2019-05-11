@@ -96,6 +96,14 @@ public class RobotManager {
         }
         return busyAndFreeWithoutTaskRobotList;
     }
+    public List<Robot> getBusyRobotList(){
+        List<Robot> robotList = new ArrayList<>();
+        for (Robot robot: this.robotList) {
+            if(robot.getStatus() == Robot.Status.BUSY)
+                robotList.add(robot);
+        }
+        return robotList;
+    }
 
     public int getRotateCost() {
         return rotateCost;

@@ -10,16 +10,16 @@ import java.util.List;
 public class MapCreator {
     public static Map map;
 
-    public static void create(){
+    public static void create() {
         map = new Map();
         Bound.update();
         Map.xLength = Bound.xLength;
         Map.yLength = Bound.yLength;
-        Map.type    = Map.MAP_TYPE_WAREHOUSE;
+        Map.type = Map.MAP_TYPE_WAREHOUSE;
         Area.update();
 
         map.setPointInfos(new PointInfo[Map.xLength][Map.yLength]);
-        for (int i = 0; i < Bound.xLength ; i++)
+        for (int i = 0; i < Bound.xLength; i++)
             for (int j = 0; j < Bound.yLength; j++)
                 map.getPointInfos()[i][j] = new PointInfo();
 
@@ -28,9 +28,9 @@ public class MapCreator {
             for (int j = 0; j < Shelf.yLength; j++) {
                 for (int k = 0; k < Shelf.xNumber; k++) {
                     for (int l = 0; l < Shelf.yNumber; l++) {
-                        int x = Distance.boundToVerShelf + i + (Distance.shelfToVerShelf +Shelf.xLength)*k;
-                        int y = Distance.boundToHorShelf + j + (Distance.shelfToHorShelf +Shelf.yLength)*l;
-                        map.getPointInfoByXY(x,y).setStatus(PointInfo.Status.SHELF);
+                        int x = Distance.boundToVerShelf + i + (Distance.shelfToVerShelf + Shelf.xLength) * k;
+                        int y = Distance.boundToHorShelf + j + (Distance.shelfToHorShelf + Shelf.yLength) * l;
+                        map.getPointInfoByXY(x, y).setStatus(PointInfo.Status.SHELF);
                     }
                 }
             }
@@ -78,8 +78,6 @@ public class MapCreator {
         private static List<Integer> yEndList;
 
         private static void update(){
-            System.out.println(Bound.xLength + " " + Bound.yLength);
-
             xLength = Shelf.xLength + Distance.shelfToVerShelf;
             yLength = Shelf.yLength + Distance.shelfToHorShelf;
 
@@ -180,8 +178,8 @@ public class MapCreator {
         Area area2 = new Area(goal);
 
         if((area1.xStart == area2.xStart) & (area1.x < area1.xMiddle) & (area2.x < area2.xMiddle)
-                &(area1.xStart != Area.xStartList.get(Area.xStartList.size()-1))
-                &(area1.xStart != Area.xStartList.get(0))){
+                &(((area1.xStart != Area.xStartList.get(0)) & (Distance.boundToVerShelf != 0))
+                | ((area1.xStart == Area.xStartList.get(0)) & (Distance.boundToVerShelf == 0)))){
             if (!((area2.y>=area1.yMiddle) & (area2.y<=area1.yEnd))){
                 int x1 = area1.xStart - 1;
                 int x2 = area1.xMiddle;
@@ -193,8 +191,8 @@ public class MapCreator {
         }
 
         else if((area1.yStart == area2.yStart) & (area1.y < area1.yMiddle) & (area2.y<area2.yMiddle)
-                &(area1.yStart != Area.yStartList.get(Area.yStartList.size()-1))
-                &(area1.yStart != Area.yStartList.get(0))){
+                &((((area1.yStart != Area.yStartList.get(0))) & (Distance.boundToHorShelf !=0))
+                | (((area1.yStart == Area.yStartList.get(0))) & (Distance.boundToHorShelf ==0)))){
             if (!((area2.x>=area1.xMiddle) & (area2.x<=area1.xEnd))){
                 int y1 = area1.yStart - 1;
                 int y2 = area1.yMiddle;

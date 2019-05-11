@@ -5,7 +5,11 @@ public class Context {
 
     public static int time = 0;
     public static int timeMax = 400;
+
     public static int timeSolveMaxMillis = 0;
+    public static long timeStartThreadMillis;
+    public static long timeEndThreadMillis;
+    public static long timeRunThreadMillis;
 
     public static int stepCost = 0;
     public static int rotateCost = 0;

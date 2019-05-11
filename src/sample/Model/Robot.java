@@ -143,5 +143,7 @@ public class Robot {
         status = Status.FREE;
         task   = null;
         mainPlanSuccess = false;
+        clearMainPlanPointList();
+        clearSubPlanPointList();
     }
 }

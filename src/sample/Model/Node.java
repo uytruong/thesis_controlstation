@@ -113,8 +113,6 @@ public class Node extends Point {
     }
 
     private void updateHScore(){
-        //hScore = Map.getEstimatePathCost(this,goal);
-        //hScore = MapCreator.getEstimatePathCost(this,goal);
         hScore = MapCreator.getEstimatePathCost(this,goal);
     }
     private void updateGScore(){

@@ -118,7 +118,7 @@ public class Controller implements Initializable {
     public TextField txtRotateCost;
     public TextField txtTaskNumber;
     public TextField txtTaskDoneNumber;
-    public TextField txtTimeSolve;
+    public TextField txtTimeSolveMin;
     public TextField txtTimeLoopMaxForPriorSearch;
     public Button    btnStartSimulation;
     public Button    btnSaveSystemConfig;
@@ -153,14 +153,15 @@ public class Controller implements Initializable {
         try {
             int randomSeed = Integer.parseInt(txtRandomSeed.getText());
             int playSpeed  = cbPlaySpeed.getValue();
-            int timeSolve  = Integer.parseInt(txtTimeSolve.getText());
+            int timeSolveMin  = Integer.parseInt(txtTimeSolveMin.getText());
             int loopMaxPrior = Integer.parseInt(txtTimeLoopMaxForPriorSearch.getText());
 
             random.setSeed(randomSeed);
             Context.playSpeed                     = playSpeed;
-            MultiPathPlanning.Config.timeSolve = timeSolve;
+            MultiPathPlanning.Config.timeSolveMin = timeSolveMin;
             MultiPathPlanning.Config.timeLoopForPriorPlanMax = loopMaxPrior;
 
+            MultiPathPlanning.Config.timeSolve = MultiPathPlanning.Config.timeSolveMin;
         }
         catch (Exception e){
             viewErrorNotification("Some properties of Config are wrong");
@@ -369,6 +370,7 @@ public class Controller implements Initializable {
 
 
     private void initializeTimeline(){
+        MultiPathPlanning.Config.timeSolve = MultiPathPlanning.Config.timeSolveMin;
         timeline = new Timeline(new KeyFrame(Duration.millis(Context.getTimelineDurationMillis()), ev -> {
             if(taskManager.isAllTaskFinished()) {
                 timeline.stop();
@@ -386,7 +388,7 @@ public class Controller implements Initializable {
                 robotManager.updateByTime(timeAssign);
 
                 solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolve), ev1 -> {
-                    long timeStartThread = System.currentTimeMillis();
+                    Context.timeStartThreadMillis = System.currentTimeMillis();
 
                     taskManager.setLastTimeAssign(timeAssign);
 
@@ -394,16 +396,6 @@ public class Controller implements Initializable {
                     multiPathPlanning.execute();
 
                     Context.solvingMultiPath = false;
-
-                    long timeEndThread = System.currentTimeMillis();
-                    long timeRunThread = timeEndThread - timeStartThread;
-                    if(timeRunThread > Context.timeSolveMaxMillis)
-                        Context.timeSolveMaxMillis = (int) timeRunThread;
-
-                    Context.logData("Time of thread solving in millis: "+(timeRunThread));
-                    if(timeRunThread > (MultiPathPlanning.Config.timeSolve *1000/Context.playSpeed)){
-                        Context.logData("\n ============================\n ERROR \n ============================\n");
-                    }
                     }));
                 solvingThread.setCycleCount(1);
                 solvingThread.playFrom(Duration.millis(MultiPathPlanning.Config.getTimeSolveMaxMillis()-1)); /*prevent Delay*/
