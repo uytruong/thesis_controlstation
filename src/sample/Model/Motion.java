@@ -48,6 +48,7 @@ public class Motion {
     }
 
     public static int getActionTimeCost(Action action){
+
         switch (action){
             case NONE:          return 1;
             case ROTATE_LEFT:   return 1;
@@ -55,6 +56,12 @@ public class Motion {
             case MOVE_CONSTANT: return 1;
             default:            return 2;
         }
+        /*
+        if(action == Action.ROTATE_BACK)
+            return 2;
+        else
+            return 1;
+         */
     }
     public static float getPenaltyCost(Action previousAction, Action action){
         switch (action){

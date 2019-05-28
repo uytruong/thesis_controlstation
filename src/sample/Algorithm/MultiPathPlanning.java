@@ -271,11 +271,12 @@ public class MultiPathPlanning {
     }
 
     private void optimizePlanLv2(){
+        int minCost = 10;
         List<Robot> freeRobotListWithTask = robotManager.getFreeRobotListWithTask();
         List<Robot> busyRobotList         = robotManager.getBusyRobotList();
         for (Robot frobot: freeRobotListWithTask) {
             for (Robot brobot: busyRobotList) {
-                int costOfBusyRobot = 10 + brobot.getTimeFree() - timeAssignment + MapCreator.getEstimateAssignmentCost(brobot.getLastPoint(),frobot.getTask().getGoal());
+                int costOfBusyRobot = minCost + brobot.getTimeFree() - timeAssignment + MapCreator.getEstimateAssignmentCost(brobot.getLastPoint(),frobot.getTask().getGoal());
                 int costOfFreeRobot = getCostOfPlanPointList(frobot.getMainPlanPointList());
                 if(costOfBusyRobot < costOfFreeRobot){
                     mapData.clearPointsFromMaps(frobot.getMainPlanPointList(),frobot.getTimeFree());

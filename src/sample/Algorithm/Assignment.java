@@ -1,7 +1,6 @@
 package sample.Algorithm;
 
 import sample.Creator.MapCreator;
-import sample.Manager.Context;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
 import sample.Model.Robot;

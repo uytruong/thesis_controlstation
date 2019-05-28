@@ -130,6 +130,7 @@ public class Node extends Point {
     }
     public List<Point> getCorrespondPoints(){
         List<Point> correspondPoints = new ArrayList<>();
+
         switch (actionToGetThis){
             case ROTATE_BACK:
                 Point middlePoint = this.getPointClone();
@@ -145,6 +146,13 @@ public class Node extends Point {
             case STEP:
                 correspondPoints.add(this.getPointClone());
         }
+        /*
+        if(actionToGetThis == Motion.Action.ROTATE_BACK){
+            Point middlePoint = this.getPointClone();
+            middlePoint.setStatus(getNeighborNodeHeadingByAction(Motion.Action.ROTATE_LEFT));
+            correspondPoints.add(middlePoint);
+        }
+        */
         correspondPoints.add(this.getPointClone());
         return correspondPoints;
     }

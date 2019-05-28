@@ -68,8 +68,8 @@ public class TaskCreator {
     }
 
     private static class Config {
-        private static int numberTaskMax  = 100;
-        private static int timeAppearMax  = 50;
+        private static int numberTaskMax  = 200;
+        private static int timeAppearMax  = 30;
         private static int timeAppearMin  = 1;
         private static int timeExecuteMax = 10;
         private static int timeExecuteMin = 1;
