@@ -12,11 +12,13 @@ public class SinglePathPlanning {
     private List<Node>  openList      = new ArrayList<>();
     private List<Node>  closeList     = new ArrayList<>();
     private List<Point> planPointList = new ArrayList<>();
+    private List<Robot> busyRobotList;
 
-    public SinglePathPlanning(Robot robot,MapData mapData){
+    public SinglePathPlanning(Robot robot,MapData mapData, List<Robot> busyRobotList){
         this.mapData   = mapData;
         this.startNode = Node.getStartNode(robot);
         this.openList.add(startNode);
+        this.busyRobotList = busyRobotList;
     }
 
     public boolean execute(){
@@ -81,6 +83,14 @@ public class SinglePathPlanning {
                 Point point       = correspondPoints.get(idx);
 
                 emptyToGo = mapData.isEmptyToMoveIn(prePoint,point,timeOfPoint);
+                for (Robot robot: busyRobotList) {
+                    if(Point.isCoincident(robot.getLastPoint(),point)){
+                        if(robot.getLastTimeBusy() < timeOfPoint){
+                            emptyToGo = false;
+                            break;
+                        }
+                    }
+                }
                 if(!emptyToGo){
                     break;
                 }
@@ -97,6 +107,6 @@ public class SinglePathPlanning {
     public int getPathPlanningCost(){return goalNode.getgScore();}
 
     private static class Config{
-        private static int timeLoopMax = 5000;
+        private static int timeLoopMax = 2000;
     }
 }

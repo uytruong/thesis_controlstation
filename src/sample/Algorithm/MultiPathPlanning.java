@@ -43,7 +43,7 @@ public class MultiPathPlanning {
         for (Robot robot: freeRobotListWithTask) {
             Context.logData("   $$$ robotId = " + robot.getId() + " is assigned to taskId = " + robot.getTask().getId());
 
-            SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData);
+            SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData,robotManager.getBusyRobotList());
             if(singlePathPlanning.execute()){
                 robot.setMainPlanPointList(singlePathPlanning.getPlanPointList());
                 robot.setMainPlanSuccess(true);
@@ -104,7 +104,7 @@ public class MultiPathPlanning {
         int totalCostMin    = 0;
         int taskCpltMax     = 0;
         for (Robot robot: priorRobotList) {
-            SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData);
+            SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData, robotManager.getBusyRobotList());
             if(singlePathPlanning.execute()) {
                 taskCpltMax++;
                 totalCostMin += singlePathPlanning.getPathPlanningCost();
@@ -122,14 +122,15 @@ public class MultiPathPlanning {
             mapData.clearPointsFromMaps(robot.getMainPlanPointList(), robot.getTimeFree());
         }
 
-        int timeLoop = Config.getTimeLoopForPriorPlan(priorRobotList.size());
+        //int timeLoop = Config.getTimeLoopForPriorPlan(priorRobotList.size());
+        int timeLoop = Math.min(Config.timeLoopForPriorPlanMax,priorRobotList.size());
         Context.logData(" $$$ PRIOR PLAN: time Loop for priorSearch = " + timeLoop);
         for (int i = 0; i <  timeLoop; i++) {
             priorRobotList  = getResortRobotList(priorRobotList);
             int totalCost   = 0;
             int taskCplt    = 0;
             for (Robot robot: priorRobotList) {
-                SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData);
+                SinglePathPlanning singlePathPlanning = new SinglePathPlanning(robot,mapData, robotManager.getBusyRobotList());
                 if(singlePathPlanning.execute()){
                     taskCplt++;
                     totalCost += singlePathPlanning.getPathPlanningCost();
@@ -353,11 +354,13 @@ public class MultiPathPlanning {
     }
 
     private List<Robot> getResortRobotList(List<Robot> robotList){
-        int index1 = random.nextInt(robotList.size());
+        /*int index1 = random.nextInt(robotList.size());
         int index2 = index1;
         while (index2 == index1)
             index2 = random.nextInt(robotList.size());
         Collections.swap(robotList,index1,index2);
+        */
+        Collections.shuffle(robotList,random);
         return robotList;
     }
 
