@@ -1,6 +1,7 @@
 package sample.Algorithm;
 
 import sample.Creator.MapCreator;
+import sample.Manager.Context;
 import sample.Manager.RobotManager;
 import sample.Manager.TaskManager;
 import sample.Model.Robot;
@@ -18,6 +19,9 @@ public class Assignment {
     public Assignment(RobotManager robotManager, TaskManager taskManager) {
         this.freeRobotList  = robotManager.getFreeRobotList();
         this.readyTaskList  = taskManager.getReadyTaskList();
+
+        Context.logData(" - number Of Task = " + readyTaskList.size());
+        Context.logData(" - number Of Robot = " + freeRobotList.size());
     }
 
     private void calculateCostMatrix(){
@@ -28,7 +32,7 @@ public class Assignment {
         for (int i = 0; i < m ; i++) {
             Robot robot = freeRobotList.get(i);
             for (int j = 0; j < n; j++) {
-                costMatrix[i][j] += MapCreator.getEstimateAssignmentCost(robot.getLastPoint(), readyTaskList.get(j).getGoal());
+                costMatrix[i][j] = MapCreator.getEstimateAssignmentCost(robot.getLastPoint(), readyTaskList.get(j).getGoal());
             }
         }
     }
@@ -44,6 +48,7 @@ public class Assignment {
             if (taskIdx>=0){
                 Task task = readyTaskList.get(taskIdx);
                 robot.setTask(task);
+                Context.logData("___ ID = " + robot.getId() + " assign with Task ID = " + task.getId());
             }
             else{
                 robot.setTask(null);

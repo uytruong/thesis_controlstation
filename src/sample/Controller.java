@@ -70,6 +70,7 @@ public class Controller implements Initializable {
     /**
      * Task
      */
+    public TextField txtTaskStationX;
     public TextField txtTaskGoalX;
     public TextField txtTaskGoalY;
     public TextField txtTaskTimeAppear;
@@ -97,9 +98,10 @@ public class Controller implements Initializable {
     public TableColumn<TaskViewModel, Integer> tableColTaskID;
     public TableColumn<TaskViewModel, Integer> tableColTaskTimeAppear;
     public TableColumn<TaskViewModel, Integer> tableColTaskTimeExecute;
-    public TableColumn<TaskViewModel, Integer> tableColTaskX;
-    public TableColumn<TaskViewModel, Integer> tableColTaskY;
-    public TableColumn<TaskViewModel, String>  tableColTaskHeading;
+    public TableColumn<TaskViewModel, Integer> tableColTaskGoalX;
+    public TableColumn<TaskViewModel, Integer> tableColTaskStationX;
+    public TableColumn<TaskViewModel, Integer> tableColTaskGoalY;
+    public TableColumn<TaskViewModel, String>  tableColTaskGoalHeading;
     public TableColumn<TaskViewModel, String>  tableColTaskStatus;
     private ObservableList<TaskViewModel>      taskObservableList = FXCollections.observableArrayList();
     /**
@@ -137,7 +139,7 @@ public class Controller implements Initializable {
         cbRobotHeading.setItems(cbRobotHeadingList);
         cbTaskHeading.setValue(cbRobotHeadingList.get(0));
         cbTaskHeading.setItems(cbRobotHeadingList);
-        cbPlaySpeed.setValue(cbPlaySpeedList.get(0));
+        cbPlaySpeed.setValue(cbPlaySpeedList.get(1));
         cbPlaySpeed.setItems(cbPlaySpeedList);
 
 
@@ -156,6 +158,7 @@ public class Controller implements Initializable {
             int timeSolveMin  = Integer.parseInt(txtTimeSolveMin.getText());
             int loopMaxPrior = Integer.parseInt(txtTimeLoopMaxForPriorSearch.getText());
 
+            random = new Random();
             random.setSeed(randomSeed);
             Context.playSpeed                     = playSpeed;
             MultiPathPlanning.Config.timeSolveMin = timeSolveMin;
@@ -219,6 +222,7 @@ public class Controller implements Initializable {
             int lengthOfAxis = Math.max(Map.xLength,Map.yLength);
             xAxis.setUpperBound(lengthOfAxis);
             yAxis.setUpperBound(lengthOfAxis);
+            RobotCreator.Config.numberRobotMax = Map.xLength;
 
             mapData      = new MapData();
             robotCreator = new RobotCreator(random);
@@ -276,31 +280,34 @@ public class Controller implements Initializable {
 
     }
     public void btnCreateTaskClick() {
+        int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
+        int taskTimeAppear  = Integer.parseInt(txtTaskTimeAppear.getText());
+
+        PointInfo.Status taskGoalHeading;
+        if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(0))){
+            taskGoalHeading = PointInfo.Status.ROBOT_UP;
+        }
+        else if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(1))){
+            taskGoalHeading = PointInfo.Status.ROBOT_DOWN;
+        }
+        else if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(2))){
+            taskGoalHeading = PointInfo.Status.ROBOT_LEFT;
+        }
+        else {
+            taskGoalHeading = PointInfo.Status.ROBOT_RIGHT;
+        }
+
+        int taskGoalX       = Integer.parseInt(txtTaskGoalX.getText());
+        int taskGoalY       = Integer.parseInt(txtTaskGoalY.getText());
+        Point taskGoalPoint    = new Point(taskGoalX,taskGoalY,taskGoalHeading);
+        Point taskStationPoint = new Point(Integer.parseInt(txtTaskStationX.getText()),0, PointInfo.Status.ROBOT_DOWN);
+
+        if (taskCreator.create(new Task(taskTimeExecute, taskTimeAppear, taskGoalPoint,taskStationPoint))) {
+            updateAndViewAtTime(0);
+        }
+
         try {
-            int taskTimeExecute = Integer.parseInt(txtTaskTimeExecute.getText());
-            int taskTimeAppear  = Integer.parseInt(txtTaskTimeAppear.getText());
 
-            PointInfo.Status taskGoalHeading;
-            if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(0))){
-                taskGoalHeading = PointInfo.Status.ROBOT_UP;
-            }
-            else if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(1))){
-                taskGoalHeading = PointInfo.Status.ROBOT_DOWN;
-            }
-            else if(cbTaskHeading.getValue().equals(cbRobotHeadingList.get(2))){
-                taskGoalHeading = PointInfo.Status.ROBOT_LEFT;
-            }
-            else {
-                taskGoalHeading = PointInfo.Status.ROBOT_RIGHT;
-            }
-
-            int taskGoalX       = Integer.parseInt(txtTaskGoalX.getText());
-            int taskGoalY       = Integer.parseInt(txtTaskGoalY.getText());
-            Point taskGoalPoint = new Point(taskGoalX,taskGoalY,taskGoalHeading);
-
-            if (taskCreator.create(new Task(taskTimeExecute, taskTimeAppear, taskGoalPoint))) {
-                updateAndViewAtTime(0);
-            }
         }
         catch (Exception e){
             viewErrorNotification("Some properties of Task are wrong");
@@ -351,6 +358,7 @@ public class Controller implements Initializable {
         btnStartSimulation.setText("Start Simulation");
         txtTime.setText("0");
         txtStepCost.setText("0");
+        txtRotateCost.setText("0");
         txtTaskNumber.setText("0");
         txtTaskDoneNumber.setText("0");
         timeline.stop();
@@ -381,7 +389,7 @@ public class Controller implements Initializable {
             updateAndViewAtTime(Context.time);
             updatePathCost(Context.time);
 
-            if((!Context.solvingMultiPath) & (taskManager.assignable(Context.time, robotManager))){
+            if((!Context.solvingMultiPath) & (taskManager.assignable(Context.time, robotManager) | taskManager.returnnable(robotManager) )){
                 Context.solvingMultiPath = true;
 
                 int timeAssign = Context.time + MultiPathPlanning.Config.timeSolve;
@@ -390,12 +398,13 @@ public class Controller implements Initializable {
                 solvingThread = new Timeline(new KeyFrame(Duration.seconds(MultiPathPlanning.Config.timeSolve), ev1 -> {
                     Context.timeStartThreadMillis = System.currentTimeMillis();
 
-                    taskManager.setLastTimeAssign(timeAssign);
 
                     MultiPathPlanning multiPathPlanning = new MultiPathPlanning(taskManager,robotManager,mapData,timeAssign,random);
                     multiPathPlanning.execute();
 
+                    taskManager.setLastTimeAssign(timeAssign);
                     Context.solvingMultiPath = false;
+                    solvingThread.stop();
                     }));
                 solvingThread.setCycleCount(1);
                 solvingThread.playFrom(Duration.millis(MultiPathPlanning.Config.getTimeSolveMaxMillis()-1)); /*prevent Delay*/
@@ -418,9 +427,10 @@ public class Controller implements Initializable {
         tableViewRobotList.setItems(robotObservableList);
 
         tableColTaskID.setCellValueFactory(new PropertyValueFactory<>("id"));
-        tableColTaskX.setCellValueFactory(new PropertyValueFactory<>("x"));
-        tableColTaskY.setCellValueFactory(new PropertyValueFactory<>("y"));
-        tableColTaskHeading.setCellValueFactory(new PropertyValueFactory<>("heading"));
+        tableColTaskGoalX.setCellValueFactory(new PropertyValueFactory<>("x"));
+        tableColTaskStationX.setCellValueFactory(new PropertyValueFactory<>("stationX"));
+        tableColTaskGoalY.setCellValueFactory(new PropertyValueFactory<>("y"));
+        tableColTaskGoalHeading.setCellValueFactory(new PropertyValueFactory<>("heading"));
         tableColTaskTimeAppear.setCellValueFactory(new PropertyValueFactory<>("timeAppear"));
         tableColTaskTimeExecute.setCellValueFactory(new PropertyValueFactory<>("timeExecute"));
         tableColTaskStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -429,48 +439,7 @@ public class Controller implements Initializable {
     private void viewTaskListToTableView() {
         List<TaskViewModel> taskViewModelList = new ArrayList<>();
         for (Task task: taskCreator.getTaskList()) {
-            int  taskIDView = task.getId();
-            int  taskXView  = task.getGoal().getX();
-            int  taskYView  = task.getGoal().getY();
-            int  taskTimeAppearView  = task.getTimeAppear();
-            int  taskTimeExecuteView = task.getTimeExecute();
-            Task.Status taskStatus   = task.getStatus();
-
-            PointInfo.Status taskHeading  = task.getGoal().getStatus();
-            String taskHeadingView;
-            switch (taskHeading){
-                case ROBOT_UP:
-                    taskHeadingView = "UP";
-                    break;
-                case ROBOT_DOWN:
-                    taskHeadingView = "DOWN";
-                    break;
-                case ROBOT_LEFT:
-                    taskHeadingView = "LEFT";
-                    break;
-                default:
-                    taskHeadingView = "RIGHT";
-            }
-
-            String taskStatusView;
-            switch (taskStatus){
-                case NEW:
-                    taskStatusView = "NEW";
-                    break;
-                case READY:
-                    taskStatusView = "READY";
-                    break;
-                case BOUND:
-                    taskStatusView = "BOUND";
-                    break;
-                case RUNNING:
-                    taskStatusView = "RUNNING";
-                    break;
-                default:
-                    taskStatusView = "DONE";
-                    break;
-            }
-            TaskViewModel taskViewModel = new TaskViewModel(taskIDView, taskXView, taskYView, taskHeadingView, taskTimeAppearView, taskTimeExecuteView, taskStatusView);
+            TaskViewModel taskViewModel = new TaskViewModel(task);
             taskViewModelList.add(taskViewModel);
         }
         tableViewTaskList.getItems().clear();
@@ -479,38 +448,7 @@ public class Controller implements Initializable {
     private void viewRobotListToTableViewAtTime(int time) {
         List<RobotViewModel> robotViewModelList = new ArrayList<>();
         for (Robot robot: robotCreator.getRobotList()) {
-            int robotIDView   = robot.getId();
-            int robotXView    = robot.getPointByTime(time).getX();
-            int robotYView    = robot.getPointByTime(time).getY();
-            int robotTimeFreeView = robot.getTimeFree();
-            String robotHeadingView;
-            switch (robot.getHeadingByTime(time)){
-                case ROBOT_UP:
-                    robotHeadingView = "UP";
-                    break;
-                case ROBOT_DOWN:
-                    robotHeadingView = "DOWN";
-                    break;
-                case ROBOT_LEFT:
-                    robotHeadingView = "LEFT";
-                    break;
-                default:
-                    robotHeadingView = "RIGHT";
-            }
-
-            String robotStatusView = "UNKNOWN";
-            switch (robot.getStatus()){
-                case FREE:
-                    robotStatusView = "FREE";
-                    break;
-                case BUSY:
-                    robotStatusView = "BUSY";
-                    break;
-            }
-            String robotTaskView = "NONE";
-            if(robot.getTask() != null)
-                robotTaskView = Integer.toString(robot.getTask().getId());
-            RobotViewModel robotViewModel = new RobotViewModel(robotIDView, robotXView, robotYView, robotHeadingView, robotTimeFreeView, robotStatusView, robotTaskView);
+            RobotViewModel robotViewModel = new RobotViewModel(robot, time);
             robotViewModelList.add(robotViewModel);
         }
         tableViewRobotList.getItems().clear();

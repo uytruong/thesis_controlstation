@@ -6,6 +6,8 @@ public class Task{
         READY,
         BOUND,
         RUNNING,
+        REPORTING,
+        RETURNING,
         DONE
     }
 
@@ -13,16 +15,19 @@ public class Task{
     private int   timeExecute;
     private int   timeAppear;
     private Point goal;
+    private Point station;
 
+    private int    timeReturn = 2;
     private int    timeArrived= Integer.MAX_VALUE;
     private int    timeFinish = Integer.MAX_VALUE;
     private Status status     = Status.NEW;
     private Robot  robot      = null;
 
-    public Task(int timeExecute, int timeAppear, Point goal) {
+    public Task(int timeExecute, int timeAppear, Point goal, Point station) {
         this.timeExecute = timeExecute;
         this.timeAppear  = timeAppear;
         this.goal        = goal;
+        this.station     = station;
     }
 
     public int getId() {
@@ -65,5 +70,17 @@ public class Task{
     }
     public void setTimeArrived(int timeArrived) {
         this.timeArrived = timeArrived;
+    }
+    public Point getStation() {
+        return station;
+    }
+    public void setGoal(Point goal) {
+        this.goal = goal;
+    }
+    public int getTimeReturn() {
+        return timeReturn;
+    }
+    public void setTimeReturn(int timeReturn) {
+        this.timeReturn = timeReturn;
     }
 }

@@ -21,6 +21,9 @@ public class TaskCreator {
         if (!map.getPointInfoByXY(task.getGoal().getX(),task.getGoal().getY()).isEmpty()){
             return false;
         }
+        if (!map.getPointInfoByPoint(task.getStation()).isEmpty()){
+            return false;
+        }
         else {
             task.setId(taskList.size());
             taskList.add(task);
@@ -35,8 +38,9 @@ public class TaskCreator {
         }
         for (int i = 0; i < numberOfTasks; i++) {
             while (true){
-                Point goal = new Point(getRandomTaskPointX(),getRandomTaskPointY(),getRandomHeading());
-                Task  task = new Task(getRandomTimeExecute(),getRandomTimeAppear(),goal);
+                Point goal = new Point(getRandomX(), getRandomY(),getRandomHeading());
+                Point station = getRandomStation();
+                Task  task    = new Task(getRandomTimeExecute(),getRandomTimeAppear(),goal,station);
                 if (create(task)) {
                     break;
                 }
@@ -49,15 +53,25 @@ public class TaskCreator {
     private int getRandomTimeExecute(){
         return random.nextInt(Config.timeExecuteMax-Config.timeExecuteMin)+Config.timeExecuteMin;
     }
-    private int getRandomTaskPointX(){
+    private int getRandomX(){
         return random.nextInt(Map.xLength);
     }
-    private int getRandomTaskPointY(){
-        return random.nextInt(Map.yLength);
+    private int getRandomY(){
+        return random.nextInt(Map.yLength-1)+1;
     }
     private PointInfo.Status getRandomHeading(){
         int status = random.nextInt(PointInfo.Status.ROBOT_RIGHT.getValue()-PointInfo.Status.ROBOT_UP.getValue()+1)+PointInfo.Status.ROBOT_UP.getValue();
         return PointInfo.Status.getEnum(status);
+    }
+
+    private Point getRandomStation(){
+        Point station;
+        while (true) {
+            station = new Point(getRandomX(), 0, PointInfo.Status.ROBOT_DOWN);
+            if (map.getPointInfoByPoint(station).isEmpty())
+                break;
+        }
+        return station;
     }
 
     public List<Task> getTaskList() {
@@ -69,7 +83,7 @@ public class TaskCreator {
 
     private static class Config {
         private static int numberTaskMax  = 200;
-        private static int timeAppearMax  = 20;
+        private static int timeAppearMax  = 35;
         private static int timeAppearMin  = 1;
         private static int timeExecuteMax = 5;
         private static int timeExecuteMin = 1;

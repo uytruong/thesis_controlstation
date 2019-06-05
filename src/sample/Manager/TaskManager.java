@@ -31,17 +31,22 @@ public class TaskManager {
                 if (valid) {
                     task.setStatus(Task.Status.READY);
                 }
-            } else if((task.getStatus() == Task.Status.BOUND) & (time >= task.getTimeArrived())) {
+            } else if((task.getStatus() == Task.Status.BOUND) & (time == task.getTimeArrived())) {
                task.setStatus(Task.Status.RUNNING);
             } else if((task.getStatus() == Task.Status.RUNNING)){
                 int timeExecute = time - task.getTimeArrived();
                 if(timeExecute >= task.getTimeExecute())
                 {
-                    doneTaskNumber++;
-                    task.setTimeFinish(time);
-                    task.setStatus(Task.Status.DONE);
-                    task.getRobot().unbindTask();
+                    task.setStatus(Task.Status.REPORTING);
+                    task.getRobot().changeToReportPhase();
+                    task.getStation().setX(task.getRobot().getId());
+                    task.setGoal(task.getStation());
                 }
+            } else if(task.getTimeFinish() == time){
+                task.setStatus(Task.Status.DONE);
+                doneTaskNumber++;
+                task.getRobot().setStatus(Robot.Status.FREE);
+                task.getRobot().setTask(null);
             }
         }
     }
@@ -81,8 +86,15 @@ public class TaskManager {
         return doneTaskNumber;
     }
 
-    public boolean assignable(){
-        return (getReadyTaskList().size()>0);
+    public boolean returnnable(RobotManager robotManager){
+        int returnRobotNum = 0;
+        for (Robot robot: robotManager.getRobotList()) {
+            if(robot.getTask() != null){
+                if((robot.getStatus() == Robot.Status.FULL) & (robot.getTask().getStatus() == Task.Status.REPORTING))
+                    returnRobotNum++;
+            }
+        }
+        return (returnRobotNum>0);
     }
     public boolean assignable(int time, RobotManager robotManager){
         int freeRobotNum = 0;
@@ -95,6 +107,8 @@ public class TaskManager {
         else
             return ((getReadyTaskList().size()>0) &((time-lastTimeAssign)>=Config.timeDelayForNextAssign));
     }
+
+
     public boolean isAllTaskFinished(){
         return (doneTaskNumber==taskList.size());
     }

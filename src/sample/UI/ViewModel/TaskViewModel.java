@@ -2,72 +2,84 @@ package sample.UI.ViewModel;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import sample.Model.Task;
 
 public class TaskViewModel {
     private SimpleIntegerProperty id;
     private SimpleIntegerProperty x;
+    private SimpleIntegerProperty stationX;
     private SimpleIntegerProperty y;
     private SimpleIntegerProperty timeAppear;
     private SimpleIntegerProperty timeExecute;
     private SimpleStringProperty status;
     private SimpleStringProperty heading;
 
-    public TaskViewModel(int id, int x, int y, String heading, int timeAppear, int timeExecute, String status) {
-        this.id = new SimpleIntegerProperty(id);
-        this.x = new SimpleIntegerProperty(x);
-        this.y = new SimpleIntegerProperty(y);
-        this.timeAppear = new SimpleIntegerProperty(timeAppear);
-        this.timeExecute = new SimpleIntegerProperty(timeExecute);
-        this.status = new SimpleStringProperty(status);
-        this.heading = new SimpleStringProperty(heading);
+
+    public TaskViewModel(Task task) {
+        this.id = new SimpleIntegerProperty(task.getId());
+        this.x = new SimpleIntegerProperty(task.getGoal().getX());
+        this.stationX = new SimpleIntegerProperty(task.getStation().getX());
+        this.y = new SimpleIntegerProperty(task.getGoal().getY());
+        this.timeAppear = new SimpleIntegerProperty(task.getTimeAppear());
+        this.timeExecute = new SimpleIntegerProperty(task.getTimeExecute());
+        this.status = new SimpleStringProperty(task.getStatus().name());
+        this.heading = new SimpleStringProperty(task.getGoal().getStatus().name());
     }
 
     public int getId() {
         return id.get();
     }
 
-    public void setId(int id) {
-        this.id = new SimpleIntegerProperty(id);
+    public SimpleIntegerProperty idProperty() {
+        return id;
     }
 
     public int getX() {
         return x.get();
     }
 
-    public void setX(int x) {
-        this.x = new SimpleIntegerProperty(x);
+    public SimpleIntegerProperty xProperty() {
+        return x;
+    }
+
+    public int getStationX() {
+        return stationX.get();
+    }
+
+    public SimpleIntegerProperty stationXProperty() {
+        return stationX;
     }
 
     public int getY() {
         return y.get();
     }
 
-    public void setY(int y) {
-        this.y = new SimpleIntegerProperty(y);
+    public SimpleIntegerProperty yProperty() {
+        return y;
     }
 
     public int getTimeAppear() {
         return timeAppear.get();
     }
 
-    public void setTimeAppear(int timeAppear) {
-        this.timeAppear = new SimpleIntegerProperty(timeAppear);
+    public SimpleIntegerProperty timeAppearProperty() {
+        return timeAppear;
     }
 
     public int getTimeExecute() {
         return timeExecute.get();
     }
 
-    public void setTimeExecute(int timeExecute) {
-        this.timeExecute = new SimpleIntegerProperty(timeExecute);
+    public SimpleIntegerProperty timeExecuteProperty() {
+        return timeExecute;
     }
 
     public String getStatus() {
         return status.get();
     }
 
-    public void setStatus(String status) {
-        this.status = new SimpleStringProperty(status);
+    public SimpleStringProperty statusProperty() {
+        return status;
     }
 
     public String getHeading() {
@@ -76,9 +88,5 @@ public class TaskViewModel {
 
     public SimpleStringProperty headingProperty() {
         return heading;
-    }
-
-    public void setHeading(String heading) {
-        this.heading.set(heading);
     }
 }

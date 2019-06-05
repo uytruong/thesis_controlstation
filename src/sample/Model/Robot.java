@@ -7,6 +7,7 @@ public class Robot {
     public enum Status{
         FREE,
         BUSY,
+        FULL
     }
 
     private int         id;
@@ -123,25 +124,26 @@ public class Robot {
     public void bindTask(){
 
         pointList.addAll(mainPlanPointList);
-        status = Status.BUSY;
-
-        task.setStatus(Task.Status.BOUND);
-        task.setTimeArrived(getLastTimeBusy());
+        if(status == Status.FREE) {
+            status = Status.BUSY;
+            task.setStatus(Task.Status.BOUND);
+            task.setTimeArrived(getLastTimeBusy());
+        }
+        else if(status == Status.FULL){
+            task.setStatus(Task.Status.RETURNING);
+            task.setTimeFinish(getLastTimeBusy()+task.getTimeReturn());
+        }
         task.setRobot(this);
     }
 
-    public boolean isFreeAndHaveTask(){
-        return (status == Status.FREE) & (task != null);
-    }
 
     public String getStringInfo(){
         String taskId = (task == null)? "null" : Integer.toString(task.getId());
-        return "robotId = " + id + ", task = " + taskId + ", status = " + status + " planSuccess = " + mainPlanSuccess;
+        return "___ robotId = " + id + ", task = " + taskId + ", status = " + status + " planSuccess = " + mainPlanSuccess;
     }
 
-    public void unbindTask(){
-        status = Status.FREE;
-        task   = null;
+    public void changeToReportPhase(){
+        status = Status.FULL;
         mainPlanSuccess = false;
         clearMainPlanPointList();
         clearSubPlanPointList();

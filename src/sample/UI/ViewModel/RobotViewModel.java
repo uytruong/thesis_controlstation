@@ -2,6 +2,8 @@ package sample.UI.ViewModel;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import sample.Model.Point;
+import sample.Model.Robot;
 
 public class RobotViewModel {
     private SimpleIntegerProperty id;
@@ -12,13 +14,16 @@ public class RobotViewModel {
     private SimpleIntegerProperty timeFree;
     private SimpleStringProperty task;
 
-    public RobotViewModel(int id, int x, int y, String heading, int TimeFree, String status, String task) {
-        this.id = new SimpleIntegerProperty(id);
-        this.x = new SimpleIntegerProperty(x);
-        this.y = new SimpleIntegerProperty(y);
-        this.heading = new SimpleStringProperty(heading);
-        this.status = new SimpleStringProperty(status);
-        this.timeFree = new SimpleIntegerProperty(TimeFree);
+    public RobotViewModel(Robot robot, int time) {
+        Point point = robot.getPointByTime(time);
+        this.id = new SimpleIntegerProperty(robot.getId());
+        this.x = new SimpleIntegerProperty(point.getX());
+        this.y = new SimpleIntegerProperty(point.getY());
+        this.heading = new SimpleStringProperty(point.getStatus().name());
+        this.status = new SimpleStringProperty(robot.getStatus().name());
+        this.timeFree = new SimpleIntegerProperty(robot.getTimeFree());
+
+        String task = (robot.getTask() == null)? "NONE" :Integer.toString(robot.getTask().getId());
         this.task = new SimpleStringProperty(task);
     }
 

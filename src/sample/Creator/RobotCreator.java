@@ -74,7 +74,7 @@ public class RobotCreator {
 
 
 
-    private static class Config{
-        private static int numberRobotMax = 100;
+    public static class Config{
+        public static int numberRobotMax = 100;
     }
 }
